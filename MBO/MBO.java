@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 package MBO;
-=======
-package com.BennieAndTheJets.MBO;
->>>>>>> 6d2b9428abe1c66a9fea66ffc5d3acf5e93ea78c
 
 import java.text.SimpleDateFormat;
 import java.util.HashMap;

@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 package Simulator;
 
 import CTC.CTC;
@@ -8,16 +7,6 @@ import MBO.TrainModel;
 import TrackController.TrackController;
 import TrackModel.TrackModel;
 import TrainController.TrainControllerWrapper;
-=======
-package com.BennieAndTheJets.Simulator;
-
-import com.BennieAndTheJets.CTC.CTC;
-import com.BennieAndTheJets.MBO.MBO;
-import com.BennieAndTheJets.MBO.TrainModel;
-import com.BennieAndTheJets.TrackController.TrackController;
-import com.BennieAndTheJets.TrackModel.TrackModel;
-import com.BennieAndTheJets.TrainController.TrainControllerWrapper;
->>>>>>> 6d2b9428abe1c66a9fea66ffc5d3acf5e93ea78c
 
 /**
  * Created by Drew on 3/27/2015.
