@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 package TrackModel;
+=======
+package com.BennieAndTheJets.TrackModel;
+>>>>>>> 6d2b9428abe1c66a9fea66ffc5d3acf5e93ea78c
 
 import java.io.File;
 import java.io.IOException;

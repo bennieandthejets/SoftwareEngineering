@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 package CTC;
+=======
+package com.BennieAndTheJets.CTC;
+>>>>>>> 6d2b9428abe1c66a9fea66ffc5d3acf5e93ea78c
 
 public class TrainRoute {
 	public int block;

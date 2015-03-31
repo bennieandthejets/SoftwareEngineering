@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 package TrainModel;
+=======
+package com.BennieAndTheJets.TrainModel;
+>>>>>>> 6d2b9428abe1c66a9fea66ffc5d3acf5e93ea78c
 
 import java.awt.EventQueue;
 
