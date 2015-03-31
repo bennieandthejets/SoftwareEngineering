@@ -1,4 +1,4 @@
-package com.BennieAndTheJets.MBO;
+package MBO;
 
 
 public class TrainModel 

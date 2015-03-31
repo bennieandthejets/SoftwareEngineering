@@ -1,11 +1,12 @@
-package com.BennieAndTheJets.Simulator;
+package Simulator;
 
-import com.BennieAndTheJets.CTC.CTC;
-import com.BennieAndTheJets.MBO.MBO;
-import com.BennieAndTheJets.MBO.TrainModel;
-import com.BennieAndTheJets.TrackController.TrackController;
-import com.BennieAndTheJets.TrackModel.TrackModel;
-import com.BennieAndTheJets.TrainController.TrainControllerWrapper;
+import CTC.CTC;
+
+import MBO.MBO;
+import MBO.TrainModel;
+import TrackController.TrackController;
+import TrackModel.TrackModel;
+import TrainController.TrainControllerWrapper;
 
 /**
  * Created by Drew on 3/27/2015.

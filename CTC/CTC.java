@@ -1,4 +1,4 @@
-package com.BennieAndTheJets.CTC;
+package CTC;
 
 import java.awt.EventQueue;
 import java.util.Arrays;

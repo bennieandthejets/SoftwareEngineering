@@ -1,4 +1,4 @@
-package com.BennieAndTheJets.MBO;
+package MBO;
 
 import java.text.SimpleDateFormat;
 import java.util.HashMap;

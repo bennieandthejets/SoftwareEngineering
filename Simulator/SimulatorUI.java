@@ -1,4 +1,4 @@
-package com.BennieAndTheJets.Simulator;
+package Simulator;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;

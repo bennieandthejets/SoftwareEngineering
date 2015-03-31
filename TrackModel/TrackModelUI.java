@@ -1,4 +1,4 @@
-package com.BennieAndTheJets.TrackModel;
+package TrackModel;
 
 import java.awt.EventQueue;
 

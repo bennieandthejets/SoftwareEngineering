@@ -1,4 +1,4 @@
-package com.BennieAndTheJets.TrainController;
+package TrainController;
 
 
 import java.awt.EventQueue;

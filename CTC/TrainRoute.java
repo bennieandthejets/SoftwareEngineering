@@ -1,4 +1,4 @@
-package com.BennieAndTheJets.CTC;
+package CTC;
 
 public class TrainRoute {
 	public int block;

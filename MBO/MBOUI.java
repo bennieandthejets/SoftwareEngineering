@@ -1,4 +1,4 @@
-package com.BennieAndTheJets.MBO;
+package MBO;
 
 import java.awt.EventQueue;
 
