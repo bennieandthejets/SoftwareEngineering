@@ -12,13 +12,13 @@ import TrainController.TrainControllerWrapper;
  * Created by Drew on 3/27/2015.
  */
 public class Simulator {
-    private SimulatorUI ui;
-    private CTC ctc;
-    private MBO mbo;
-    private TrackController trackController;
-    private TrackModel trackModel;
-    private TrainControllerWrapper trainControllerWrapper;
-    private TrainModel trainModel;
+    public SimulatorUI ui;
+    public CTC ctc;
+    public MBO mbo;
+    public TrackController trackController;
+    public TrackModel trackModel;
+    public TrainControllerWrapper trainControllerWrapper;
+    public TrainModel trainModel;
 
     private boolean isRunning;
     private int speedMultiplier;
