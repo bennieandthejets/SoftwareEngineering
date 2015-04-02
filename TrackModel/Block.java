@@ -1,26 +1,27 @@
 package TrackModel;
 
-
 public class Block {
 	
 	int blockID;
 	double blockSize;
 	boolean trainPresent;
-	boolean trackSwitch;
+	boolean isBroken;
+	boolean isClosed;
+	boolean isStation;
+	Switch sw;
+	Beacon beacon;
 	boolean rrCrossing;
 	boolean underground;
 	String station;
 	int trackTemp;
 	double grade;
 	double elevation;
-	int power;
 	int speedLimit;
-	String directions;
-	boolean beaconPresent;
+	String[] directions;
 	String lineColor;
 	String section;
 	double cumElevation;
-	String switchPos;
+	//TODO GET RID OF ARROWDIR WHAT EVEN IS THIS
 	String arrowDir;
 	
 	public Block(int blockID)
@@ -39,10 +40,6 @@ public class Block {
 	public boolean isTrainPresent()
 	{
 		return trainPresent;
-	}
-	public boolean isTrackSwitch()
-	{
-		return trackSwitch;
 	}
 	public boolean isRrCrossing()
 	{
@@ -64,21 +61,9 @@ public class Block {
 	{
 		return elevation;
 	}
-	public int getPower()
-	{
-		return power;
-	}
 	public int getSpeedLimit()
 	{
 		return speedLimit;
-	}
-	public String getDirections()
-	{
-		return directions;
-	}
-	public boolean isBeacon()
-	{
-		return beaconPresent;
 	}
 	public String getLineColor()
 	{
@@ -92,76 +77,13 @@ public class Block {
 	{
 		return cumElevation;
 	}
-	public String getSwitchPos()
+	public Switch getSwitch()
 	{
-		return switchPos;
+		return sw;
 	}
-	public String getArrowDir()
+	public Beacon getBeacon()
 	{
-		return arrowDir;
+		return beacon;
 	}
-	public void setBlockID(int blockID)
-	{
-		this.blockID = blockID;
-	}
-	public void setBlockSize(double blockSize)
-	{
-		this.blockSize = blockSize;
-	}
-	public void setTrackSwitch(boolean trackSwitch)
-	{
-		this.trackSwitch = trackSwitch;
-	}
-	public void setRrCrossing(boolean rrCrossing)
-	{
-		this.rrCrossing = rrCrossing;
-	}
-	public void setUnderground(boolean underground)
-	{
-		this.underground = underground;
-	}
-	public void setStation(String station)
-	{
-		this.station = station;
-	}
-	public void setGrade(double grade)
-	{
-		this.grade = grade;
-	}
-	public void setElevation(double elevation)
-	{
-		this.elevation = elevation;
-	}
-	public void setSpeedLimit(int speedLimit)
-	{
-		this.speedLimit = speedLimit;
-	}
-	public void setDirections(String directions)
-	{
-		this.directions = directions;
-	}
-	public void setBeacon(boolean beaconPresent)
-	{
-		this.beaconPresent = beaconPresent;
-	}
-	public void setLineColor(String lineColor)
-	{
-		this.lineColor = lineColor;
-	}
-	public void setSection(String section)
-	{
-		this.section = section;
-	}
-	public void setCumElevation(double cumElevation)
-	{
-		this.cumElevation = cumElevation;
-	}
-	public void setSwitchPos(String switchPos)
-	{
-		this.switchPos = switchPos;
-	}
-	public void setArrowDir(String arrowDir)
-	{
-		this.arrowDir = arrowDir;
-	}
+
 }
