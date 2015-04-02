@@ -1,5 +1,5 @@
 package TrainController;
-
+import TrainModel.*;;
 
 public class TrainController {
 		
@@ -19,44 +19,45 @@ public class TrainController {
 	private double		targetVelocity;
 	private	double[]	powerCommand = new double[2];	//Current[1] and most recent[0] power commands
 	private double[]	u = new double[2];				//Intermediate variables
-	private double[]	error = new double[2];			//Current [1] and most recent [0] velocity error
+	private double[]	velocityError = new double[2];			//Current [1] and most recent [0] velocity velocityError
 	
-	//private TrainModel 	model;
+	private TrainModelProto 	model;
 	
 	
-	public TrainController() {
-		//model = trainModel;
-		ID = 0;
+	public TrainController(int newID, TrainModelProto newTrainModel) {
+		ID = newID;
+		model = newTrainModel;
 		mode = 1;
 		setpointVelocity = 0.0;
 		velocityFeedback = 0.0;
 		powerCommand[0] = 0.0;
 		powerCommand[1] = 0.0;
-		error[0] = 0.0;
-		error[1] = 0.0;
+		velocityError[0] = 0.0;
+		velocityError[1] = 0.0;
 		u[0] = 0;
 		u[1] = 0;
 	}
 	
 	public int getID() {
-		return ID;
+		return this.ID;
 	}
 	
 	public double calculatePower() {
-		//velocityFeedback = 
-		error[1] = setpointVelocity - velocityFeedback;
+		velocityFeedback = model.getVelocity();
+		
+		velocityError[1] = setpointVelocity - velocityFeedback;
 		
 		if(powerCommand[1] < MAX_POWER) {
-			u[1] = u[0] + (TIME_PERIOD/2) * (error[1] + error[0]);
+			u[1] = u[0] + (TIME_PERIOD/2) * (velocityError[1] + velocityError[0]);
 		}
 		else 
 			u[1] = u[0];
 		
-		powerCommand[1] = Ki * error[1] + Kp * u[1];
+		powerCommand[1] = Ki * velocityError[1] + Kp * u[1];
 		
 		u[0] = u[1];
 		powerCommand[0] = powerCommand[1];
-		error[0] = error[1];
+		velocityError[0] = velocityError[1];
 		return powerCommand[1];
 	}
 		
