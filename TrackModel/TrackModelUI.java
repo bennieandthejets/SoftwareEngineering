@@ -1,5 +1,4 @@
 package TrackModel;
-
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -9,11 +8,6 @@ import javax.swing.JPanel;
 import java.awt.BorderLayout;
 
 import javax.swing.JButton;
-
-//import com.jgoodies.forms.layout.FormLayout;
-//import com.jgoodies.forms.layout.ColumnSpec;
-//import com.jgoodies.forms.factories.FormFactory;
-//import com.jgoodies.forms.layout.RowSpec;
 
 import javax.swing.JLabel;
 
@@ -26,6 +20,7 @@ import java.util.ArrayList;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Choice;
+import java.awt.GridLayout;
 
 public class TrackModelUI extends TrackModel {
 
@@ -42,7 +37,6 @@ public class TrackModelUI extends TrackModel {
 	JLabel lblElevation;
 	JLabel lblRrCrossing;
 	JLabel lblUnderground;
-	JLabel lblSwitch;
 	JLabel lblStation;
 	JLabel lblSpeedLimit;
 	JLabel lblGrade;
@@ -82,36 +76,13 @@ public class TrackModelUI extends TrackModel {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		/*frame = new JFrame();
+		frame = new JFrame();
 		frame.setBounds(100, 100, 710, 508);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		attributesPanel = new JPanel();
 		attributesPanel.setBackground(new Color(255, 153, 0));
 		frame.getContentPane().add(attributesPanel, BorderLayout.EAST);
-		attributesPanel.setLayout(new FormLayout(new ColumnSpec[] {
-				FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-				ColumnSpec.decode("200px:grow"), }, new RowSpec[] {
-				FormFactory.LINE_GAP_ROWSPEC, RowSpec.decode("25px"),
-				FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
 
 		selBlockPanel = new JPanel();
 		selBlockPanel.setBackground(new Color(51, 204, 255));
@@ -131,7 +102,7 @@ public class TrackModelUI extends TrackModel {
 		addButtons();
 
 		addLabels();
-*/
+
 	}
 
 	public void makeMap() {
@@ -155,9 +126,7 @@ public class TrackModelUI extends TrackModel {
 				blocks[count].speedLimit = Integer.parseInt(row.get(5));
 				blocks[count].station = row.get(6);
 				if(row.get(7).equals("TRUE"))
-					blocks[count].trackSwitch = true;
-				else
-					blocks[count].trackSwitch = false;
+					blocks[count].sw = new Switch(count,row.get(12));
 				if(row.get(8).equals("TRUE"))
 					blocks[count].underground = true;
 				else
@@ -168,7 +137,6 @@ public class TrackModelUI extends TrackModel {
 					blocks[count].rrCrossing = false;
 				blocks[count].elevation = Double.parseDouble(row.get(10));
 				blocks[count].cumElevation = Double.parseDouble(row.get(11));
-				blocks[count].switchPos = row.get(12);
 				blocks[count].arrowDir = row.get(13);
 
 				choice.add(String.valueOf(count));
@@ -227,25 +195,26 @@ public class TrackModelUI extends TrackModel {
 			public void mouseReleased(MouseEvent arg0) {
 			}
 		});
-		attributesPanel.add(btnLoadTrack, "2, 2, center, top");
+		attributesPanel.setLayout(new GridLayout(17, 1, 0, 0));
+		attributesPanel.add(btnLoadTrack);
 
 		JButton btnBreakTrack = new JButton("Break Track");
 		btnBreakTrack.setBackground(new Color(0, 0, 0));
 		btnBreakTrack.setFont(new Font("Tahoma", Font.BOLD, 13));
 		btnBreakTrack.setForeground(new Color(51, 255, 51));
-		attributesPanel.add(btnBreakTrack, "2, 4, center, default");
+		attributesPanel.add(btnBreakTrack);
 
 		JButton btnPowerFailure = new JButton("Power Failure");
 		btnPowerFailure.setBackground(new Color(0, 0, 0));
 		btnPowerFailure.setFont(new Font("Tahoma", Font.BOLD, 13));
 		btnPowerFailure.setForeground(new Color(255, 255, 51));
-		attributesPanel.add(btnPowerFailure, "2, 6, center, default");
+		attributesPanel.add(btnPowerFailure);
 
 		JButton btnCircuitFailure = new JButton("Circuit Failure");
 		btnCircuitFailure.setBackground(new Color(0, 0, 0));
 		btnCircuitFailure.setFont(new Font("Tahoma", Font.BOLD, 13));
 		btnCircuitFailure.setForeground(new Color(220, 20, 60));
-		attributesPanel.add(btnCircuitFailure, "2, 8, center, default");
+		attributesPanel.add(btnCircuitFailure);
 	}
 
 	public void addLabels() {
@@ -253,72 +222,67 @@ public class TrackModelUI extends TrackModel {
 		lblLine = new JLabel("Line: ");
 		lblLine.setFont(new Font("Tahoma", Font.BOLD, 13));
 		lblLine.setForeground(new Color(138, 43, 226));
-		attributesPanel.add(lblLine, "2, 10");
+		attributesPanel.add(lblLine);
 
 		lblSection = new JLabel("Section: ");
 		lblSection.setFont(new Font("Tahoma", Font.BOLD, 13));
 		lblSection.setForeground(new Color(138, 43, 226));
-		attributesPanel.add(lblSection, "2, 12");
+		attributesPanel.add(lblSection);
 
 		lblBlock = new JLabel("Block Number: ");
 		lblBlock.setFont(new Font("Tahoma", Font.BOLD, 13));
 		lblBlock.setForeground(new Color(138, 43, 226));
-		attributesPanel.add(lblBlock, "2, 14");
+		attributesPanel.add(lblBlock);
 
 		lblBlockSize = new JLabel("Block Length: " + " m");
 		lblBlockSize.setFont(new Font("Tahoma", Font.BOLD, 13));
 		lblBlockSize.setForeground(new Color(138, 43, 226));
-		attributesPanel.add(lblBlockSize, "2, 16");
+		attributesPanel.add(lblBlockSize);
 
 		lblGrade = new JLabel("Grade: " + "%");
 		lblGrade.setFont(new Font("Tahoma", Font.BOLD, 13));
 		lblGrade.setForeground(new Color(138, 43, 226));
-		attributesPanel.add(lblGrade, "2, 18");
+		attributesPanel.add(lblGrade);
 
 		lblSpeedLimit = new JLabel("Speed Limit: " + " km/hr");
 		lblSpeedLimit.setFont(new Font("Tahoma", Font.BOLD, 13));
 		lblSpeedLimit.setForeground(new Color(138, 43, 226));
-		attributesPanel.add(lblSpeedLimit, "2, 20");
+		attributesPanel.add(lblSpeedLimit);
 
 		lblStation = new JLabel("Station: ");
 		lblStation.setFont(new Font("Tahoma", Font.BOLD, 13));
 		lblStation.setForeground(new Color(138, 43, 226));
-		attributesPanel.add(lblStation, "2, 22");
-
-		lblSwitch = new JLabel("Switch: ");
-		lblSwitch.setFont(new Font("Tahoma", Font.BOLD, 13));
-		lblSwitch.setForeground(new Color(138, 43, 226));
-		attributesPanel.add(lblSwitch, "2, 24");
+		attributesPanel.add(lblStation);
 
 		lblUnderground = new JLabel("Underground: ");
 		lblUnderground.setFont(new Font("Tahoma", Font.BOLD, 13));
 		lblUnderground.setForeground(new Color(138, 43, 226));
-		attributesPanel.add(lblUnderground, "2, 26");
+		attributesPanel.add(lblUnderground);
 
 		lblRrCrossing = new JLabel("RR Crossing: ");
 		lblRrCrossing.setFont(new Font("Tahoma", Font.BOLD, 13));
 		lblRrCrossing.setForeground(new Color(138, 43, 226));
-		attributesPanel.add(lblRrCrossing, "2, 28");
+		attributesPanel.add(lblRrCrossing);
 
 		lblElevation = new JLabel("Elevation: ");
 		lblElevation.setFont(new Font("Tahoma", Font.BOLD, 13));
 		lblElevation.setForeground(new Color(138, 43, 226));
-		attributesPanel.add(lblElevation, "2, 30");
+		attributesPanel.add(lblElevation);
 
 		lblCumElevation = new JLabel("Cumulative Elevation: ");
 		lblCumElevation.setFont(new Font("Tahoma", Font.BOLD, 13));
 		lblCumElevation.setForeground(new Color(138, 43, 226));
-		attributesPanel.add(lblCumElevation, "2, 32");
+		attributesPanel.add(lblCumElevation);
 
 		lblSwitchPos = new JLabel("Switch Positions: ");
 		lblSwitchPos.setFont(new Font("Tahoma", Font.BOLD, 13));
 		lblSwitchPos.setForeground(new Color(138, 43, 226));
-		attributesPanel.add(lblSwitchPos, "2, 34");
+		attributesPanel.add(lblSwitchPos);
 
 		lblArrowDir = new JLabel("Arrow Direction: ");
 		lblArrowDir.setFont(new Font("Tahoma", Font.BOLD, 13));
 		lblArrowDir.setForeground(new Color(138, 43, 226));
-		attributesPanel.add(lblArrowDir, "2, 36");
+		attributesPanel.add(lblArrowDir);
 	}
 
 	public void resetLabels(Block b) {
@@ -330,12 +294,11 @@ public class TrackModelUI extends TrackModel {
 		lblGrade.setText("Grade: " + b.grade + "%");
 		lblSpeedLimit.setText("Speed Limit: " + b.speedLimit + " km/hr");
 		lblStation.setText("Station: " + b.station);
-		lblSwitch.setText("Switch: " + b.trackSwitch);
 		lblUnderground.setText("Underground: " + b.underground);
 		lblRrCrossing.setText("RR Crossing: " + b.rrCrossing);
 		lblElevation.setText("Elevation: " + b.elevation);
 		lblCumElevation.setText("Cumulative Elevation: " + b.cumElevation);
-		lblSwitchPos.setText("Switch Positions: " + b.switchPos);
+		lblSwitchPos.setText("Switch Positions: " + b.getSwitch().switches);
 		lblArrowDir.setText("Arrow Direction: " + b.arrowDir);
 	}
 
