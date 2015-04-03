@@ -62,7 +62,7 @@ public class Simulator {
         trackControllerWrapper.tick();
         trackModel.tick();
         trainModelWrapper.tick();
-        trainController.tick();
+        trainControllerWrapper.tick();
         */
     }
 

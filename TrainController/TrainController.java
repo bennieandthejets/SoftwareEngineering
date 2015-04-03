@@ -19,7 +19,9 @@ public class TrainController {
 	private double		targetVelocity;
 	private	double[]	powerCommand = new double[2];	//Current[1] and most recent[0] power commands
 	private double[]	u = new double[2];				//Intermediate variables
-	private double[]	velocityError = new double[2];			//Current [1] and most recent [0] velocity velocityError
+	private double[]	velocityError = new double[2];	//Current [1] and most recent [0] velocity velocityError
+	private double		setpointAuthority;
+	private double		remainingAuthority;
 	
 	private TrainModelProto 	model;
 	
@@ -60,13 +62,25 @@ public class TrainController {
 		velocityError[0] = velocityError[1];
 		return powerCommand[1];
 	}
-		
-	//public double getVelocityFeedback() {
-		//return model.getVelocity();
-	//}
 	
-	public double setSetpointVelocity(double stptVel) {
-		setpointVelocity = stptVel;
+	public double calculateAuthority() {
+		this.remainingAuthority = this.remainingAuthority - model.getDistanceTravelled();
+		if(remainingAuthority < 0) {
+			//STOP
+		}
+		
+	}
+	
+	public void setNewAuthority(double newAuthority) {
+		this.setpointAuthority = newAuthority;
+	}
+		
+	public double getVelocityFeedback() {
+		return model.getVelocity();
+	}
+	
+	public double setSetpointVelocity(double newSetpointVelocity) {
+		setpointVelocity = newSetpointVelocity;
 		if(mode == 1) {
 			targetVelocity = setpointVelocity;
 		}
@@ -82,13 +96,13 @@ public class TrainController {
 		targetVelocity = setpointVelocity;
 	}
 	
-	public void setTargetVelocity(double tgtVel)
+	public void setTargetVelocity(double newTargetVelocity)
 	{
 		if(mode == 1) {
-			if(tgtVel > setpointVelocity)
+			if(newTargetVelocity > setpointVelocity)
 				targetVelocity = setpointVelocity;
 			else
-				targetVelocity = tgtVel;
+				targetVelocity = newTargetVelocity;
 		}
 		else
 			targetVelocity = setpointVelocity;
