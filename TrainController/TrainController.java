@@ -20,18 +20,21 @@ public class TrainController {
 	private	double[]	powerCommand = new double[2];	//Current[1] and most recent[0] power commands
 	private double[]	u = new double[2];				//Intermediate variables
 	private double[]	velocityError = new double[2];	//Current [1] and most recent [0] velocity velocityError
-	private double		setpointAuthority;
 	private double		remainingAuthority;
+	private double		stopDistance;
 	
-	private TrainModelProto 	model;
+	private TrainModel 	model;
+	private TrainControllerUI ui;
 	
 	
-	public TrainController(int newID, TrainModelProto newTrainModel) {
+	public TrainController(int newID, TrainModel newTrainModel, TrainControllerUI newUI) {
 		ID = newID;
 		model = newTrainModel;
+		ui = newUI;
 		mode = 1;
 		setpointVelocity = 0.0;
 		velocityFeedback = 0.0;
+		remainingAuthority = 0.0;
 		powerCommand[0] = 0.0;
 		powerCommand[1] = 0.0;
 		velocityError[0] = 0.0;
@@ -44,35 +47,54 @@ public class TrainController {
 		return this.ID;
 	}
 	
-	public double calculatePower() {
+	//Determine the power command to send to the train model
+	public void calculatePower() {
+		double confirmedPower;
+		setTargetVelocity();
+		
 		velocityFeedback = model.getVelocity();
 		
-		velocityError[1] = setpointVelocity - velocityFeedback;
+		velocityError[1] = targetVelocity - velocityFeedback;
 		
 		if(powerCommand[1] < MAX_POWER) {
 			u[1] = u[0] + (TIME_PERIOD/2) * (velocityError[1] + velocityError[0]);
 		}
-		else 
+		else {
 			u[1] = u[0];
+		}
 		
 		powerCommand[1] = Ki * velocityError[1] + Kp * u[1];
 		
+		if(powerCommand[1] > 0) {
+			powerCommand[1] = 0;
+		}
+			
 		u[0] = u[1];
 		powerCommand[0] = powerCommand[1];
 		velocityError[0] = velocityError[1];
-		return powerCommand[1];
-	}
-	
-	public double calculateAuthority() {
-		this.remainingAuthority = this.remainingAuthority - model.getDistanceTravelled();
-		if(remainingAuthority < 0) {
-			//STOP
-		}
 		
+		model.setPower(powerCommand[1]);
+		//confirmedPower = model.getPower();
+		
+		//if(powerCommand[1] != confirmedPower) {
+			
+		//}
+		
+		return;
 	}
 	
-	public void setNewAuthority(double newAuthority) {
-		this.setpointAuthority = newAuthority;
+	public void setAuthority(double newAuthority) {
+		remainingAuthority = newAuthority;
+		return;
+	}
+	
+	private double calculateRemainingAuthority() {
+		//remainingAuthority = remainingAuthority - model.getDistanceTravelled();
+		//stopDistance = model.getStopDistance();
+		if(remainingAuthority <= stopDistance) {
+			stopTrain();
+		}
+		return 0.0;
 	}
 		
 	public double getVelocityFeedback() {
@@ -87,25 +109,44 @@ public class TrainController {
 		return setpointVelocity;
 	}
 	
-	public double setVelocityFeedback(double velFdbk) {
-		velocityFeedback = velFdbk;
-		return velocityFeedback;
-	}
-	
 	public void setTargetVelocity() {
-		targetVelocity = setpointVelocity;
+		if(mode == 1) {
+			//manualVelocity = 
+			
+			//if(newTargetVelocity > setpointVelocity)
+				targetVelocity = setpointVelocity;
+			//else
+				//targetVelocity = newTargetVelocity;
+		}
+		else {
+			targetVelocity = setpointVelocity;
+		}
 	}
 	
-	public void setTargetVelocity(double newTargetVelocity)
-	{
-		if(mode == 1) {
-			if(newTargetVelocity > setpointVelocity)
-				targetVelocity = setpointVelocity;
-			else
-				targetVelocity = newTargetVelocity;
-		}
-		else
-			targetVelocity = setpointVelocity;
+	private void stopTrain() {
+		model.setPower(0);
+		powerCommand[0] = 0;
+		model.activateServiceBrakes();
+		return;
+		
+	}
+	
+	private void emergencyStop() {
+		model.setPower(0);
+		powerCommand[0] = 0;
+		model.activateEmergencyBrakes();
+		return;
+	}
+	
+	public void tick(long currentTime, int currentTemp) {
+		//checkFaults();
+		calculateRemainingAuthority();
+		calculatePower();
+		
+		//controlSubsystems(currentTime, currentTemp);
+		
+		
+		
 	}
 	
 }
