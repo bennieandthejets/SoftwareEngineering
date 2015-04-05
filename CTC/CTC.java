@@ -5,6 +5,9 @@ import java.util.Arrays;
 
 import javax.swing.table.DefaultTableModel;
 
+import MBO.*;
+import TrackController.*;
+import Simulator.*;
 
 public class CTC {
 	private int mode;
@@ -18,30 +21,17 @@ public class CTC {
 	private ctcWindow myWindow;
 	private fakeWindow faaake;
 	
+	//modules i can talk to
+	private Simulator notReggie;
+	private TrackCtrlWrapper ben;
+	private MBO drewBaby;
+	
 	
 	//function setSchedule
 	//function getMode
 	//This comment is a test bro 
 	
-	public static void main(String[] args) {
 		
-		CTC ctc = new CTC("sexxxx"); 
-		
-		
-		//DefaultTableModel model = (DefaultTableModel) ctc.myWindow.tblAnnouncements.getModel();
-		//model.insertRow(0,new Object[]{"Opened From Model"});
-		ctc.myWindow.setAnnouncement("Opened From CTC class");
-		
-		//initialize map
-		for(int i = 0; i < ctc.blockCount; i++){
-			ctc.myWindow.setMapBlock(i, false, false);
-		}
-		
-		//update window forever
-		
-		
-	}
-	
 	//function to monitor train locations and whatever else I feel like
 	//made public for prototype, will be private later
 	public void updateEverything(){
@@ -95,7 +85,10 @@ public class CTC {
 		
 	}
 	
-	public CTC(String trackFile){
+	public CTC(Simulator reggie){
+		//setup module references
+		
+		
 		//load track somehow
 		int blocks = 10;
 		
