@@ -263,6 +263,10 @@ public class MBO
 		}
 	}*/
 	
+	public void tick() {
+		
+	}
+	
 	public void loadTrack() {
 		this.trackModel = new Block[] {
 			new Block(1, 100, false, "", 0),	

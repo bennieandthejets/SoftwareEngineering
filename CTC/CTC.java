@@ -5,6 +5,9 @@ import java.util.Arrays;
 
 import javax.swing.table.DefaultTableModel;
 
+import MBO.*;
+import TrackController.*;
+import Simulator.*;
 
 public class CTC {
 	private int mode;
@@ -18,24 +21,31 @@ public class CTC {
 	private ctcWindow myWindow;
 	private fakeWindow faaake;
 	
+	//modules i can talk to
+	private Simulator notReggie;
+	private TrackCtrlWrapper ben;
+	private MBO drewBaby;
+	
 	
 	//function setSchedule
 	//function getMode
 	//This comment is a test bro 
 	
 	public static void main(String[] args) {
+		//!!!probably delete this main
 		
-		CTC ctc = new CTC("sexxxx"); 
+		
+		//CTC ctc = new CTC("sexxxx"); 
 		
 		
 		//DefaultTableModel model = (DefaultTableModel) ctc.myWindow.tblAnnouncements.getModel();
 		//model.insertRow(0,new Object[]{"Opened From Model"});
-		ctc.myWindow.setAnnouncement("Opened From CTC class");
+		//ctc.myWindow.setAnnouncement("Opened From CTC class");
 		
 		//initialize map
-		for(int i = 0; i < ctc.blockCount; i++){
-			ctc.myWindow.setMapBlock(i, false, false);
-		}
+		//for(int i = 0; i < ctc.blockCount; i++){
+			//ctc.myWindow.setMapBlock(i, false, false);
+		//}
 		
 		//update window forever
 		
@@ -44,7 +54,7 @@ public class CTC {
 	
 	//function to monitor train locations and whatever else I feel like
 	//made public for prototype, will be private later
-	public void updateEverything(){
+	public void tick(){
 		boolean[][] stat = faaake.getStatus();
 		
 		for(int i = 0; i < stat.length; i++){
@@ -95,7 +105,12 @@ public class CTC {
 		
 	}
 	
-	public CTC(String trackFile){
+	public CTC(Simulator reggie){
+		//setup references to other modules
+		this.notReggie = reggie;
+		this.ben = reggie.trackControllerWrapper;
+		this.drewBaby = reggie.mbo;
+		
 		//load track somehow
 		int blocks = 10;
 		
@@ -115,10 +130,11 @@ public class CTC {
 		
 				
 		//setup window(s)		
-		faaake = new fakeWindow();
-		myWindow = new ctcWindow(this,faaake);
+		//faaake = new fakeWindow();
+		myWindow = new ctcWindow(this);
 		
 		
+		/*
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -141,9 +157,26 @@ public class CTC {
 				}
 			}
 		});
+		*/
 		
 		
 	}
+	
+	//method to display the ctcWindow associated with this CTC
+	public void displayWindow(){
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+										
+					//ctcWindow window = new ctcWindow();
+					myWindow.frmCtc.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});		
+	}
+	
 	
 	public boolean routeTrainCTC(int train, double speed, int dest){
 		//convert train number to block number 	

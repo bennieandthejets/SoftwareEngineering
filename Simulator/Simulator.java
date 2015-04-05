@@ -6,6 +6,7 @@ import MBO.*;
 import TrackController.*;
 import TrackModel.*;
 import TrainController.*;
+import TrainModel.*;
 
 /**
  * Created by Drew on 3/27/2015.
@@ -14,10 +15,10 @@ public class Simulator {
     public SimulatorUI ui;
     public CTC ctc;
     public MBO mbo;
-    public TrackCtrlWrapper trackController;
+    public TrackCtrlWrapper trackControllerWrapper;
     public TrackModel trackModel;
     public TrainControllerWrapper trainControllerWrapper;
-    public TrainModelWrapper trainModel;
+    public TrainModelWrapper trainModelWrapper;
 
     private boolean isRunning;
     private int speedMultiplier;
@@ -55,14 +56,12 @@ public class Simulator {
     }
 
     private void updateModules() {
-        /*
-        ctc.tick();
+        //ctc.tick();
         mbo.tick();
-        trackControllerWrapper.tick();
-        trackModel.tick();
+        //trackControllerWrapper.tick();
+        //trackModel.tick();
         trainModelWrapper.tick();
         trainControllerWrapper.tick();
-        */
     }
 
     public static void main(String[] args ) throws InterruptedException {
