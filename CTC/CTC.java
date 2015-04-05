@@ -35,8 +35,9 @@ public class CTC {
 		//!!!probably delete this main
 		
 		
-		//CTC ctc = new CTC("sexxxx"); 
+		CTC ctc = new CTC(c); 
 		
+		ctc.displayWindow();
 		
 		//DefaultTableModel model = (DefaultTableModel) ctc.myWindow.tblAnnouncements.getModel();
 		//model.insertRow(0,new Object[]{"Opened From Model"});
@@ -103,6 +104,30 @@ public class CTC {
 			}
 		}
 		
+	}
+	
+	//alternate constructor with no sim. just for viewing form changes
+	public CTC(){
+int blocks = 10;
+		
+		
+		this.mode = 0; //manual
+		this.stops = 0;
+		this.stopsLastHour = 0;
+		this.activeTrains = 0;
+		//use block count as size of block and train lists; more than one train per block would be crazy 
+		this.blockCount = blocks;
+		this.closedBlocks = new boolean[blocks];
+		this.locations = new int[blocks];
+		this.routes = new TrainRoute[blocks]; 
+		Arrays.fill(closedBlocks, false);
+		Arrays.fill(locations,  -1); //use -1 for trains that don't exist yet
+		Arrays.fill(routes,  null);//new TrainRoute(-1, null));
+		
+				
+		//setup window(s)		
+		//faaake = new fakeWindow();
+		myWindow = new ctcWindow(this);
 	}
 	
 	public CTC(Simulator reggie){
