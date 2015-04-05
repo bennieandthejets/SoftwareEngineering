@@ -1,12 +1,11 @@
 package Simulator;
 
-import CTC.CTC;
-
-import MBO.MBO;
-import MBO.TrainModel;
-import TrackController.TrackController;
-import TrackModel.TrackModel;
-import TrainController.TrainControllerWrapper;
+import CTC.*;
+import MBO.*;
+import MBO.*;
+import TrackController.*;
+import TrackModel.*;
+import TrainController.*;
 
 /**
  * Created by Drew on 3/27/2015.
@@ -15,10 +14,10 @@ public class Simulator {
     public SimulatorUI ui;
     public CTC ctc;
     public MBO mbo;
-    public TrackController trackController;
+    public TrackCtrlWrapper trackController;
     public TrackModel trackModel;
     public TrainControllerWrapper trainControllerWrapper;
-    public TrainModel trainModel;
+    public TrainModelWrapper trainModel;
 
     private boolean isRunning;
     private int speedMultiplier;

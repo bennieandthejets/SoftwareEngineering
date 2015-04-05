@@ -34,7 +34,7 @@ public class MBOUI {
 	private JTextField txtStatus;
 	private JTextField txtStopDistance;
 	private JTextArea txtrStops;
-	private MBO prototype;
+	private MBO mbo;
 
 	/**
 	 * Launch the application.
@@ -60,18 +60,18 @@ public class MBOUI {
 		frame.setVisible(true);
 	}
 	
-	public void setItems(MBO prototype) {
-		this.prototype = prototype;
-		this.txtRequiredThroughput.setText("" + prototype.getThroughput());
-		//System.out.print(prototype.trainSchedules.get(1).toString());
-		this.txtrStops.setText(prototype.trainSchedules.get(1).toString());
+	public void setItems(MBO mbo) {
+		this.mbo = mbo;
+		this.txtRequiredThroughput.setText("" + mbo.getThroughput());
+		//System.out.print(mbo.trainSchedules.get(1).toString());
+		this.txtrStops.setText(mbo.trainSchedules.get(1).toString());
 	}
 
 	/**
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		frame = new JFrame("MBO Prototype");
+		frame = new JFrame("MBO");
 		frame.setResizable(false);
 		frame.setBounds(100, 100, 599, 370);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

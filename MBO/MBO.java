@@ -1,5 +1,9 @@
 package MBO;
 
+import CTC.*;
+import Simulator.*;
+import TrackModel.*;
+import TrainModel.*;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 
@@ -13,9 +17,9 @@ public class MBO
 	
 	private int throughput;
 	private int actualThroughput;
-	private int throughputLastHour;
 	private int numTrains;
 		
+	// Map train ID to stuff
 	HashMap<Integer, TrainModel> trains;
 	HashMap<Integer, TrainSchedule> trainSchedules;
 	HashMap<Integer, CrewSchedule> crewSchedules;
@@ -307,7 +311,7 @@ public class MBO
 	public static void main(String args[]) throws InterruptedException {
 		MBOUI ui = new MBOUI();
 		/*MBO prototype = new MBO(ui);
-		prototype.setThroughput(35, 0);
+		prototype.setThroughput(35, 0)
 		prototype.createTrainSchedule(35);
 		ui.setItems(prototype);*/
 	}
