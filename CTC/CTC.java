@@ -162,6 +162,22 @@ public class CTC {
 		
 	}
 	
+	//method to display the ctcWindow associated with this CTC
+	public void displayWindow(){
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+										
+					//ctcWindow window = new ctcWindow();
+					myWindow.frmCtc.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});		
+	}
+	
+	
 	public boolean routeTrainCTC(int train, double speed, int dest){
 		//convert train number to block number 	
 		int block = locations[train];
