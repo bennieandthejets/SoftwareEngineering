@@ -31,10 +31,30 @@ public class CTC {
 	//function getMode
 	//This comment is a test bro 
 	
+	public static void main(String[] args) {
+		//!!!probably delete this main
 		
+		
+		//CTC ctc = new CTC("sexxxx"); 
+		
+		
+		//DefaultTableModel model = (DefaultTableModel) ctc.myWindow.tblAnnouncements.getModel();
+		//model.insertRow(0,new Object[]{"Opened From Model"});
+		//ctc.myWindow.setAnnouncement("Opened From CTC class");
+		
+		//initialize map
+		//for(int i = 0; i < ctc.blockCount; i++){
+			//ctc.myWindow.setMapBlock(i, false, false);
+		//}
+		
+		//update window forever
+		
+		
+	}
+	
 	//function to monitor train locations and whatever else I feel like
 	//made public for prototype, will be private later
-	public void updateEverything(){
+	public void tick(){
 		boolean[][] stat = faaake.getStatus();
 		
 		for(int i = 0; i < stat.length; i++){
@@ -86,8 +106,10 @@ public class CTC {
 	}
 	
 	public CTC(Simulator reggie){
-		//setup module references
-		
+		//setup references to other modules
+		this.notReggie = reggie;
+		this.ben = reggie.trackControllerWrapper;
+		this.drewBaby = reggie.mbo;
 		
 		//load track somehow
 		int blocks = 10;
@@ -108,10 +130,11 @@ public class CTC {
 		
 				
 		//setup window(s)		
-		faaake = new fakeWindow();
-		myWindow = new ctcWindow(this,faaake);
+		//faaake = new fakeWindow();
+		myWindow = new ctcWindow(this);
 		
 		
+		/*
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -134,6 +157,7 @@ public class CTC {
 				}
 			}
 		});
+		*/
 		
 		
 	}

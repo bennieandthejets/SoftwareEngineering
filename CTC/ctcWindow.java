@@ -39,7 +39,7 @@ import java.awt.Window.Type;
 public class ctcWindow {
 
 	public CTC owner;
-	public fakeWindow fakeShit;
+	
 	
 	public JFrame frmCtc;
 	public JTable tblAnnouncements;
@@ -82,9 +82,9 @@ public class ctcWindow {
 	/**
 	 * Create the application.
 	 */
-	public ctcWindow(CTC initCTC, fakeWindow fake) {
+	public ctcWindow(CTC initCTC) {
 		this.owner = initCTC;
-		this.fakeShit = fake;
+		
 		initialize();
 	}
 	public ctcWindow() {
@@ -461,7 +461,7 @@ public class ctcWindow {
 		JButton btnSpawn = new JButton("Spawn Train");
 		btnSpawn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				fakeShit.spawnTrain();
+				//fakeShit.spawnTrain();
 				owner.spawnTrainCTC();
 			}
 		});
@@ -500,16 +500,5 @@ public class ctcWindow {
 				"map", "", "", "", ""
 			}
 		));
-		
-		JButton btnNewButton = new JButton("Update Sim");
-		btnNewButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				//update manually to avoid any weird transitional track statuses
-				owner.updateEverything();
-			}
-		});
-		btnNewButton.setForeground(new Color(255, 0, 255));
-		btnNewButton.setBounds(330, 213, 110, 23);
-		frmCtc.getContentPane().add(btnNewButton);
 	}
 }
