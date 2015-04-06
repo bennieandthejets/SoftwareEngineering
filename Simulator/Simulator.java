@@ -67,7 +67,7 @@ public class Simulator {
 
     private void updateModules() {
         ctc.tick();
-        mbo.tick();
+        mbo.tick(systemTime);
         //trackControllerWrapper.tick();
         //trackModel.tick();
         trainModelWrapper.tick();

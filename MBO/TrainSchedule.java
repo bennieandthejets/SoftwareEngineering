@@ -11,24 +11,21 @@ public class TrainSchedule
 	}
 	
 	public void addStop(int minute, String station) {
-		stops.add(new Stop(minute, station));
+		//stops.add(new Stop(minute, station));
 	}
 	
-	/*public void removeRange(int start) {
-		stops.
-		for(int i = start; i < end; i++) {
-			stops.remove(i);
-		}
-	}*/
+	public void addStop(int minute, String station, int dwellTime) {
+		stops.add(new Stop(minute, station, dwellTime));
+	}
 	
 	public String toString() {
 		String str = "";
 		for(Stop stop : stops) {
 			if(stop.minute < 10) {
-				str += "08:0" + stop.minute + " " + stop.station + "\n";
+				str += "08:0" + stop.minute + " " + stop.station + ", dwell " + stop.dwellTime + "s\n";
 			}
 			else {
-				str += "08:" + stop.minute + " " + stop.station + "\n";
+				str += "08:" + stop.minute + " " + stop.station + ", dwell " + stop.dwellTime + "s\n";
 			}
 		}
 		return str;
@@ -46,12 +43,14 @@ public class TrainSchedule
 	}
 	
 	public class Stop {
-		public int minute;
-		public String station;
+		public int minute;		// Minute the train will arrive (rounded down)
+		public String station;	// The station to stop at
+		public int dwellTime; 	// Dwell time in seconds
 		
-		public Stop(int minute, String station) {
+		public Stop(int minute, String station, int dwellTime) {
 			this.minute = minute;
 			this.station = station;
+			this.dwellTime = dwellTime;
 		}
 	}
 }

@@ -1,9 +1,7 @@
 package MBO;
 
-
 public class CrewSchedule 
 {
-	private long sysTime;
 	private long shiftBeginTime;
 	private long shiftEndTime;
 	private long breakBeginTime;
@@ -12,17 +10,14 @@ public class CrewSchedule
 	private String breakLocation;
 	private String shiftEndLocation;
 	
-	public CrewSchedule(long currentTime)
+	public CrewSchedule(long startTime)
 	{
-		this.sysTime = currentTime;
-		create();
+		this.shiftBeginTime = startTime;
+		this.shiftEndTime = startTime + 1000 * (60 * 60 * 8);
+		this.breakBeginTime = startTime + 1000 * (60 * 60 * 4);
+		this.breakEndTime = this.breakEndTime + 1000 * (60 * 30);
 	}
-	
-	public void create()
-	{
-		
-	}
-	
+
 	private long getShiftBeginTime() 
 	{
 		return shiftBeginTime;

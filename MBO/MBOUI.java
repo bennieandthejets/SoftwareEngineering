@@ -13,6 +13,12 @@ import javax.swing.JSeparator;
 import java.awt.Color;
 
 import javax.swing.JTextArea;
+import javax.swing.JButton;
+
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 public class MBOUI {
@@ -35,6 +41,8 @@ public class MBOUI {
 	private JTextField txtStopDistance;
 	private JTextArea txtrStops;
 	private MBO mbo;
+	
+    private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
 
 	/**
 	 * Launch the application.
@@ -63,8 +71,13 @@ public class MBOUI {
 	public void setItems(MBO mbo) {
 		this.mbo = mbo;
 		this.txtRequiredThroughput.setText("" + mbo.getThroughput());
-		//System.out.print(mbo.trainSchedules.get(1).toString());
+		displayTime();
 		//this.txtrStops.setText(mbo.trainSchedules.get(1).toString());
+	}
+	
+	public void displayTime() {
+        Date date = new Date(mbo.getTime());
+        txtTime.setText(timeFormat.format(date));
 	}
 	
 	public void setVisible(boolean visible) {
@@ -77,7 +90,7 @@ public class MBOUI {
 	private void initialize() {
 		frame = new JFrame("MBO");
 		frame.setResizable(false);
-		frame.setBounds(100, 100, 599, 370);
+		frame.setBounds(100, 100, 599, 410);
 		frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
@@ -257,6 +270,14 @@ public class MBOUI {
 		txtStopDistance.setColumns(10);
 		txtStopDistance.setBounds(180, 164, 85, 24);
 		frame.getContentPane().add(txtStopDistance);
+		
+		JButton btnLoadSchedule = new JButton("Load Schedule");
+		btnLoadSchedule.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+			}
+		});
+		btnLoadSchedule.setBounds(67, 341, 125, 30);
+		frame.getContentPane().add(btnLoadSchedule);
 		frame.setLocationRelativeTo(null);
 	}
 }

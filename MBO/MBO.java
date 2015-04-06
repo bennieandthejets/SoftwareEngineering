@@ -269,8 +269,13 @@ public class MBO
 		}
 	}*/
 	
-	public void tick() {
-		
+	public void tick(long systemTime) {
+		this.systemTime = systemTime;
+		ui.setItems(this);
+	}
+	
+	public long getTime() {
+		return this.systemTime;
 	}
 	
 	public void loadTrack() {
