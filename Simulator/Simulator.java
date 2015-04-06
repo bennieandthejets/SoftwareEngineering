@@ -57,11 +57,11 @@ public class Simulator {
 
     private void updateModules() {
         //ctc.tick();
-        mbo.tick();
+        //mbo.tick();
         //trackControllerWrapper.tick();
         //trackModel.tick();
-        trainModelWrapper.tick();
-        trainControllerWrapper.tick();
+        //trainModelWrapper.tick();
+        //trainControllerWrapper.tick();
     }
 
     public static void main(String[] args ) throws InterruptedException {
