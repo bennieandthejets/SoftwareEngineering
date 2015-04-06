@@ -46,7 +46,8 @@ public class TrainControllerUI {
 
 	public JFrame frame;
 	private final ButtonGroup controlModes = new ButtonGroup();
-	private TrainController trainController;
+	private final JSlider velocitySlider = new JSlider();
+	
 	private JTextField setpointVelocityField;
 	private JTextField targetVelocityField;
 	private JTextField velocityFeedbackField;
@@ -60,7 +61,9 @@ public class TrainControllerUI {
 	private JTextField heatStatusField;
 	private JTextField acStatusField;
 	private JTextField authorityField;
+	
 	private TrainControllerWrapper wrapper;
+	private TrainController controller;
 
 	/**
 	 * Create the application.
@@ -89,6 +92,13 @@ public class TrainControllerUI {
 		frame.getContentPane().add(panel);
 		
 		JRadioButton autoRadio = new JRadioButton("Automatic");
+		autoRadio.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent arg0) {
+				if(autoRadio.isSelected()) {
+					switchMode(1);
+				}
+			}
+		});
 		controlModes.add(autoRadio);
 		autoRadio.setSelected(true);
 		autoRadio.setBackground(SystemColor.controlHighlight);
@@ -96,23 +106,29 @@ public class TrainControllerUI {
 		panel.add(autoRadio);
 		
 		JRadioButton manRadio = new JRadioButton("Manual");
+		manRadio.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent arg0) {
+				if(manRadio.isSelected()) {
+					switchMode(2);
+				}
+			}
+		});
 		controlModes.add(manRadio);
 		manRadio.setBackground(SystemColor.controlHighlight);
 		manRadio.setBounds(493, 13, 93, 24);
 		panel.add(manRadio);
-		
-		JSlider velocitySlider = new JSlider();
 		velocitySlider.setEnabled(false);
+		
 		velocitySlider.setValue(0);
 		velocitySlider.setPaintTicks(true);
 		velocitySlider.setOrientation(SwingConstants.VERTICAL);
 		velocitySlider.setMinorTickSpacing(100);
-		velocitySlider.setMaximum(7000);
+		velocitySlider.setMaximum(4350);
 		velocitySlider.setMajorTickSpacing(1000);
 		velocitySlider.setBackground(SystemColor.controlHighlight);
 		velocitySlider.setBounds(266, 174, 86, 298);
 		Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
-		for(int i = 0; i <= 7; i++) {
+		for(int i = 0; i <= 4; i++) {
 			labelTable.put( Integer.valueOf(i * 1000 ), new JLabel(Integer.toString(i * 10)));
 		}
 		velocitySlider.setLabelTable( labelTable );
@@ -166,7 +182,7 @@ public class TrainControllerUI {
 		
 		JLabel targetVelocityLbl = new JLabel("Target Velocity");
 		targetVelocityLbl.setHorizontalAlignment(SwingConstants.CENTER);
-		targetVelocityLbl.setBounds(248, 124, 104, 28);
+		targetVelocityLbl.setBounds(245, 124, 104, 28);
 		panel.add(targetVelocityLbl);
 		
 		JSeparator midSep = new JSeparator();
@@ -210,10 +226,6 @@ public class TrainControllerUI {
 		panel.add(brakeButton);
 		
 		JButton eBrakeButton = new JButton("E-Brake");
-		eBrakeButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-			}
-		});
 		eBrakeButton.setBounds(158, 446, 83, 26);
 		panel.add(eBrakeButton);
 		
@@ -238,7 +250,7 @@ public class TrainControllerUI {
 		targetVelocityField = new JTextField();
 		targetVelocityField.setEditable(false);
 		targetVelocityField.setColumns(10);
-		targetVelocityField.setBounds(245, 149, 114, 20);
+		targetVelocityField.setBounds(255, 149, 71, 20);
 		panel.add(targetVelocityField);
 		
 		velocityFeedbackField = new JTextField();
@@ -317,6 +329,10 @@ public class TrainControllerUI {
 		authorityLbl.setHorizontalAlignment(SwingConstants.CENTER);
 		authorityLbl.setBounds(102, 245, 104, 28);
 		panel.add(authorityLbl);
+		
+		JLabel lblMph = new JLabel("mph");
+		lblMph.setBounds(330, 154, 36, 16);
+		panel.add(lblMph);
 	}
 	
 	public void setTargetVelocity(double newVelocity) {
@@ -329,5 +345,19 @@ public class TrainControllerUI {
 	
 	public void switchTrain(int trainID) {
 		
+	}
+	
+	public void switchMode(int modeID) {
+		//auto
+		if(modeID == 1) {
+			velocitySlider.setEnabled(false);
+		}
+		else {
+			velocitySlider.setEnabled(true);
+		}
+	}
+	
+	public double kmsToMph(double value) {
+		return value * 0.621371;
 	}
 }
