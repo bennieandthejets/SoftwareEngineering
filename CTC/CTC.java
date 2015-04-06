@@ -58,6 +58,7 @@ public class CTC {
 	//function to monitor train locations and whatever else I feel like
 	//made public for prototype, will be private later
 	public void tick(){
+		/*
 		boolean[][] stat = faaake.getStatus();
 		
 		for(int i = 0; i < stat.length; i++){
@@ -105,7 +106,7 @@ public class CTC {
 				myWindow.setAnnouncement("!!Lost Train " + (i + 1) + "! What have you done?!?!");			
 			}
 		}
-		
+	*/	
 	}
 	
 	//alternate constructor with no sim. just for viewing form changes
