@@ -23,6 +23,8 @@ public class CTC {
 	private ctcWindow myWindow;
 	private fakeWindow faaake;
 	private Block[] blocks;
+	private long time;
+	
 	
 	//modules i can talk to
 	private Simulator notReggie;
@@ -59,6 +61,10 @@ public class CTC {
 	//made public for prototype, will be private later
 	public void tick(){
 		
+		
+		//update time
+		this.time = notReggie.getTime();
+		myWindow.setTime(time);
 		
 		/*
 		boolean[][] stat = faaake.getStatus();
@@ -194,7 +200,7 @@ public class CTC {
 	//method to display the ctcWindow associated with this CTC
 	public void displayWindow(){
 		
-		if (myWindow.frmCtc.isVisible()){
+		if (!myWindow.frmCtc.isVisible()){
 
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
@@ -207,7 +213,10 @@ public class CTC {
 					}
 				}
 			});	
+		} else {
+			myWindow.frmCtc.setVisible(false);
 		}
+		
 		
 		
 		

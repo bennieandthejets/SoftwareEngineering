@@ -258,6 +258,7 @@ public class ctcWindow {
 		panel_time.setLayout(null);
 		
 		txtTime = new JTextField();
+		txtTime.setBounds(10, 14, 66, 22);
 		txtTime.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		txtTime.setText("HH:mm:ss");
 		txtTime.setHorizontalAlignment(SwingConstants.CENTER);
@@ -265,7 +266,6 @@ public class ctcWindow {
 		txtTime.setEditable(false);
 		txtTime.setColumns(10);
 		txtTime.setBackground(new Color(0, 0, 0));
-		txtTime.setBounds(10, 11, 66, 22);
 		panel_time.add(txtTime);
 		
 		JPanel pnlMaintenance = new JPanel();
