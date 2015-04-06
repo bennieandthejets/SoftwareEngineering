@@ -25,6 +25,10 @@ public class TrainModelWrapper{
 		return trains.get(trainID);
 	}
 	
+	public void showUI(){
+		
+	}
+	
 	public void tick(){
 		
 	}

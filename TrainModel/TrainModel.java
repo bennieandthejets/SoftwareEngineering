@@ -3,6 +3,7 @@ package TrainModel;
 //import TrainModelUIProto;
 
 import java.text.DecimalFormat;
+import java.util.*;
 
 public class TrainModel{
 	/* All units for calculation will be kept in metric
@@ -18,18 +19,19 @@ public class TrainModel{
 	//Constants
 	private static final double METRIC_VEL_CONV = 3.6;	// Used to convert from km/h --> m/s 
 	private static final double TRAIN_VELOCITY_LIMIT = 19.444;	// 19.44m/s --> 70.0 km/h
-	//private static final double TRAIN_ACCELERATION_LIMIT = 0.5;	// m/s^2
+	private static final double TRAIN_ACCELERATION_LIMIT = 0.5;	// m/s^2
 	private static final double BRAKE_DECEL = -1.2;	// m/s^2
 	private static final double E_BRAKE_DECEL = -2.73;	// m/s^2
 	private static final double TRAIN_MASS = 40900.0;	// 40900 kg --> 40.9 tons;
 	private static final int PASS_MASS = 68;
+	private static final int MAX_PASS = 222;
 	
 	//Train Characteristics
-	private double totalMass; // combined train and people
 	private double trainHeight = 3.42;	// meters
 	private double trainWidth = 2.65;	// meters
 	private double trainLength = 32.20;	// meters
-	private double trainPower;
+	private double trainPower = 150000.0; // N
+	private double trainForce;
 	private double trainAcceleration;
 	private double trainVelocity;
 	private int crew;
@@ -53,19 +55,30 @@ public class TrainModel{
 	private double tickDistance;
 	private double departTime;
 	private int safeAuthority;
-	private int safeSetPoint;
+	private double safeSetPoint;
 	//private CrewSchedule crewSchedule;
 	private int arrivalBlock;
 	private int currentBlock;
 	private double slope;
 	
+	Random people = new Random(System.currentTimeMillis());
+	
 	//###############
 	//###FUNCTIONS###
 	//###############
 	public TrainModel(int trainID){
+		//intializing accel and vel variables
+		trainAcceleration = 0.0;
+		trainVelocity = 0.0;
+		passengers = 10;
+		double power = trainPower; //W = N*m/s = kg*m^2/s^3
+		safeSetPoint = 10.0;
+		
 		while(true){
-			//calcAcceleration();
-			//calcVelocity();
+			calcForce(power);
+			calcAcceleration();
+			calcVelocity();
+			System.out.println();
 			//setTxtFields();
 			try {
 				Thread.sleep(1000);
@@ -76,21 +89,47 @@ public class TrainModel{
 		}
 	}
 	
+	public static void main(String[] args){
+		TrainModel atrain = new TrainModel(1);
+	}
+	
 	//Calculation functions
-	public void calcAcceleration(){
+	public void calcForce(double power){
+		//calc force from grav
 		
+		//calc force from power
+		if(trainVelocity == 0)
+			trainForce = power/.001; // N = W/(m/s) = kg*m/s^2
+		else
+			trainForce = power/trainVelocity;
+		System.out.println("Train Force: "+trainForce+" N");
+	}
+	
+	public void calcAcceleration(){
+		double totalMass = getMass();
+		trainAcceleration = trainForce/totalMass;	// a = F/M = N/kg = m/s^2 
+		//If calculated acceleration is greater than the limit, set to the limit
+		if(trainAcceleration > TRAIN_ACCELERATION_LIMIT)
+			trainAcceleration = TRAIN_ACCELERATION_LIMIT;
+		System.out.println("Train Accel: "+trainAcceleration+" m/s^2");
 	}
 	
 	public void calcVelocity(){
-		
+		trainVelocity += trainAcceleration; // v = a/s = m/s
+		//If calculated velocity is less than 0, set to 0
+		if(trainVelocity < 0.0)
+			trainVelocity = 0.0;
+		System.out.println("Train Velocity: "+trainVelocity+" m/s");
 	}
 	
-	public void addPassengers(int newPassengers){
-		
+	public void addPassengers(){
+		int newPassengers = people.nextInt(MAX_PASS-passengers+1);
+		passengers += newPassengers;
 	}
 	
 	public void removePassengers(){
-		passengers = 0;
+		int oldPassengers = people.nextInt(passengers+1);
+		passengers -= oldPassengers;
 	}
 	//Dealing with brakes
 	public void activateServiceBrakes(){
@@ -109,7 +148,7 @@ public class TrainModel{
 	
 	//Getter and Setter functions
 	public double getMass(){
-		totalMass = TRAIN_MASS + passengers*PASS_MASS;
+		double totalMass = TRAIN_MASS + passengers*PASS_MASS;
 		return totalMass;
 	}
 	
@@ -136,6 +175,7 @@ public class TrainModel{
 	public double getDistanceTraveled(){
 		return distanceTraveled;
 	}
+	
 	
 	public double getVelocity(){
 		return trainVelocity;
@@ -174,6 +214,10 @@ public class TrainModel{
 	
 	public void setPower(double power){
 		trainPower = power;
+	}
+	
+	public void setSetPointVelocity(double setPointVel){
+		safeSetPoint = setPointVel;
 	}
 	
 	public void setLeftDoor(boolean doorStatus){

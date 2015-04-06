@@ -75,7 +75,7 @@ public class TrainModelUIProto implements ActionListener{
 	private void initialize() {
 		frame = new JFrame("Train Model");
 		frame.setBounds(100, 100, 585, 360);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
 		JLabel lblTrainCharacteristics = new JLabel("Train Characteristics");
