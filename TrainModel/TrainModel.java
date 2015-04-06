@@ -74,7 +74,7 @@ public class TrainModel{
 		double power = trainPower; //W = N*m/s = kg*m^2/s^3
 		safeSetPoint = 10.0;
 		
-		while(true){
+
 			calcForce(power);
 			calcAcceleration();
 			calcVelocity();
@@ -86,7 +86,6 @@ public class TrainModel{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}
 	}
 	
 	public static void main(String[] args){
