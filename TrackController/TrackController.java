@@ -26,15 +26,7 @@ public class TrackController {
 
 	TrackController(Simulator simulator) {
 		myModel = simulator.trackModel;
-		present = new ArrayList<Integer>(); 
-
-		getBlocks();
-				
-	}
-	
-	public void getBlocks() {
-		map = myModel.getBlocks();
-		populateTrainmap();
+		present = new ArrayList<Integer>(); 				
 	}
 	
 	public void setRoute(int trainBlock, int destination, double suggestedSpeed, int suggestedAuthority, int[] route) {

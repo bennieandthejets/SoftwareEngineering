@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
+import TrackModel.*;
 import Simulator.Simulator;
 
 public class TrackCtrlWrapper {
@@ -12,7 +13,9 @@ public class TrackCtrlWrapper {
 	private static TrackController downish;
 	private static UI ui;
 	private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+	private Block map[];
 	private int penis = 0;
+	private Simulator simulator;
 	
 	public static void main (String[] args) {
 		/*upish = new TrackController();
@@ -41,26 +44,8 @@ public class TrackCtrlWrapper {
 	public TrackCtrlWrapper(Simulator simulator) {
 		upish = new TrackController(simulator);
 		downish = new TrackController(simulator);
+		simulator = simulator;
 	}
 	
-	public void startStop() {
-		upish.startStop();
-	}
-	
-	public int getSwitch(int num) {
-		return upish.getSwitchRoot(num);
-	}
-	public int getSwitchHead(int num, int head) {
-		return upish.getSwitchHead(num, head);
-	}
-	public int getSwitchState(int num) {
-		return upish.getSwitchState(num);
-	}
-	
-	public int getCrossing() {
-		return upish.getCrossing();
-	}
-	public boolean getCrossingState() {
-		return upish.getCrossingState();
-	}
+
 }
