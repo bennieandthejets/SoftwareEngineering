@@ -2,7 +2,6 @@ package Simulator;
 
 import CTC.*;
 import MBO.*;
-import MBO.*;
 import TrackController.*;
 import TrackModel.*;
 import TrainController.*;
