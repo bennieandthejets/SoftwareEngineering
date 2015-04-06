@@ -147,7 +147,7 @@ public class ctcWindow {
 	@SuppressWarnings("unchecked")
 	private void initialize() {
 		frmCtc = new JFrame();
-		frmCtc.setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\Jason\\workspace\\CTC\\src\\verySexyIcon.ico"));
+		frmCtc.setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\source\\sex.png"));
 		frmCtc.getContentPane().setBackground(new Color(128, 128, 128));
 		frmCtc.setTitle("CTC Office");
 		frmCtc.setBounds(100, 100, 965, 590);
