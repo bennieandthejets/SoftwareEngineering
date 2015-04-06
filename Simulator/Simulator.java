@@ -86,4 +86,11 @@ public class Simulator {
 	public void showMBOUI() {
 		mbo.showUI();
 	}
+	
+	public void showTrainControllerUI() {
+		trainControllerWrapper.showUI();
+	}
+	
+	
+	
 }
