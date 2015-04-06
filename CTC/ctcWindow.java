@@ -32,8 +32,11 @@ import java.awt.Font;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 import javax.swing.UIManager;
+
 import java.awt.Toolkit;
 import java.awt.Window.Type;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 public class ctcWindow {
@@ -57,6 +60,7 @@ public class ctcWindow {
 	public JTable tblFakeMap;
 	private JTextField txtTime;
 	
+	private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
 
 	/**
 	 * Launch the application.
@@ -105,6 +109,12 @@ public class ctcWindow {
 		
 	}
 	
+	public void setTime(long t){
+		
+		Date date = new Date(t);
+        txtTime.setText(timeFormat.format(date));
+	}
+	
 	//edit a map row with new data
 	public void setMapBlock(int block, boolean train, boolean broke){
 		if(block >= 0){
@@ -151,7 +161,6 @@ public class ctcWindow {
 		frmCtc.getContentPane().setBackground(new Color(128, 128, 128));
 		frmCtc.setTitle("CTC Office");
 		frmCtc.setBounds(100, 100, 965, 590);
-		frmCtc.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmCtc.getContentPane().setLayout(null);
 		
 		JComboBox cboMode = new JComboBox();
