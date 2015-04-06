@@ -31,7 +31,7 @@ public class Simulator {
         
         ctc = new CTC(this);
         mbo = new MBO(this);
-        trackControllerWrapper = new TrackCtrlWrapper();
+        trackControllerWrapper = new TrackCtrlWrapper(this);
         trackModel = new TrackModel();
         trainControllerWrapper = new TrainControllerWrapper(this);
         trainModelWrapper = new TrainModelWrapper();
@@ -89,8 +89,7 @@ public class Simulator {
 	
 	public void showTrainControllerUI() {
 		trainControllerWrapper.showUI();
-	}
-	
+	}	
 	
 	
 }

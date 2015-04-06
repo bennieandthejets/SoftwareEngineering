@@ -15,6 +15,7 @@ public class CrewSchedule
 	public CrewSchedule(long currentTime)
 	{
 		this.sysTime = currentTime;
+		create();
 	}
 	
 	public void create()
