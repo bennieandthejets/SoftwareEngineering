@@ -5,13 +5,19 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JSlider;
+
 import java.awt.BorderLayout;
+
 import javax.swing.SwingConstants;
 import javax.swing.border.EtchedBorder;
+
 import java.awt.Color;
 import java.awt.SystemColor;
+
 import javax.swing.JRadioButton;
+
 import java.awt.TextArea;
+
 import javax.swing.JTextPane;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -22,15 +28,19 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.border.BevelBorder;
 import javax.swing.JTextField;
+
 import java.awt.Font;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+
 import javax.swing.JList;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.JSeparator;
+
+import java.util.*;
 
 public class TrainControllerUI {
 
@@ -50,11 +60,13 @@ public class TrainControllerUI {
 	private JTextField heatStatusField;
 	private JTextField acStatusField;
 	private JTextField authorityField;
+	private TrainControllerWrapper wrapper;
 
 	/**
 	 * Create the application.
 	 */
-	public TrainControllerUI() {
+	public TrainControllerUI(TrainControllerWrapper newWrapper) {
+		wrapper = newWrapper;
 		initialize();
 	}
 
@@ -67,7 +79,6 @@ public class TrainControllerUI {
 		frame.getContentPane().setBackground(Color.DARK_GRAY);
 		frame.getContentPane().setForeground(SystemColor.info);
 		frame.setBounds(100, 100, 754, 654);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
 		JPanel panel = new JPanel();
@@ -78,27 +89,39 @@ public class TrainControllerUI {
 		frame.getContentPane().add(panel);
 		
 		JRadioButton autoRadio = new JRadioButton("Automatic");
+		controlModes.add(autoRadio);
 		autoRadio.setSelected(true);
 		autoRadio.setBackground(SystemColor.controlHighlight);
 		autoRadio.setBounds(391, 13, 98, 24);
 		panel.add(autoRadio);
 		
 		JRadioButton manRadio = new JRadioButton("Manual");
+		controlModes.add(manRadio);
 		manRadio.setBackground(SystemColor.controlHighlight);
 		manRadio.setBounds(493, 13, 93, 24);
 		panel.add(manRadio);
 		
 		JSlider velocitySlider = new JSlider();
-		velocitySlider.setValue(35);
-		velocitySlider.setPaintTicks(true);
-		velocitySlider.setPaintLabels(true);
-		velocitySlider.setOrientation(SwingConstants.VERTICAL);
-		velocitySlider.setMinorTickSpacing(1);
-		velocitySlider.setMaximum(70);
-		velocitySlider.setMajorTickSpacing(10);
 		velocitySlider.setEnabled(false);
+		velocitySlider.setValue(0);
+		velocitySlider.setPaintTicks(true);
+		velocitySlider.setOrientation(SwingConstants.VERTICAL);
+		velocitySlider.setMinorTickSpacing(100);
+		velocitySlider.setMaximum(7000);
+		velocitySlider.setMajorTickSpacing(1000);
 		velocitySlider.setBackground(SystemColor.controlHighlight);
 		velocitySlider.setBounds(266, 174, 86, 298);
+		Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
+		for(int i = 0; i <= 7; i++) {
+			labelTable.put( Integer.valueOf(i * 1000 ), new JLabel(Integer.toString(i * 10)));
+		}
+		velocitySlider.setLabelTable( labelTable );
+		velocitySlider.setPaintLabels(true);
+		velocitySlider.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                setTargetVelocity(velocitySlider.getValue());
+            }
+        });
 		panel.add(velocitySlider);
 		
 		JLabel announcementsLbl = new JLabel("Announcements");
@@ -183,7 +206,7 @@ public class TrainControllerUI {
 		panel.add(trainNumberLbl);
 		
 		JButton brakeButton = new JButton("Brake");
-		brakeButton.setBounds(171, 407, 83, 26);
+		brakeButton.setBounds(158, 407, 83, 26);
 		panel.add(brakeButton);
 		
 		JButton eBrakeButton = new JButton("E-Brake");
@@ -191,7 +214,7 @@ public class TrainControllerUI {
 			public void actionPerformed(ActionEvent arg0) {
 			}
 		});
-		eBrakeButton.setBounds(171, 446, 83, 26);
+		eBrakeButton.setBounds(158, 446, 83, 26);
 		panel.add(eBrakeButton);
 		
 		JSeparator rightSep = new JSeparator();
@@ -254,14 +277,14 @@ public class TrainControllerUI {
 		
 		brakeStatusField = new JTextField();
 		brakeStatusField.setEditable(false);
-		brakeStatusField.setBounds(118, 409, 43, 22);
+		brakeStatusField.setBounds(102, 409, 43, 22);
 		panel.add(brakeStatusField);
 		brakeStatusField.setColumns(10);
 		
 		eBrakeStatusField = new JTextField();
 		eBrakeStatusField.setEditable(false);
 		eBrakeStatusField.setColumns(10);
-		eBrakeStatusField.setBounds(118, 448, 43, 22);
+		eBrakeStatusField.setBounds(102, 450, 43, 22);
 		panel.add(eBrakeStatusField);
 		
 		JButton heatButton = new JButton("Heat");
@@ -294,5 +317,17 @@ public class TrainControllerUI {
 		authorityLbl.setHorizontalAlignment(SwingConstants.CENTER);
 		authorityLbl.setBounds(102, 245, 104, 28);
 		panel.add(authorityLbl);
+	}
+	
+	public void setTargetVelocity(double newVelocity) {
+		targetVelocityField.setText(Double.toString(newVelocity / 100));
+	}
+	
+	public void update() {
+		
+	}
+	
+	public void switchTrain(int trainID) {
+		
 	}
 }

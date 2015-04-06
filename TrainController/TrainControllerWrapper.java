@@ -13,10 +13,15 @@ public class TrainControllerWrapper {
 	private ArrayList<TrainController> controllers;
 	private TrainControllerUI ui;
 	
+	public TrainControllerWrapper() {
+		controllers = new ArrayList<TrainController>();
+		ui = new TrainControllerUI(this);
+	}
+	
 	public TrainControllerWrapper(Simulator newSimulator) {
 		controllers = new ArrayList<TrainController>();
 		simulator = newSimulator;
-		ui = new TrainControllerUI();
+		ui = new TrainControllerUI(this);
 	}
 	
 	public TrainController getTrainController(int targetID) {
@@ -31,24 +36,27 @@ public class TrainControllerWrapper {
 	
 	
 	public void tick() {
-		//this.temperature = simulator.getTemp();
-		//this.systemTime = simulator.getTime();
+//		this.temperature = simulator.getTemp();
+//		this.systemTime = simulator.getTime();
 		for(int i = 1; i < controllers.size() + 1; i++) {
-			//controllers.get(i).tick(temperature, systemTime);
+//			controllers.get(i).tick(systemTime, temperature);
 		}
 	}
 	
-	public static void main(String[] args) {
-		
+	public void showUI() {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					TrainControllerUI UI = new TrainControllerUI();
-					UI.frame.setVisible(true);
+					ui.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		});
+	}
+	
+	public static void main(String[] args) {
+		TrainControllerWrapper wrapper = new TrainControllerWrapper();
+		wrapper.showUI();
 	}
 }
