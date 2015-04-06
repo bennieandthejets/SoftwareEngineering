@@ -2,60 +2,49 @@ package TrackController;
 
 import java.util.ArrayList;
 import java.util.ListIterator;
+import java.util.HashMap;
 import java.io.*;
+import Simulator.Simulator;
+import TrackModel.*;
 
 
 
 public class TrackController {
-	boolean presence_redline[];
-	//boolean presence_greenline[];
-	ArrayList<Integer> present_red;
-	//ArrayList<Integer> present_green;
+	Block map[];
+	TrackModel myModel;
+	
+	ArrayList<Integer> present;
 	
 	ArrayList<Switch> switches;
 	int switchBlocks;
 	int stopBlocks;
 	
-	Train train;
+	HashMap<Integer, Train> trains;
+	
 	Crossing crossing;
 	int crossingBlocks;
-	
-	//Initialize a single train in each line
-	private void prototype_initialize() {
-		for (int i = 0; i < 78; i++) {
-			presence_redline[i] = false;
-		}
-		presence_redline[48] = true;
-		train = new Train(48, 72);
-		
-		switches = new ArrayList<Switch>();
-		switches.add(new Switch(66, 67, 72));
-		switches.add(new Switch(77, 71, 76));
-		
-		crossing = new Crossing(30);
-		crossingBlocks = 4;
-		/*for (int j = 0; j < 150; j++) {
-			presence_greenline[j] = false;
-		}
-		presence_greenline[89] = true;
-		*/
-	}
 
-	TrackController(String filename) {
-		presence_redline =new boolean[78]; 
-		present_red = new ArrayList<Integer>(); 
-		//ArrayList<Integer> present_green = new ArrayList<Integer>(); 
-		
-		loadPLC(filename);
-		
-		prototype_initialize();
-		
-		populateTrainPresence();
-		
-		//switchState = 0;
+	TrackController(Simulator simulator) {
+		myModel = simulator.trackModel;
+		present = new ArrayList<Integer>(); 
 
+		getBlocks();
+				
 	}
 	
+	public void getBlocks() {
+		map = myModel.getBlocks();
+		populateTrainmap();
+	}
+	
+	public void setRoute(int trainBlock, int destination, double suggestedSpeed, int suggestedAuthority, int[] route) {
+		Train train = trains.get(trainBlock);
+		
+		train.destination = destination;
+		train.sugSpeed = suggestedSpeed;
+		train.sugAuthority = suggestedAuthority;
+		train.suggestedRoute = route;
+	}
 	void loadPLC(String filename) {
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(new File(filename)));
@@ -90,215 +79,51 @@ public class TrackController {
 		}
 	}
 	
-	void populateTrainPresence() {
-		for (int i = 0; i < presence_redline.length; i++) {
-			if (presence_redline[i]) {
-				present_red.add(i);
+	void populateTrainmap() {
+		for (int i = 0; i < map.length; i++) {
+			if (map[i].isTrainPresent()) {
+				present.add(i);
 			}
 		}
-		/*for (int i= 0; i < presence_greenline.length; i++) {
-			if (presence_greenline[i]) {
+		/*for (int i= 0; i < map_greenline.length; i++) {
+			if (map_greenline[i]) {
 				present_green.add(i);
 			}
 		}
 		*/
 	}
 	
-	void checkSwitches() {
-		SWITCHES: for (Switch sw : switches) {
-			boolean route = true;
-			//when a train enters block (root-switchblocks), check the blocks between train and switch for other trains
-			if (sw.direction == 1 && presence_redline[sw.root-switchBlocks]) {
-				BLOCKS_BETWEEN: for (int i = sw.root; i > sw.root-switchBlocks; i--) {
-					//If there is a train between the switch and the other train, can't change switch
-					if (presence_redline[i]) {
-						route = false;
-						continue SWITCHES;
-					}
-				}
-				//if all blocks were empty, route the switch according to the train's destination
-				if (train.destination == 72)
-					sw.state = 0;
-				else 
-					sw.state = 1;
-			}
-			
-			//otherwise when a train enters block (head1 + switchBlocks) or (head2 + switchBlocks), do the same as above
-			else if (sw.direction == -1 && (presence_redline[sw.head1 - switchBlocks] || presence_redline[sw.head2 - switchBlocks])) {
-				int head;
-				
-				if (presence_redline[sw.head1 - switchBlocks])
-					head = sw.head1;
-				else 
-					head = sw.head2;
-					
-				BLOCKS_BETWEEN: for (int i = head; i > head - switchBlocks; i--) {
-					//If there is a train between the switch and the other train, can't change switch
-					if (presence_redline[i]) {
-						route = false;
-						continue SWITCHES;
-					}
-				}
-				//if all blocks were empty, route the switch according to the train's destination
-				if (train.destination == 72)
-					sw.state = 0;
-				else 
-					sw.state = 1;
-			}
-		}
-	}
-	
-	void advanceTrain() {
-		//checkSwitch
-		
-		if (train.speed == 0) {
-			return;
-		}
-		
-		ListIterator<Integer> it = present_red.listIterator();
-		PRESENTBLOCKS: while (it.hasNext()) {
-			int block = it.next();
-			
-			//if the train is in the last block, loop it around to the first
-			if (block==77) {
-				presence_redline[block] = false;
-				block = 0;
-				it.set(block);
-				presence_redline[block] = true;
-				train.position = block;
-				
-				if (train.destination == 72) {
-					train.destination = 76;
-				}
-				else {
-					train.destination = 72;
-				}
-				continue;
-			}
-			
-			//check to see if the train is interacting with a switch
-			SWITCHES: for (Switch sw : switches) {
-				//if the train is at the root of a switch and the train is moving root -> head, move it to the head that the switch points to
-				//If the train is at the root and moving head -> root, just continue as normal
-				if (block == sw.root && sw.direction == 1) {
-					presence_redline[block] = false;
-					if (sw.state == 0)
-						block = sw.head1;
-					else
-						block = sw.head2;
-					it.set(block);
-					presence_redline[block] = true;
-					train.position = block;
-					continue PRESENTBLOCKS;
-				}
-				//Otherwise if the train is at a switch head and moving head -> root, move it to the root IF the switch state allows it to
-				else if (block == sw.head1 && sw.direction == -1) {
-					if (sw.state == 0) {
-						presence_redline[block] = false;
-						block = sw.root;
-						it.set(block);
-						presence_redline[block] = true;
-						train.position = block;
-
-						continue PRESENTBLOCKS;
-					}
-					else {
-						System.out.println("ERROR: TRAIN HAS GONE OFF THE RAILS, EVERYBODY DIED");
-						System.exit(0);
-					}	
-				}
-				else if (block == sw.head2 && sw.direction == -1) {
-					if (sw.state == 1) {
-						presence_redline[block] = false;
-						block = sw.root;
-						it.set(block);
-						presence_redline[block] = true;
-						train.position = block;
-
-						continue PRESENTBLOCKS;
-					}
-					else {
-						System.out.println("ERROR: TRAIN HAS GONE OFF THE RAILS, EVERYBODY DIED");
-						System.exit(0);
-					}
-				}
-			}
-			
-			//If not looping around or at a switch, Simply advance the block by one
-			presence_redline[block] = false;
-			block += 1;
-			it.set(block);
-			presence_redline[block] = true;
-			train.position = block;
-
-		}
-	}
-	
-	public void checkCrossing() {
-		if (train.position >= crossing.position-crossingBlocks && train.position <= crossing.position) 
-			crossing.lightsOn = true;
-		else
-			crossing.lightsOn = false;
-	}
-	
-	public void startStop() {
-		//if the train is not moving, set its speed to 1 to allow it to move
-		if (train.speed == 0) {
-			train.speed = 1;
-		}
-		//otherwise set its speed to 0 to stop it from moving
-		else {
-			train.speed = 0;
-		}
-	}
-	
 		
 	public int getPosition() {
-		return train.position;
+//		return train.position;
+		return -1;
 	}
 	
-	public int getSwitchRoot(int switchNumber) {
-		return switches.get(switchNumber).root;
-	}
 	
-	public int getSwitchHead(int switchNumber, int head) {
-		if (head == 1)
-			return switches.get(switchNumber).head1;
-		else
-			return switches.get(switchNumber).head2;
-	}
-	
-	public int getSwitchState(int switchNumber) {
-		return switches.get(switchNumber).state;
-	}
-	
-	public int getCrossing() {
-		return crossing.position;
-	}
-	public boolean getCrossingState() {
-		return crossing.lightsOn;
-	}
 	
 	public static void main(String args[]) {
-		TrackController ctrl = new TrackController(args[0]);
+		/*TrackController ctrl = new TrackController();
 		
 		ctrl.prototype_initialize();
 		
-		ctrl.populateTrainPresence();
+		ctrl.populateTrainmap();
 				
 		for (int i = 0; i < 200; i++) {
 			if (ctrl.train.speed == 0)
 				break;
 			ctrl.advanceTrain();
 			ctrl.checkSwitches();
-		}
+		}*/
 	}
 	
 	
 	private class Train {
 		int position;
 		int destination;
-		int speed;
+		double speed;
+		double sugSpeed;
+		int sugAuthority;
+		int[] suggestedRoute;
 		
 		Train(int pos, int dest) {
 			position = pos;
@@ -351,4 +176,8 @@ public class TrackController {
 		}
 	}
 	
+	
+	private interface PLC {
+		
+	}
 }
