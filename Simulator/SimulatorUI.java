@@ -139,6 +139,7 @@ public class SimulatorUI {
 		frmBennieAndThe.getContentPane().add(startButton);
 		
 		txtSimulatorSpeed = new JTextField();
+		txtSimulatorSpeed.setText("1");
 		txtSimulatorSpeed.setBounds(319, 62, 105, 20);
 		frmBennieAndThe.getContentPane().add(txtSimulatorSpeed);
 		txtSimulatorSpeed.setColumns(10);

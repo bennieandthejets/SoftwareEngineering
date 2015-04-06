@@ -49,12 +49,16 @@ public class Simulator {
     public void stop() {
         this.isRunning = false;
     }
+    
+    public long getTime() {
+    	return systemTime;
+    }
 
     public void tick() throws InterruptedException {
 
         while(true) {
             if ((isRunning)) {
-                systemTime += (1000 / speedMultiplier);
+                systemTime += (1000);
                 updateModules();
             }
             ui.setTxtSystemTime(systemTime);
