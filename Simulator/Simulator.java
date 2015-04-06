@@ -29,6 +29,13 @@ public class Simulator {
         this.isRunning = false;
         this.speedMultiplier = 1;
         this.systemTime = System.currentTimeMillis();
+        
+        ctc = new CTC(this);
+        mbo = new MBO(this);
+        trackControllerWrapper = new TrackCtrlWrapper();
+        trackModel = new TrackModel();
+        trainControllerWrapper = new TrainControllerWrapper(this);
+        trainModelWrapper = new TrainModelWrapper();
     }
 
     public void setSpeedMultiplier(int speedMultiplier) {
@@ -56,12 +63,12 @@ public class Simulator {
     }
 
     private void updateModules() {
-        //ctc.tick();
-        //mbo.tick();
+        ctc.tick();
+        mbo.tick();
         //trackControllerWrapper.tick();
         //trackModel.tick();
-        //trainModelWrapper.tick();
-        //trainControllerWrapper.tick();
+        trainModelWrapper.tick();
+        trainControllerWrapper.tick();
     }
 
     public static void main(String[] args ) throws InterruptedException {

@@ -57,14 +57,14 @@ public class MBOUI {
 	 */
 	public MBOUI() {
 		initialize();
-		frame.setVisible(true);
+		//frame.setVisible(true);
 	}
 	
 	public void setItems(MBO mbo) {
 		this.mbo = mbo;
 		this.txtRequiredThroughput.setText("" + mbo.getThroughput());
 		//System.out.print(mbo.trainSchedules.get(1).toString());
-		this.txtrStops.setText(mbo.trainSchedules.get(1).toString());
+		//this.txtrStops.setText(mbo.trainSchedules.get(1).toString());
 	}
 
 	/**

@@ -27,14 +27,11 @@ public class MBO
 	HashMap<Integer, Double> setpoints;
 	HashMap<Integer, Double> stopDistances;
 	
+	private Simulator simulator;
 	public Block[] trackModel;
 	private MBOUI ui;
 	private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-	private long sysTime;
-	private long simTime;
-	private final long TIMESTEP = 1000;
-	private int factor = 1;
-	private boolean running = false;
+	private long systemTime;
 
 	public MBO()
 	{
@@ -48,6 +45,11 @@ public class MBO
 		
 		loadTrack();
 		ui.setItems(this);
+	}
+	
+	public MBO(Simulator simulator) {
+		this();
+		this.simulator = simulator;
 	}
 	
 	/// Set the throughput for the system
