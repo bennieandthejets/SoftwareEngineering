@@ -78,6 +78,10 @@ public class Simulator {
         Simulator simulator = new Simulator();
         simulator.tick();
     }
+    
+    public void showCTCUI() {
+    	ctc.displayWindow();
+    }
 
 	public void showMBOUI() {
 		mbo.showUI();

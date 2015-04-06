@@ -86,6 +86,7 @@ public class SimulatorUI {
 		JButton ctcButton = new JButton("CTC");
 		ctcButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				simulator.showCTCUI();
 			}
 		});
 		ctcButton.setBounds(10, 11, 109, 28);
@@ -101,6 +102,11 @@ public class SimulatorUI {
 		frmBennieAndThe.getContentPane().add(mboButton);
 		
 		JButton trackControllerButton = new JButton("Track Controller");
+		trackControllerButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+			}
+		});
 		trackControllerButton.setBounds(10, 89, 109, 28);
 		frmBennieAndThe.getContentPane().add(trackControllerButton);
 		
@@ -113,10 +119,18 @@ public class SimulatorUI {
 		frmBennieAndThe.getContentPane().add(trackModelButton);
 		
 		JButton trainControllerButton = new JButton("Train Controller");
+		trainControllerButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
 		trainControllerButton.setBounds(10, 167, 109, 28);
 		frmBennieAndThe.getContentPane().add(trainControllerButton);
 		
 		JButton trainModelButton = new JButton("Train Model");
+		trainModelButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
 		trainModelButton.setBounds(10, 206, 109, 28);
 		frmBennieAndThe.getContentPane().add(trainModelButton);
 		
