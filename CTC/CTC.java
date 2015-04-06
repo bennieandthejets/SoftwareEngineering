@@ -58,6 +58,8 @@ public class CTC {
 	//function to monitor train locations and whatever else I feel like
 	//made public for prototype, will be private later
 	public void tick(){
+		
+		
 		/*
 		boolean[][] stat = faaake.getStatus();
 		
