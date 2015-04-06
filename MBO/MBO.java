@@ -52,6 +52,10 @@ public class MBO
 		this.simulator = simulator;
 	}
 	
+	public void showUI() {
+		ui.setVisible(true);
+	}
+	
 	/// Set the throughput for the system
 	/// Returns: none
 	public void setThroughput(int throughput, int hour) {

@@ -78,4 +78,8 @@ public class Simulator {
         Simulator simulator = new Simulator();
         simulator.tick();
     }
+
+	public void showMBOUI() {
+		mbo.showUI();
+	}
 }

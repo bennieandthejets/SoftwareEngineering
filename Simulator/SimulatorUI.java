@@ -19,7 +19,7 @@ import javax.swing.event.DocumentListener;
 
 public class SimulatorUI {
 
-	private Simulator simulator;
+	private final Simulator simulator;
 	private JFrame frmBennieAndThe;
 	
     private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
@@ -92,6 +92,11 @@ public class SimulatorUI {
 		frmBennieAndThe.getContentPane().add(ctcButton);
 		
 		JButton mboButton = new JButton("MBO");
+		mboButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				simulator.showMBOUI();
+			}
+		});
 		mboButton.setBounds(10, 50, 109, 28);
 		frmBennieAndThe.getContentPane().add(mboButton);
 		

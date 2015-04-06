@@ -66,6 +66,10 @@ public class MBOUI {
 		//System.out.print(mbo.trainSchedules.get(1).toString());
 		//this.txtrStops.setText(mbo.trainSchedules.get(1).toString());
 	}
+	
+	public void setVisible(boolean visible) {
+		frame.setVisible(visible);
+	}
 
 	/**
 	 * Initialize the contents of the frame.
@@ -74,7 +78,7 @@ public class MBOUI {
 		frame = new JFrame("MBO");
 		frame.setResizable(false);
 		frame.setBounds(100, 100, 599, 370);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
 		JComboBox trainSelectBox = new JComboBox();
