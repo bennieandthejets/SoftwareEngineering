@@ -8,6 +8,8 @@ import javax.swing.table.DefaultTableModel;
 import MBO.*;
 import TrackController.*;
 import Simulator.*;
+import TrackModel.*;
+import TrackModel.Block;
 
 public class CTC {
 	private int mode;
@@ -20,6 +22,7 @@ public class CTC {
 	private TrainRoute[] routes;
 	private ctcWindow myWindow;
 	private fakeWindow faaake;
+	private Block[] blocks;
 	
 	//modules i can talk to
 	private Simulator notReggie;
@@ -32,10 +35,9 @@ public class CTC {
 	//This comment is a test bro 
 	
 	public static void main(String[] args) {
-		//!!!probably delete this main
+			
 		
-		
-		CTC ctc = new CTC(c); 
+		CTC ctc = new CTC(); 
 		
 		ctc.displayWindow();
 		
@@ -108,7 +110,7 @@ public class CTC {
 	
 	//alternate constructor with no sim. just for viewing form changes
 	public CTC(){
-int blocks = 10;
+		int blocks = 10;
 		
 		
 		this.mode = 0; //manual
@@ -137,8 +139,7 @@ int blocks = 10;
 		this.drewBaby = reggie.mbo;
 		
 		//load track somehow
-		int blocks = 10;
-		
+		int blocks = 10;		
 		
 		this.mode = 0; //manual
 		this.stops = 0;
@@ -189,17 +190,24 @@ int blocks = 10;
 	
 	//method to display the ctcWindow associated with this CTC
 	public void displayWindow(){
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-										
-					//ctcWindow window = new ctcWindow();
-					myWindow.frmCtc.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
+		
+		if (myWindow.frmCtc.isVisible()){
+
+			EventQueue.invokeLater(new Runnable() {
+				public void run() {
+					try {
+											
+						//ctcWindow window = new ctcWindow();
+						myWindow.frmCtc.setVisible(true);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
-			}
-		});		
+			});	
+		}
+		
+		
+		
 	}
 	
 	
