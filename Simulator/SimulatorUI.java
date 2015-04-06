@@ -1,7 +1,9 @@
 package Simulator;
 
 import java.awt.EventQueue;
+import java.awt.Image;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JButton;
 
@@ -16,6 +18,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.JLabel;
 
 public class SimulatorUI {
 
@@ -79,7 +82,7 @@ public class SimulatorUI {
 	private void initialize() {
 		frmBennieAndThe = new JFrame();
 		frmBennieAndThe.setTitle("Bennie and the Jets");
-		frmBennieAndThe.setBounds(100, 100, 450, 290);
+		frmBennieAndThe.setBounds(100, 100, 398, 355);
 		frmBennieAndThe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmBennieAndThe.getContentPane().setLayout(null);
 		
@@ -155,20 +158,30 @@ public class SimulatorUI {
 				}
 			}
 		});
-		startButton.setBounds(319, 106, 109, 28);
+		startButton.setBounds(263, 89, 109, 28);
 		frmBennieAndThe.getContentPane().add(startButton);
 		
 		txtSimulatorSpeed = new JTextField();
 		txtSimulatorSpeed.setText("1");
-		txtSimulatorSpeed.setBounds(319, 62, 105, 20);
+		txtSimulatorSpeed.setBounds(267, 42, 105, 20);
 		frmBennieAndThe.getContentPane().add(txtSimulatorSpeed);
 		txtSimulatorSpeed.setColumns(10);
 		
 		txtSystemTime = new JTextField();
 		txtSystemTime.setEditable(false);
 		txtSystemTime.setColumns(10);
-		txtSystemTime.setBounds(319, 15, 105, 20);
+		txtSystemTime.setBounds(267, 12, 105, 20);
 		frmBennieAndThe.getContentPane().add(txtSystemTime);
+		
+		JLabel label = new JLabel("");
+		label.setBounds(129, 135, 46, 14);
+		frmBennieAndThe.getContentPane().add(label);
+		
+		JLabel lblWave = new JLabel("");
+		lblWave.setIcon(new ImageIcon("C:\\source\\waving\\little wave.PNG"));
+		lblWave.setBounds(129, 122, 259, 193);
+		frmBennieAndThe.getContentPane().add(lblWave);
+		
 	}
 	
     public void startButtonClicked() {
@@ -198,5 +211,4 @@ public class SimulatorUI {
         sliderSimulationTime.setValue(speed);
         simulator.setSpeedMultiplier(speed);
     }
-
 }

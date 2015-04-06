@@ -63,17 +63,21 @@ public class CTC {
 		
 		
 		//update time
-		this.time = notReggie.getTime();
+		time = notReggie.getTime();
 		myWindow.setTime(time);
 		
-		/*
-		boolean[][] stat = faaake.getStatus();
 		
-		for(int i = 0; i < stat.length; i++){
-			boolean train = stat[i][0];
-			boolean broke = stat[i][1];
-			closedBlocks[i] = stat[i][1]; //use broken and closed as equivalent for prototyope
-			myWindow.setMapBlock(i,  train,  broke);
+		//update map
+		//blocks = ben.getBlocks(); //still doesn't exist
+		
+		
+		
+		for(int i = 0; i <blockCount; i++){
+			//boolean train = blocks[i].get;
+			//boolean broke = stat[i][1];
+			//closedBlocks[i] = blocks[i].;
+			//myWindow.setMapBlock(i,  train,  broke);
+			boolean train = false;
 			
 			if(train){
 				boolean known = false; //keep track if this is a ghost train
@@ -110,11 +114,12 @@ public class CTC {
 		
 		//verify that all train locations actually have a train on them
 		for(int i = 0;i<activeTrains;i++){
-			if(!stat[locations[i]][0]){
-				myWindow.setAnnouncement("!!Lost Train " + (i + 1) + "! What have you done?!?!");			
+			/*if(!stat[locations[i]][0]){
+				myWindow.setAnnouncement("!!Lost Train " + (i + 1) + "! What have you done?!?!");							
 			}
+			*/
 		}
-	*/	
+		
 	}
 	
 	//alternate constructor with no sim. just for viewing form changes
@@ -148,17 +153,19 @@ public class CTC {
 		this.drewBaby = reggie.mbo;
 		
 		//load track somehow
-		int blocks = 10;		
+		//this.blocks = ben.getBlocks();	//call this once it exists
+		
+		this.blockCount = blocks.length;
 		
 		this.mode = 0; //manual
 		this.stops = 0;
 		this.stopsLastHour = 0;
 		this.activeTrains = 0;
 		//use block count as size of block and train lists; more than one train per block would be crazy 
-		this.blockCount = blocks;
-		this.closedBlocks = new boolean[blocks];
-		this.locations = new int[blocks];
-		this.routes = new TrainRoute[blocks]; 
+		
+		this.closedBlocks = new boolean[blockCount];
+		this.locations = new int[blockCount];
+		this.routes = new TrainRoute[blockCount]; 
 		Arrays.fill(closedBlocks, false);
 		Arrays.fill(locations,  -1); //use -1 for trains that don't exist yet
 		Arrays.fill(routes,  null);//new TrainRoute(-1, null));
@@ -259,10 +266,10 @@ public class CTC {
 		//!!! for demo don't optimize train selection. new trains will always be at the end of the array
 		
 		//use old max for index of new train
-		routes[activeTrains] = new TrainRoute(0, null);
-		locations[activeTrains] = -1; //initialized to -1 but force anyway
+		routes[activeTrains] = new TrainRoute(1, null);
+		locations[activeTrains] = 0; //initialized to -1 but force anyway
 		
-		myWindow.setLocation(activeTrains, -1,  0);
+		myWindow.setLocation(activeTrains, -1,  1);
 		
 		activeTrains++; 
 		
