@@ -25,6 +25,7 @@ public class TrainControllerWrapper {
 	}
 	
 	public TrainController getTrainController(int targetID) {
+		System.out.println(targetID);
 		return controllers.get(targetID - 1);
 	}
 	
@@ -39,7 +40,7 @@ public class TrainControllerWrapper {
 	public void tick() {
 //		this.temperature = simulator.getTemp();
 //		this.systemTime = simulator.getTime();
-		for(int i = 1; i < controllers.size() + 1; i++) {
+		for(int i = 0; i < controllers.size(); i++) {
 			controllers.get(i).tick(0, 0);
 		}
 		ui.update();
