@@ -7,6 +7,7 @@ public class Block {
 	boolean trainPresent;
 	boolean isBroken;
 	boolean isClosed;
+	boolean isFailed;
 	boolean isStation;
 	Switch sw;
 	Beacon beacon;
@@ -21,14 +22,22 @@ public class Block {
 	String lineColor;
 	String section;
 	double cumElevation;
-	//TODO GET RID OF ARROWDIR WHAT EVEN IS THIS
-	String arrowDir;
+	boolean toYard;
+	boolean fromYard;
 	
 	public Block(int blockID)
 	{
 		this.blockID = blockID;
 	}
 	
+	public boolean isToYard()
+	{
+		return toYard;
+	}
+	public boolean isFromYard()
+	{
+		return fromYard;
+	}
 	public int getBlockID()
 	{
 		return blockID;
@@ -84,6 +93,14 @@ public class Block {
 	public Beacon getBeacon()
 	{
 		return beacon;
+	}
+	public boolean isBroken()
+	{
+		return isBroken;
+	}
+	public boolean isFailed()
+	{
+		return isFailed;
 	}
 
 }

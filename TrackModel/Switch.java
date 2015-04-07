@@ -6,17 +6,15 @@ public class Switch {
 	int blockTwo;
 	int blockRoot;
 	String position;
-	String switches;
 	
-	public Switch(int blockRoot, String switches)
+	public Switch(int blockRoot)
 	{
 		this.blockRoot = blockRoot;
-		this.switches = switches;
 		//PARSE STRING SWITCHES INTO BLOCKONE AND BLOCKTWO
 		//SET POSITION
 	}
 	
-	public int[] getBlocks()
+	public int[] getSwitchBlocks()
 	{
 		return new int[]{blockOne, blockTwo};
 	}

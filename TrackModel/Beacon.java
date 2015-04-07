@@ -4,11 +4,17 @@ public class Beacon {
 
 	int radius;
 	int blockID;
+	double blockSize;
 	boolean trainPresent;
+	
+	//TODO ALL OF BEACON SOS
 	
 	public Beacon(int blockID)
 	{
 		this.blockID = blockID;
+		TrackModel t = new TrackModel();
+		Block[] blocks = t.getBlocks();
+		this.blockSize = blocks[blockID].blockSize;
 	}
 	
 	public int getRadius()
@@ -21,10 +27,10 @@ public class Beacon {
 		return trainPresent;
 	}
 	
-	public int distance(int radius)
+	public int distance()
 	{
-		//CALCULATE DISTANCE TO SEARCH
-		return 0;
+		//search for train three blocks away
+		return (int) blockSize*3;
 	}
 	
 	public void searchForTrain()

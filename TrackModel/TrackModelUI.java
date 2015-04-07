@@ -4,19 +4,26 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTable;
 
 import java.awt.BorderLayout;
 
 import javax.swing.JButton;
-
 import javax.swing.JLabel;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableModel;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Scanner;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Choice;
@@ -26,12 +33,10 @@ public class TrackModelUI extends TrackModel {
 
 	private JFrame frame;
 	String inputFile;
-	ExcelParser ex;
 	JPanel attributesPanel;
 	ArrayList<ArrayList<String>> line;
 	int count = 1;
 	JLabel lblLine;
-	JLabel lblArrowDir;
 	JLabel lblSwitchPos;
 	JLabel lblCumElevation;
 	JLabel lblElevation;
@@ -48,6 +53,8 @@ public class TrackModelUI extends TrackModel {
 	private JPanel selBlockPanel;
 	private JLabel lblSelectBlock;
 	private Choice choice;
+	TrackModel t;
+	private JPanel mapPanel;
 
 	/**
 	 * Launch the application.
@@ -76,6 +83,9 @@ public class TrackModelUI extends TrackModel {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		
+		t = new TrackModel();
+		
 		frame = new JFrame();
 		frame.setBounds(100, 100, 710, 508);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -99,52 +109,68 @@ public class TrackModelUI extends TrackModel {
 		choice.setFont(new Font("Dialog", Font.BOLD, 12));
 		selBlockPanel.add(choice);
 		
+		mapPanel = new JPanel();
+		frame.getContentPane().add(mapPanel, BorderLayout.CENTER);
+		
 		addButtons();
 
 		addLabels();
 
 	}
+	
+	public void addMap(String input) throws FileNotFoundException
+	{
+		String mapFile = "";
+		
+		if(input.equals("TrackLayoutGreenLine.csv"))
+			mapFile = "greenmap.txt";
+		else if(input.equals("TrackLayoutRedLine.csv"))
+			mapFile = "redmap.txt";
+		
+		Scanner map = new Scanner(new File(mapFile));
+		
+		ArrayList<ArrayList<String>> mapRows = new ArrayList<ArrayList<String>>();
+		
+		while(map.hasNextLine())
+		{
+			String col = map.nextLine();
+			ArrayList<String> mapCol = new ArrayList<String>();
+			
+			String[] colArray = col.split("\\s+");
+			
+			for(int i=0; i<colArray.length; i++)
+			{
+				mapCol.add(colArray[i]);
+			}
+			mapRows.add(mapCol);
+		}
+		
+		mapPanel.setLayout(new GridLayout(1, 0, 0, 0));
 
-	public void makeMap() {
-
-		// trackPanel = new JPanel();
-		// frame.getContentPane().add(trackPanel, BorderLayout.CENTER);
-		// trackPanel.setLayout(new GridLayout(1, 0, 0, 0));
-
-		// make block and button arrays
-		blocks = new Block[line.size()];
-		trackButtons = new JButton[line.size()];
-		for (count = 1; count < line.size(); count++) {
-			ArrayList<String> row = line.get(count);
-			if (row.size() != 0) {
-				blocks[count] = new Block(count);
-				blocks[count].lineColor = row.get(0);
-				blocks[count].section = row.get(1);
-				blocks[count].blockID = Integer.parseInt(row.get(2));
-				blocks[count].blockSize = Double.parseDouble(row.get(3));
-				blocks[count].grade = Double.parseDouble(row.get(4));
-				blocks[count].speedLimit = Integer.parseInt(row.get(5));
-				blocks[count].station = row.get(6);
-				if(row.get(7).equals("TRUE"))
-					blocks[count].sw = new Switch(count,row.get(12));
-				if(row.get(8).equals("TRUE"))
-					blocks[count].underground = true;
+	    Object[][] data = new Object[mapRows.size()][mapRows.get(0).size()];
+	    
+		for(int i=0; i<mapRows.size(); i++)
+		{
+			ArrayList<String> mapCol = mapRows.get(i);
+			
+			for(int j=0; j<mapCol.size(); j++)
+			{
+				//data[i][j] = mapCol.get(j);
+				if(mapCol.get(j).equals("x"))
+					data[i][j] = new Color(143,105,255);
 				else
-					blocks[count].underground = false;
-				if(row.get(9).equals("TRUE"))
-					blocks[count].rrCrossing = true;
-				else
-					blocks[count].rrCrossing = false;
-				blocks[count].elevation = Double.parseDouble(row.get(10));
-				blocks[count].cumElevation = Double.parseDouble(row.get(11));
-				blocks[count].arrowDir = row.get(13);
-
-				choice.add(String.valueOf(count));
+					data[i][j] = new Color(105,255,161);
 			}
 		}
+		MyMap m = new MyMap(data);
+		mapPanel.add(m.getTable());
 	}
 
 	public void addBlockChoice() {
+		
+		for(int i=1; i<blocks.length; i++)
+			choice.add(String.valueOf(blocks[i].blockID));
+		
 		// Add item listener
 		choice.addItemListener(new ItemListener() {
 			@Override
@@ -167,16 +193,14 @@ public class TrackModelUI extends TrackModel {
 					inputFile = JOptionPane
 							.showInputDialog("Enter a file name to import: ");
 					try {
-						ex = new ExcelParser(inputFile);
+						blocks = t.importTrack(inputFile);
+						addMap(inputFile);
+						addBlockChoice();
 						validInput = true;
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-					line = ex.getLine();
-					count = line.size();
 				}
-				makeMap();
-				addBlockChoice();
 			}
 
 			@Override
@@ -279,10 +303,6 @@ public class TrackModelUI extends TrackModel {
 		lblSwitchPos.setForeground(new Color(138, 43, 226));
 		attributesPanel.add(lblSwitchPos);
 
-		lblArrowDir = new JLabel("Arrow Direction: ");
-		lblArrowDir.setFont(new Font("Tahoma", Font.BOLD, 13));
-		lblArrowDir.setForeground(new Color(138, 43, 226));
-		attributesPanel.add(lblArrowDir);
 	}
 
 	public void resetLabels(Block b) {
@@ -298,8 +318,10 @@ public class TrackModelUI extends TrackModel {
 		lblRrCrossing.setText("RR Crossing: " + b.rrCrossing);
 		lblElevation.setText("Elevation: " + b.elevation);
 		lblCumElevation.setText("Cumulative Elevation: " + b.cumElevation);
-		lblSwitchPos.setText("Switch Positions: " + b.getSwitch().switches);
-		lblArrowDir.setText("Arrow Direction: " + b.arrowDir);
-	}
+		if(b.getSwitch() != null)
+			lblSwitchPos.setText("Switch Positions: " + b.getSwitch().blockOne + ", " + b.getSwitch().blockTwo);
+		else
+			lblSwitchPos.setText("Switch Positions: ");
+	}	
 
 }
