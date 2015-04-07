@@ -50,7 +50,7 @@ public class Simulator {
         trainControllerWrapper.tick();
     }
     
-    public void birthTrain() {
+    public void makeTrainPuppy() {
     	
     }
     
