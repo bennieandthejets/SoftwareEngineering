@@ -25,6 +25,7 @@ public class TrainControllerWrapper {
 	}
 	
 	public TrainController getTrainController(int targetID) {
+		System.out.println(targetID);
 		return controllers.get(targetID - 1);
 	}
 	
