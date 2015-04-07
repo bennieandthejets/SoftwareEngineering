@@ -15,6 +15,8 @@ public class TrainModel{
 	//###ATTRIBUTES###
 	//################
 	private TrainModelUIProto ui;
+	private TrainModelWrapper tmWrapper;
+	private Antenna antenna;
 	
 	//Constants
 	private static final double METRIC_VEL_CONV = 3.6;	// Used to convert from km/h --> m/s 
@@ -30,10 +32,10 @@ public class TrainModel{
 	private double trainHeight = 3.42;	// meters
 	private double trainWidth = 2.65;	// meters
 	private double trainLength = 32.20;	// meters
-	private double trainPower = 150000.0; // N
-	private double trainForce;
-	private double trainAcceleration;
-	private double trainVelocity;
+	private double trainPower;	// W
+	private double trainForce;	// N
+	private double trainAcceleration;	// m/s^2
+	private double trainVelocity; 		// m/s
 	private int crew;
 	private int passengers;
 	
@@ -49,58 +51,82 @@ public class TrainModel{
 	private boolean acStatus;
 	private boolean heatStatus;
 	
-	//Other stuff
-	private boolean[] failure = new boolean[3];
-	private double distanceTraveled;
-	private double tickDistance;
-	private double departTime;
+	//From Track Model
+	
+	private int currentBlock;
+	private int nextBlock;
+	
+	//From MBO
 	private int safeAuthority;
 	private double safeSetPoint;
 	//private CrewSchedule crewSchedule;
-	private int arrivalBlock;
-	private int currentBlock;
+	private double distanceTraveled;
+	private double tickDistance;
+	
+	//Other stuff
+	private boolean atStation;
+	private boolean[] failure = new boolean[3];
+	private double departTime;
 	private double slope;
 	
-	Random people = new Random(System.currentTimeMillis());
+	Random randomPass = new Random(System.currentTimeMillis());
 	
 	//###############
 	//###FUNCTIONS###
 	//###############
 	public TrainModel(int trainID){
-		//intializing accel and vel variables
+		//intializing variables
+		setPower(150000.0);
 		trainAcceleration = 0.0;
 		trainVelocity = 0.0;
-		passengers = 10;
-		double power = trainPower; //W = N*m/s = kg*m^2/s^3
-		safeSetPoint = 10.0;
+		passengers = 0;
+		safeSetPoint = 10.0; // m/s
 		
 
-			calcForce(power);
-			calcAcceleration();
-			calcVelocity();
-			System.out.println();
-			//setTxtFields();
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		updateTrain(trainPower);
+		//setTxtFields();
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
+	//main  for testing
 	public static void main(String[] args){
 		TrainModel atrain = new TrainModel(1);
 	}
 	
+	public void updateTrain(double power){
+		calcForce(power);
+		calcAcceleration();
+		calcVelocity();
+		if(trainVelocity == 0.0 & atStation){
+			removePassengers();
+			addPassengers();
+		}
+		calcDistance();
+		System.out.println();
+	}
+	
 	//Calculation functions
 	public void calcForce(double power){
+		double totalMass = getMass();
 		//calc force from grav
 		
 		//calc force from power
-		if(trainVelocity == 0)
-			trainForce = power/.001; // N = W/(m/s) = kg*m/s^2
-		else
-			trainForce = power/trainVelocity;
+		//first check if brakes are applied
+		if(eBrake)
+			trainForce = E_BRAKE_DECEL*totalMass;
+		else if(brake)
+			trainForce = BRAKE_DECEL*totalMass;
+		else{
+			if(trainVelocity == 0)
+				trainForce = power/.001; // N = W/(m/s) = kg*m/s^2
+			else
+				trainForce = power/trainVelocity;	
+		}
 		System.out.println("Train Force: "+trainForce+" N");
 	}
 	
@@ -121,15 +147,22 @@ public class TrainModel{
 		System.out.println("Train Velocity: "+trainVelocity+" m/s");
 	}
 	
+	public void calcDistance(){
+		
+	}
+	
 	public void addPassengers(){
-		int newPassengers = people.nextInt(MAX_PASS-passengers+1);
+		int newPassengers = randomPass.nextInt(MAX_PASS-passengers+1);
 		passengers += newPassengers;
+		System.out.println(newPassengers+" have boarded the train.");
 	}
 	
 	public void removePassengers(){
-		int oldPassengers = people.nextInt(passengers+1);
+		int oldPassengers = randomPass.nextInt(passengers+1);
 		passengers -= oldPassengers;
+		System.out.println(oldPassengers+" have left the train.");
 	}
+	
 	//Dealing with brakes
 	public void activateServiceBrakes(){
 		brake = true;
@@ -231,10 +264,13 @@ public class TrainModel{
 		lightStatus = lights;
 	}
 	
-	public void setTemp(double setTemp){
-		temperature = setTemp;
+	public void setAC(boolean ac){
+		acStatus = ac;
 	}
 	
+	public void setHeat(boolean heat){
+		heatStatus = heat;
+	}
 	public void setFailure(int fail){
 		failure[fail] = true;
 	}
