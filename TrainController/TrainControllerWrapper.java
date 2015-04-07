@@ -25,7 +25,7 @@ public class TrainControllerWrapper {
 	}
 	
 	public TrainController getTrainController(int targetID) {
-		return controllers.get(targetID);
+		return controllers.get(targetID - 1);
 	}
 	
 	public void createTrainController(TrainModel newModel) {
