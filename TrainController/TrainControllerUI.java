@@ -41,10 +41,17 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.JSeparator;
 
 import java.util.*;
+import java.awt.event.ItemListener;
+import java.awt.event.ItemEvent;
 
+@SuppressWarnings("unused")
 public class TrainControllerUI {
 
 	public JFrame frame;
+	
+	private final double	MPS_TO_MPH = 2.23694;			//Conversion ratio for meters per second to miles per hour
+	private final double	METERS_TO_MILES = 0.000621371;	//Conversion ratio for meters to miles
+	
 	private final ButtonGroup controlModes = new ButtonGroup();
 	private final JSlider velocitySlider = new JSlider();
 	
@@ -61,9 +68,13 @@ public class TrainControllerUI {
 	private JTextField heatStatusField;
 	private JTextField acStatusField;
 	private JTextField authorityField;
+	private JComboBox<Integer> trainSelectBox;
+	
+	private JButton brakeButton = new JButton("Brake");
+
 	
 	private TrainControllerWrapper wrapper;
-	private TrainController controller;
+	private TrainController controller = null;
 
 	/**
 	 * Create the application.
@@ -84,12 +95,12 @@ public class TrainControllerUI {
 		frame.setBounds(100, 100, 754, 654);
 		frame.getContentPane().setLayout(null);
 		
-		JPanel panel = new JPanel();
-		panel.setLayout(null);
-		panel.setForeground(SystemColor.windowBorder);
-		panel.setBackground(SystemColor.controlHighlight);
-		panel.setBounds(0, 0, 748, 619);
-		frame.getContentPane().add(panel);
+		JPanel mainPanel = new JPanel();
+		mainPanel.setLayout(null);
+		mainPanel.setForeground(SystemColor.windowBorder);
+		mainPanel.setBackground(SystemColor.controlHighlight);
+		mainPanel.setBounds(0, 0, 748, 619);
+		frame.getContentPane().add(mainPanel);
 		
 		JRadioButton autoRadio = new JRadioButton("Automatic");
 		autoRadio.addChangeListener(new ChangeListener() {
@@ -103,7 +114,7 @@ public class TrainControllerUI {
 		autoRadio.setSelected(true);
 		autoRadio.setBackground(SystemColor.controlHighlight);
 		autoRadio.setBounds(391, 13, 98, 24);
-		panel.add(autoRadio);
+		mainPanel.add(autoRadio);
 		
 		JRadioButton manRadio = new JRadioButton("Manual");
 		manRadio.addChangeListener(new ChangeListener() {
@@ -116,7 +127,7 @@ public class TrainControllerUI {
 		controlModes.add(manRadio);
 		manRadio.setBackground(SystemColor.controlHighlight);
 		manRadio.setBounds(493, 13, 93, 24);
-		panel.add(manRadio);
+		mainPanel.add(manRadio);
 		velocitySlider.setEnabled(false);
 		
 		velocitySlider.setValue(0);
@@ -135,20 +146,20 @@ public class TrainControllerUI {
 		velocitySlider.setPaintLabels(true);
 		velocitySlider.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
-                setTargetVelocity(velocitySlider.getValue());
+                setTargetVelocity(velocitySlider.getValue() / 100);
             }
         });
-		panel.add(velocitySlider);
+		mainPanel.add(velocitySlider);
 		
 		JLabel announcementsLbl = new JLabel("Announcements");
 		announcementsLbl.setHorizontalAlignment(SwingConstants.RIGHT);
 		announcementsLbl.setBounds(158, 538, 93, 16);
-		panel.add(announcementsLbl);
+		mainPanel.add(announcementsLbl);
 		
 		JLabel notificationsLbl = new JLabel("Notifications");
 		notificationsLbl.setHorizontalAlignment(SwingConstants.RIGHT);
 		notificationsLbl.setBounds(180, 566, 71, 16);
-		panel.add(notificationsLbl);
+		mainPanel.add(notificationsLbl);
 		
 		JButton leftDoorButton = new JButton("Left Doors");
 		leftDoorButton.addActionListener(new ActionListener() {
@@ -156,208 +167,263 @@ public class TrainControllerUI {
 			}
 		});
 		leftDoorButton.setBounds(524, 149, 104, 26);
-		panel.add(leftDoorButton);
+		mainPanel.add(leftDoorButton);
 		
 		JButton rightDoorButton = new JButton("Right Doors");
 		rightDoorButton.setBounds(524, 188, 104, 26);
-		panel.add(rightDoorButton);
+		mainPanel.add(rightDoorButton);
 		
 		JButton lightsButton = new JButton("Lights");
 		lightsButton.setBounds(524, 109, 104, 26);
-		panel.add(lightsButton);
+		mainPanel.add(lightsButton);
 		
-		JComboBox trainSelectBox = new JComboBox();
-		trainSelectBox.setBounds(221, 12, 114, 25);
-		panel.add(trainSelectBox);
+		trainSelectBox = new JComboBox<Integer>();
+		trainSelectBox.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent arg0) {
+				if (arg0.getStateChange() == ItemEvent.SELECTED) {
+			          Integer trainID = (Integer) arg0.getItem();
+			          switchTrain(trainID);
+			    }
+			}
+		});
+		trainSelectBox.setBounds(221, 12, 93, 25);
+		mainPanel.add(trainSelectBox);
 		
 		JLabel setpointVelocityLbl = new JLabel("Setpoint Velocity");
 		setpointVelocityLbl.setHorizontalAlignment(SwingConstants.CENTER);
 		setpointVelocityLbl.setBounds(102, 124, 104, 28);
-		panel.add(setpointVelocityLbl);
+		mainPanel.add(setpointVelocityLbl);
 		
 		JLabel velocityFeedbackLbl = new JLabel("Velocity Feedback");
 		velocityFeedbackLbl.setHorizontalAlignment(SwingConstants.CENTER);
 		velocityFeedbackLbl.setBounds(102, 187, 104, 28);
-		panel.add(velocityFeedbackLbl);
+		mainPanel.add(velocityFeedbackLbl);
 		
 		JLabel targetVelocityLbl = new JLabel("Target Velocity");
 		targetVelocityLbl.setHorizontalAlignment(SwingConstants.CENTER);
 		targetVelocityLbl.setBounds(245, 124, 104, 28);
-		panel.add(targetVelocityLbl);
+		mainPanel.add(targetVelocityLbl);
 		
 		JSeparator midSep = new JSeparator();
 		midSep.setOrientation(SwingConstants.VERTICAL);
 		midSep.setForeground(Color.BLACK);
 		midSep.setBackground(SystemColor.textInactiveText);
 		midSep.setBounds(372, 63, 14, 409);
-		panel.add(midSep);
+		mainPanel.add(midSep);
 		
 		JSeparator topSep = new JSeparator();
 		topSep.setForeground(Color.BLACK);
 		topSep.setBackground(SystemColor.textInactiveText);
 		topSep.setBounds(118, 49, 510, 2);
-		panel.add(topSep);
+		mainPanel.add(topSep);
 		
 		JSeparator bottomSep = new JSeparator();
 		bottomSep.setForeground(Color.BLACK);
 		bottomSep.setBackground(SystemColor.textInactiveText);
 		bottomSep.setBounds(118, 498, 510, 2);
-		panel.add(bottomSep);
+		mainPanel.add(bottomSep);
 		
 		JLabel velocityControlSectionLbl = new JLabel("Velocity Control");
 		velocityControlSectionLbl.setHorizontalAlignment(SwingConstants.CENTER);
 		velocityControlSectionLbl.setFont(new Font("Dialog", Font.BOLD, 15));
 		velocityControlSectionLbl.setBounds(159, 66, 157, 35);
-		panel.add(velocityControlSectionLbl);
+		mainPanel.add(velocityControlSectionLbl);
 		
 		JLabel subsystemControlSectionLbl = new JLabel("Subsystem Control");
 		subsystemControlSectionLbl.setHorizontalAlignment(SwingConstants.CENTER);
 		subsystemControlSectionLbl.setFont(new Font("Dialog", Font.BOLD, 15));
 		subsystemControlSectionLbl.setBounds(445, 70, 157, 26);
-		panel.add(subsystemControlSectionLbl);
+		mainPanel.add(subsystemControlSectionLbl);
 		
 		JLabel trainNumberLbl = new JLabel("Train #");
 		trainNumberLbl.setFont(new Font("Dialog", Font.BOLD, 13));
 		trainNumberLbl.setBounds(163, 17, 55, 16);
-		panel.add(trainNumberLbl);
+		mainPanel.add(trainNumberLbl);
 		
-		JButton brakeButton = new JButton("Brake");
+		brakeButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				switchServiceBrakeStatus();
+			}
+		});
 		brakeButton.setBounds(158, 407, 83, 26);
-		panel.add(brakeButton);
+		mainPanel.add(brakeButton);
 		
 		JButton eBrakeButton = new JButton("E-Brake");
+		eBrakeButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				switchEmergencyBrakeStatus();
+			}
+		});
 		eBrakeButton.setBounds(158, 446, 83, 26);
-		panel.add(eBrakeButton);
+		mainPanel.add(eBrakeButton);
 		
 		JSeparator rightSep = new JSeparator();
 		rightSep.setForeground(Color.BLACK);
 		rightSep.setBackground(SystemColor.textInactiveText);
 		rightSep.setBounds(391, 301, 242, 2);
-		panel.add(rightSep);
+		mainPanel.add(rightSep);
 		
 		JLabel faultsSectionLbl = new JLabel("Faults");
 		faultsSectionLbl.setHorizontalAlignment(SwingConstants.CENTER);
 		faultsSectionLbl.setFont(new Font("Dialog", Font.BOLD, 15));
 		faultsSectionLbl.setBounds(445, 316, 157, 26);
-		panel.add(faultsSectionLbl);
+		mainPanel.add(faultsSectionLbl);
 		
 		setpointVelocityField = new JTextField();
 		setpointVelocityField.setEditable(false);
 		setpointVelocityField.setColumns(10);
 		setpointVelocityField.setBounds(102, 150, 114, 20);
-		panel.add(setpointVelocityField);
+		mainPanel.add(setpointVelocityField);
 		
 		targetVelocityField = new JTextField();
 		targetVelocityField.setEditable(false);
 		targetVelocityField.setColumns(10);
 		targetVelocityField.setBounds(255, 149, 71, 20);
-		panel.add(targetVelocityField);
+		mainPanel.add(targetVelocityField);
 		
 		velocityFeedbackField = new JTextField();
 		velocityFeedbackField.setEditable(false);
 		velocityFeedbackField.setColumns(10);
 		velocityFeedbackField.setBounds(102, 212, 114, 20);
-		panel.add(velocityFeedbackField);
+		mainPanel.add(velocityFeedbackField);
 		
 		lightStatusField = new JTextField();
 		lightStatusField.setEditable(false);
 		lightStatusField.setColumns(10);
 		lightStatusField.setBounds(431, 112, 71, 20);
-		panel.add(lightStatusField);
+		mainPanel.add(lightStatusField);
 		
 		leftDoorStatusField = new JTextField();
 		leftDoorStatusField.setEditable(false);
 		leftDoorStatusField.setColumns(10);
 		leftDoorStatusField.setBounds(431, 150, 71, 20);
-		panel.add(leftDoorStatusField);
+		mainPanel.add(leftDoorStatusField);
 		
 		rightDoorStatusField = new JTextField();
 		rightDoorStatusField.setEditable(false);
 		rightDoorStatusField.setColumns(10);
 		rightDoorStatusField.setBounds(431, 191, 71, 20);
-		panel.add(rightDoorStatusField);
+		mainPanel.add(rightDoorStatusField);
 		
 		announcementsField = new JTextField();
 		announcementsField.setColumns(10);
 		announcementsField.setBounds(272, 536, 296, 20);
-		panel.add(announcementsField);
+		mainPanel.add(announcementsField);
 		
 		notificationsField = new JTextField();
 		notificationsField.setColumns(10);
 		notificationsField.setBounds(272, 564, 296, 20);
-		panel.add(notificationsField);
+		mainPanel.add(notificationsField);
 		
 		brakeStatusField = new JTextField();
 		brakeStatusField.setEditable(false);
 		brakeStatusField.setBounds(102, 409, 43, 22);
-		panel.add(brakeStatusField);
+		mainPanel.add(brakeStatusField);
 		brakeStatusField.setColumns(10);
 		
 		eBrakeStatusField = new JTextField();
 		eBrakeStatusField.setEditable(false);
 		eBrakeStatusField.setColumns(10);
-		eBrakeStatusField.setBounds(102, 450, 43, 22);
-		panel.add(eBrakeStatusField);
+		eBrakeStatusField.setBounds(102, 448, 43, 22);
+		mainPanel.add(eBrakeStatusField);
 		
 		JButton heatButton = new JButton("Heat");
 		heatButton.setBounds(524, 224, 104, 26);
-		panel.add(heatButton);
+		mainPanel.add(heatButton);
 		
 		JButton acButton = new JButton("AC");
 		acButton.setBounds(524, 262, 104, 26);
-		panel.add(acButton);
+		mainPanel.add(acButton);
 		
 		heatStatusField = new JTextField();
 		heatStatusField.setEditable(false);
 		heatStatusField.setColumns(10);
 		heatStatusField.setBounds(431, 226, 71, 20);
-		panel.add(heatStatusField);
+		mainPanel.add(heatStatusField);
 		
 		acStatusField = new JTextField();
 		acStatusField.setEditable(false);
 		acStatusField.setColumns(10);
 		acStatusField.setBounds(431, 264, 71, 20);
-		panel.add(acStatusField);
+		mainPanel.add(acStatusField);
 		
 		authorityField = new JTextField();
 		authorityField.setEditable(false);
 		authorityField.setColumns(10);
 		authorityField.setBounds(102, 275, 114, 20);
-		panel.add(authorityField);
+		mainPanel.add(authorityField);
 		
 		JLabel authorityLbl = new JLabel("Authority");
 		authorityLbl.setHorizontalAlignment(SwingConstants.CENTER);
 		authorityLbl.setBounds(102, 245, 104, 28);
-		panel.add(authorityLbl);
+		mainPanel.add(authorityLbl);
 		
 		JLabel lblMph = new JLabel("mph");
 		lblMph.setBounds(330, 154, 36, 16);
-		panel.add(lblMph);
+		mainPanel.add(lblMph);
+	}
+	
+	public void addTrain(int trainID) {
+		trainSelectBox.addItem(new Integer(trainID));
 	}
 	
 	public void setTargetVelocity(double newVelocity) {
-		targetVelocityField.setText(Double.toString(newVelocity / 100));
+		
+		//prevent driver from going above setpoint
+		if((controller.getSetpointVelocity() * MPS_TO_MPH) < newVelocity) {
+			newVelocity = controller.getSetpointVelocity() * MPS_TO_MPH;
+		}
+		
+		targetVelocityField.setText(Double.toString(newVelocity));
+		
+		controller.setTargetVelocity(newVelocity / MPS_TO_MPH);
+	}
+	
+	public void switchServiceBrakeStatus() {
+		
+	}
+	
+	public void switchEmergencyBrakeStatus() {
+		
+	}
+	
+	private void updateSetpointVelocity(double newSetpointVelocity) {
+		setpointVelocityField.setText(Double.toString(newSetpointVelocity));
+	}
+	
+	private void updateVelocityFeedback(double newSetpointVelocity) {
+		velocityFeedbackField.setText(Double.toString(newSetpointVelocity));
+	}
+	
+	private void updateAuthority(double newAuthority) {
+		authorityField.setText(Double.toString(newAuthority));
 	}
 	
 	public void update() {
-		
+		updateSetpointVelocity(controller.getSetpointVelocity() * MPS_TO_MPH);
+		updateVelocityFeedback(controller.getVelocityFeedback() * MPS_TO_MPH);
+		updateAuthority(controller.getAuthority() * METERS_TO_MILES);
 	}
 	
 	public void switchTrain(int trainID) {
-		
+		controller = wrapper.getTrainController(trainID);
+		update();
 	}
 	
 	public void switchMode(int modeID) {
+		if(controller != null) {
+			controller.setMode(modeID);
+		}
+		
 		//auto
 		if(modeID == 1) {
 			velocitySlider.setEnabled(false);
+			brakeButton.setEnabled(false);
 		}
 		else {
 			velocitySlider.setEnabled(true);
+			brakeButton.setEnabled(true);
 		}
 	}
-	
-	public double kmsToMph(double value) {
-		return value * 0.621371;
-	}
+
 }
