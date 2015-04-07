@@ -1,9 +1,11 @@
 package TrainModel;
 
-//import TrainModelUIProto;
-
 import java.text.DecimalFormat;
 import java.util.*;
+
+import TrackModel.Block;
+import MBO.*;
+import Simulator.*;
 
 public class TrainModel{
 	/* All units for calculation will be kept in metric
@@ -14,9 +16,11 @@ public class TrainModel{
 	//################
 	//###ATTRIBUTES###
 	//################
-	private TrainModelUIProto ui;
+	private TrainModelUI ui;
 	private TrainModelWrapper tmWrapper;
 	private Antenna antenna;
+	private Simulator sim;
+	private MBO mbo;
 	
 	//Constants
 	private static final double METRIC_VEL_CONV = 3.6;	// Used to convert from km/h --> m/s 
@@ -42,7 +46,6 @@ public class TrainModel{
 	//Train Features
 	private boolean brake;
 	private boolean eBrake;
-	private boolean brakeStatus;
 	private boolean lightStatus;
 	private boolean leftDoorStatus;
 	private boolean rightDoorStatus;
@@ -51,37 +54,42 @@ public class TrainModel{
 	private boolean acStatus;
 	private boolean heatStatus;
 	
-	//From Track Model
+	//Track Model stuff
+	private Block currentBlock;
+	private Block nextBlock;
+	private double blockLocation;
+	private boolean atStation;
 	
-	private int currentBlock;
-	private int nextBlock;
-	
-	//From MBO
+	//MBO stuff
 	private int safeAuthority;
-	private double safeSetPoint;
-	//private CrewSchedule crewSchedule;
+	private double safeSetpoint;
+	private CrewSchedule crewSchedule;
 	private double distanceTraveled;
-	private double tickDistance;
+	
 	
 	//Other stuff
-	private boolean atStation;
+	private double stopDistance;
+	private double authority;
+	private double setpoint;
 	private boolean[] failure = new boolean[3];
 	private double departTime;
 	private double slope;
+	private double tickDistance;
 	
 	Random randomPass = new Random(System.currentTimeMillis());
 	
 	//###############
 	//###FUNCTIONS###
 	//###############
-	public TrainModel(int trainID){
-		//intializing variables
+	public TrainModel(int trainID, TrainModelUI ui){
+		//initializing variables
+		this.ui = ui;
 		setPower(150000.0);
 		trainAcceleration = 0.0;
 		trainVelocity = 0.0;
 		passengers = 0;
-		safeSetPoint = 10.0; // m/s
-		
+		blockLocation = 0.0;
+		distanceTraveled = 0.0;
 
 		updateTrain(trainPower);
 		//setTxtFields();
@@ -95,7 +103,9 @@ public class TrainModel{
 	
 	//main  for testing
 	public static void main(String[] args){
-		TrainModel atrain = new TrainModel(1);
+		TrainModelUI UI = new TrainModelUI();
+		TrainModel train = new TrainModel(1,UI);
+		UI.setTrain(train);
 	}
 	
 	public void updateTrain(double power){
@@ -122,7 +132,7 @@ public class TrainModel{
 		else if(brake)
 			trainForce = BRAKE_DECEL*totalMass;
 		else{
-			if(trainVelocity == 0)
+			if(trainVelocity == 0.0)
 				trainForce = power/.001; // N = W/(m/s) = kg*m/s^2
 			else
 				trainForce = power/trainVelocity;	
@@ -148,7 +158,9 @@ public class TrainModel{
 	}
 	
 	public void calcDistance(){
-		
+		tickDistance = trainVelocity;
+		blockLocation += tickDistance;
+		distanceTraveled += tickDistance;
 	}
 	
 	public void addPassengers(){
@@ -208,11 +220,17 @@ public class TrainModel{
 		return distanceTraveled;
 	}
 	
+	public double getStopDistance(){
+		return mbo.calculateStopDistance(trainVelocity);
+	}
 	
 	public double getVelocity(){
 		return trainVelocity;
 	}
 	
+	public double getSetpointVelocity(){
+		return setpoint;
+	}
 	public double getAcceleration(){
 		return trainAcceleration;
 	}
@@ -240,7 +258,7 @@ public class TrainModel{
 		return underground;
 	}
 	
-	public int getBlock(){
+	public Block getBlock(){
 		return currentBlock;
 	}
 	
@@ -248,8 +266,12 @@ public class TrainModel{
 		trainPower = power;
 	}
 	
-	public void setSetPointVelocity(double setPointVel){
-		safeSetPoint = setPointVel;
+	public void setAuthority(double auth){
+		authority = auth;
+	}
+	
+	public void setSetpointVelocity(double setpointVel){
+		safeSetpoint = setpointVel;
 	}
 	
 	public void setLeftDoor(boolean doorStatus){
