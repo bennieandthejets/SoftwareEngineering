@@ -3,8 +3,10 @@ package TrackController;
 import java.util.ArrayList;
 import java.util.ListIterator;
 import java.util.HashMap;
+import java.net.URLClassLoader;
 import java.io.*;
-import Simulator.Simulator;
+
+import Simulator.*;
 import TrackModel.*;
 
 
@@ -31,6 +33,10 @@ public class TrackController {
 		present = new ArrayList<Integer>(); 				
 	}
 	
+	TrackController() {
+		System.out.println(loadPLC("testPLC"));
+	}
+	
 	public void setRoute(int trainBlock, int destination, double suggestedSpeed, int suggestedAuthority, int[] route) {
 		Train train = trains.get(trainBlock);
 		
@@ -39,41 +45,29 @@ public class TrackController {
 		train.sugAuthority = suggestedAuthority;
 		train.suggestedRoute = route;
 	}
-	void loadPLC(String filename) {
+	
+	public boolean loadPLC(String filename) {
+		//File file = new File(filename);
+		ClassLoader cl = ClassLoader.getSystemClassLoader();
+
 		try {
-			BufferedReader reader = new BufferedReader(new FileReader(new File(filename)));
+			/*URL url = file.toURL();
+			URL[] urls = new URL[]{url};
 			
-			//The first line is an integer that corresponds to the number of blocks away a train should be before the switch tries to switch
-			try {
-				String line = reader.readLine().trim();
-				switchBlocks = Integer.parseInt(line);
-			}
-			catch (IOException e) {
-				System.out.println("Invalid PLC File, please try again");
-			}
-			//The second corresponds to the number of blocks away whose speeds will be set to zero should there be a switch conflict
-			try {
-				String line = reader.readLine().trim();
-				stopBlocks = Integer.parseInt(line);
-			}
-			catch (IOException e) {
-				System.out.println("Invalid PLC File, please try again");
-			}
+			ClassLoader cl = new URLClassLoader(urls);*/
 			
+			Class cls = cl.loadClass(filename);
+			Object o = cls.newInstance();
 			
-			try {
-				reader.close();
-			}
-			catch (IOException e) {
-				
-			}
+			myPLC = (PLC) o;
+			
+			return true;
 		}
-		catch (FileNotFoundException e) {
-			System.out.println("File not found, please try again");
-		}
+		catch (Exception e) {
+			System.out.println("Caught Exception: "+e);
+			return false;
+		} 
 	}
-	
-	
 	
 		
 	public int getPosition() {
@@ -96,6 +90,8 @@ public class TrackController {
 			ctrl.advanceTrain();
 			ctrl.checkSwitches();
 		}*/
+		
+		TrackController TC = new TrackController();
 	}
 	
 	
