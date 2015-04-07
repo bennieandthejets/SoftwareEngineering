@@ -24,6 +24,9 @@ public class CTC {
 	private fakeWindow faaake;
 	private Block[] blocks;
 	private long time;
+	//defautl red line yard block until jackie gives me a better option
+	private int fromYard = 77; //tell where new trains will come from
+	private int toYard = 77; //which block leads to the yard
 	
 	
 	//modules i can talk to
@@ -36,8 +39,7 @@ public class CTC {
 	//function getMode
 	//This comment is a test bro 
 	
-	public static void main(String[] args) {
-			
+	public static void main(String[] args) {	
 		
 		CTC ctc = new CTC(); 
 		
@@ -122,7 +124,7 @@ public class CTC {
 		
 	}
 	
-	//alternate constructor with no sim. just for viewing form changes
+	//alternate constructor with no sim. just for viewing design changes
 	public CTC(){
 		int blocks = 10;
 		
@@ -155,7 +157,7 @@ public class CTC {
 		//load track somehow
 		//this.blocks = ben.getBlocks();	//call this once it exists
 		
-		this.blockCount = blocks.length;
+		this.blockCount = 1 // = blocks.length;
 		
 		this.mode = 0; //manual
 		this.stops = 0;
@@ -235,7 +237,7 @@ public class CTC {
 		int block = locations[train];
 		//myWindow.setAnnouncement("got location " + Integer.toString(block));
 		
-		if(block >= 0 ){
+		if(block > 0 ){
 			//route it
 			//calculate full path
 			int[] path = calcRoute(block, dest);
@@ -243,7 +245,7 @@ public class CTC {
 			//myWindow.setAnnouncement("path calculated");
 			
 			if(setRoute(train, path)){
-				this.faaake.routeTrain( block, speed, dest, path);			
+				//this.faaake.routeTrain( block, speed, dest, path);			
 				//myWindow.setAnnouncement("route set");			
 				myWindow.setLocation(train, -1,  dest);
 				return true;
@@ -266,8 +268,8 @@ public class CTC {
 		//!!! for demo don't optimize train selection. new trains will always be at the end of the array
 		
 		//use old max for index of new train
-		routes[activeTrains] = new TrainRoute(1, null);
-		locations[activeTrains] = 0; //initialized to -1 but force anyway
+		routes[activeTrains] = new TrainRoute(1, null); //!!! 1 is not the first block connected to the yard
+		locations[activeTrains] = 0; //special flag for yard
 		
 		myWindow.setLocation(activeTrains, -1,  1);
 		
@@ -275,19 +277,135 @@ public class CTC {
 		
 	}
 	
+	//sub to find the best route
 	private int[] calcRoute(int block, int dest){
-		block++;
+		
+		//calculate both directions, choose shortest		
+		TrainRoute rtUp = new TrainRoute(block, null);
+		
+		TrainRoute rtDwn = new TrainRoute(block, null);
+		
+						
+		/*
 		//straight path for demo, return sequence
-		int path[] = new int[(dest-block) + 1];		
+		
 		for(int i =0; i < (dest-block) + 1; i++){
 			path[i] = block + i;
 			//myWindow.setAnnouncement("   " + Integer.toString(path[i]));
 		}		
-		
+		*/
+		int path[] = new int[(dest-block) + 1];
 		return path;
 		
 	}
+	//sub to determine a path in a specific direction
+	private TrainRoute calcRoute(int block, int dest, boolean up){
+		TrainRoute rt = new TrainRoute(block, null);
+		TrainRoute save = rt; //save start point because we're adding to the end
+		int inc; //increment
+		int previous = block;
+		if(up){
+			inc = 1;
+		} else {
+			inc = -1;
+		}
+		
+		boolean hasSwitch = false; //!!!  fuck you jackie; commit yo' shit
+		Switch sw = new Switch(0, "fuckkkkkkkkk");
+		int next = -1;
+		boolean justSwitched = false;
+		
+		while(block!=dest){
+			if(hasSwitch && !justSwitched){
+				justSwitched = true;
+				if (sw.getRoot() == block){
+					//choose "One" or "Two"
+					int[] paths = sw.getBlocks();
+					//!!! dangerous assumption: paths[0] will be root + 1
+					if(onBranch(paths[0], dest)){
+						next = paths[0];
+					} else if (onBranch(paths[1], dest)){
+						next = paths[1];
+					} else {
+						next =  block + inc;
+					}
+					
+				} else {
+					//cann only go to root block from a branch
+					next = sw.getRoot();
+				}
+			
+			} else {
+				justSwitched = false;
+				next = block + inc;
+				//turn around if these blocks are pointing the other way
+				if (next == previous){
+					next = block - inc;
+				}
+				//don't get turned around if you come off of a switch and you like another block from that switch
+				if ((hasSwitch)&&(next==sw.getRoot() || next==sw.getBlocks()[0] || next==sw.getBlocks()[1])){
+					next = block - inc;
+				}
+				
+				
+				//add new location to list (route)
+				previous = block;
+				block = next;
+				TrainRoute rrrt = new TrainRoute(next, null);
+				rt.next = rrrt;
+				rt = rrrt;
+				
+			}
+			
+						
+		} //end while
+		
+		
+		
+		
+		return rt;
+	}
 	
+	
+	
+	/* sub to check if the destination is on the branch path. 
+	*  Allows the main routing calculation to ignore branches
+	*/
+	private boolean onBranch(int block, int dest){
+		//!!! account for hitting the yard to avoid infinite loop
+		
+		//find direction of initial switch 
+		int increment;
+		
+		int fuckOffEclipse = 0;
+		//!!! jackie needs to expose switch presence   if(blocks[block-1].hasSwitch()){
+		if(fuckOffEclipse == 0){ 
+			block++;
+			increment = 1;
+		} 
+		else {
+			block--;
+			increment = -1;
+		}
+		
+		//!!! while (!blocks[block].hasSwitch){		
+		while(fuckOffEclipse == 1){
+			if (block == dest){
+				return true;
+			}
+			block += increment;
+		}	
+		
+		//destination might also have switch
+		if (block == dest){
+			return true;
+		}
+		block += increment;
+		
+	return false;
+	}
+	
+		
 	//set the route for a train after path is calculated 
 	//this method will erase any existing route
 	private boolean setRoute(int train, int[] path){
@@ -318,7 +436,7 @@ public class CTC {
 		return this.mode;
 	}
 	
-	public void setSchedule(String schedFile){
+	public void setSchedule(TrainSchedule sched){
 		//don't do shit yet
 	}
 	
