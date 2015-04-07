@@ -8,7 +8,7 @@ import Simulator.Simulator;
 public class TrainModelWrapper{
 	//ATTRIBUTES
 	ArrayList<TrainModel> trains = new ArrayList<TrainModel>();
-	Simulator simulator;
+	Simulator sim;
 	
 	//FUNCTIONS
 	public void birthTrain(){

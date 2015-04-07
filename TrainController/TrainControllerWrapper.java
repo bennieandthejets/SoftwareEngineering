@@ -31,16 +31,18 @@ public class TrainControllerWrapper {
 	public void createTrainController(TrainModel newModel) {
 		int nextID = controllers.size() + 1;
 		controllers.add(new TrainController(nextID, newModel, ui));
+		ui.addTrain(nextID);
 	}
 	
 	
 	
 	public void tick() {
 //		this.temperature = simulator.getTemp();
-//		this.systemTime = simulator.getTime();
+		this.systemTime = simulator.getTime();
 		for(int i = 1; i < controllers.size() + 1; i++) {
-//			controllers.get(i).tick(systemTime, temperature);
+			controllers.get(i).tick(systemTime, temperature);
 		}
+		ui.update();
 	}
 	
 	public void showUI() {

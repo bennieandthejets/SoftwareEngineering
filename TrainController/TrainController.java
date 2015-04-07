@@ -1,13 +1,14 @@
 package TrainController;
-import TrainModel.*;;
+import TrainModel.*;
 
 public class TrainController {
 		
-	
+	private final double	MPS_TO_MPH = 2.23694;		//Conversion ratio for meters per second to miles per hour
+
 	private final int		MAX_POWER = 120000;			//Maximum power output (W)
-	private final double	MAX_VELOCITY = 70.0;		//Maximum train velocity (km/h)
-	private final double	BRAKE_DECEL = -1.2;			//Service brake deceleration (m/s^2)
-	private final double	E_BRAKE_DECEL = -2.73;		//Emergency brake deceleration (m/s^2)
+	private final double	MAX_VELOCITY = 19.4444;		//Maximum train velocity (m/s)
+//	private final double	BRAKE_DECEL = -1.2;			//Service brake deceleration (m/s^2)
+//	private final double	E_BRAKE_DECEL = -2.73;		//Emergency brake deceleration (m/s^2)
 	private final double	TIME_PERIOD = 1;			//Sample period of time (s)
 	private	final double	Ki = 1.0;					//Integral Gain
 	private	final double	Kp = 12;					//Proportional Gain
@@ -22,9 +23,10 @@ public class TrainController {
 	private double[]	velocityError = new double[2];	//Current [1] and most recent [0] velocity velocityError
 	private double		remainingAuthority;
 	private double		stopDistance;
+	private boolean		stopped;
 	
-	private TrainModel 	model;
-	private TrainControllerUI ui;
+	private TrainModel			model;
+	private TrainControllerUI	ui;
 	
 	
 	public TrainController(int newID, TrainModel newTrainModel, TrainControllerUI newUI) {
@@ -41,16 +43,32 @@ public class TrainController {
 		velocityError[1] = 0.0;
 		u[0] = 0;
 		u[1] = 0;
+		stopped = true;
 	}
 	
 	public int getID() {
 		return this.ID;
 	}
 	
+	public void setMode(int newMode) {
+		mode = newMode;
+	}
+	
+	public double getSetpointVelocity() {
+		return setpointVelocity;
+	}
+	
+	public double getVelocityFeedback() {
+		return model.getVelocity();
+	}
+	
+	public double getAuthority() {
+		return remainingAuthority;
+	}
+	
 	//Determine the power command to send to the train model
 	public void calculatePower() {
-		double confirmedPower;
-		setTargetVelocity();
+//		double confirmedPower;
 		
 		velocityFeedback = model.getVelocity();
 		
@@ -65,7 +83,7 @@ public class TrainController {
 		
 		powerCommand[1] = Ki * velocityError[1] + Kp * u[1];
 		
-		if(powerCommand[1] > 0) {
+		if(powerCommand[1] < 0) {
 			powerCommand[1] = 0;
 		}
 			
@@ -88,65 +106,54 @@ public class TrainController {
 		return;
 	}
 	
-	private double calculateRemainingAuthority() {
-		//remainingAuthority = remainingAuthority - model.getDistanceTravelled();
-		//stopDistance = model.getStopDistance();
+	private void checkRemainingAuthority() {
+		remainingAuthority = remainingAuthority - model.getDistanceTraveled();
+		stopDistance = model.getStopDistance();
 		if(remainingAuthority <= stopDistance) {
 			stopTrain();
 		}
-		return 0.0;
+		return;
 	}
 		
-	public double getVelocityFeedback() {
-		return model.getVelocity();
+
+	
+	public void setTargetVelocity(double newVelocity) {
+		targetVelocity = newVelocity;
 	}
 	
-	public double setSetpointVelocity(double newSetpointVelocity) {
-		setpointVelocity = newSetpointVelocity;
-		if(mode == 1) {
-			targetVelocity = setpointVelocity;
-		}
-		return setpointVelocity;
-	}
-	
-	public void setTargetVelocity() {
-		if(mode == 1) {
-			//manualVelocity = 
-			
-			//if(newTargetVelocity > setpointVelocity)
-				targetVelocity = setpointVelocity;
-			//else
-				//targetVelocity = newTargetVelocity;
-		}
-		else {
-			targetVelocity = setpointVelocity;
-		}
-	}
-	
-	private void stopTrain() {
+	public void stopTrain() {
 		model.setPower(0);
 		powerCommand[0] = 0;
 		model.activateServiceBrakes();
 		return;
-		
 	}
 	
-	private void emergencyStop() {
+	public void emergencyStop() {
 		model.setPower(0);
 		powerCommand[0] = 0;
 		model.activateEmergencyBrakes();
 		return;
 	}
 	
+	public void releaseBrakes() {
+		if(stopped == true) {
+			
+		}
+	}
+	
 	public void tick(long currentTime, int currentTemp) {
-		//checkFaults();
-		calculateRemainingAuthority();
+		//checkFailures();
+		checkRemainingAuthority();
+		setpointVelocity = model.getSetpointVelocity();
+		if(mode == 1) {
+			setTargetVelocity(setpointVelocity);
+		}
 		calculatePower();
 		
 		//controlSubsystems(currentTime, currentTemp);
 		
-		
-		
 	}
+	
+	
 	
 }
