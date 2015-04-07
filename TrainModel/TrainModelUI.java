@@ -194,14 +194,14 @@ public class TrainModelUI implements ActionListener{
 		separator_2.setBounds(403, 11, 10, 255);
 		frame.getContentPane().add(separator_2);
 		
-		JLabel lblAcceleration = new JLabel("Acceleration");
+		JLabel lblAcceleration = new JLabel("Acceleration (m/s^2)");
 		lblAcceleration.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		lblAcceleration.setBounds(189, 37, 67, 14);
+		lblAcceleration.setBounds(189, 37, 120, 14);
 		frame.getContentPane().add(lblAcceleration);
 		
-		JLabel lblNewLabel_2 = new JLabel("Velocity");
+		JLabel lblNewLabel_2 = new JLabel("Velocity (km/hr)");
 		lblNewLabel_2.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		lblNewLabel_2.setBounds(189, 62, 46, 14);
+		lblNewLabel_2.setBounds(189, 62, 90, 14);
 		frame.getContentPane().add(lblNewLabel_2);
 		
 		JLabel lblBrakes = new JLabel("Brakes");
@@ -238,7 +238,7 @@ public class TrainModelUI implements ActionListener{
 		txtAccel.setHorizontalAlignment(SwingConstants.CENTER);
 		txtAccel.setEditable(false);
 		txtAccel.setColumns(10);
-		txtAccel.setBounds(293, 34, 100, 20);
+		txtAccel.setBounds(310, 34, 83, 20);
 		frame.getContentPane().add(txtAccel);
 		
 		txtVelocity = new JTextField();
@@ -405,8 +405,8 @@ public class TrainModelUI implements ActionListener{
 		txtNumofCars.setText(new Integer(cars).toString());
 	}
 	//Display
-	public void setAcceleration(double accel){
-		txtAccel.setText(new Double(accel).toString());
+	public void setAcceleration(String accel){
+		txtAccel.setText(accel);
 	}
 	public void setVelocity(String velocity){
 		txtVelocity.setText(velocity);

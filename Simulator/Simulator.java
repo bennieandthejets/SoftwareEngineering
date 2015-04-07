@@ -34,8 +34,29 @@ public class Simulator {
         trackControllerWrapper = new TrackCtrlWrapper(this);
         trackModel = new TrackModel();
         trainControllerWrapper = new TrainControllerWrapper(this);
-        trainModelWrapper = new TrainModelWrapper();
+        trainModelWrapper = new TrainModelWrapper(this);
     }
+    
+//=====================
+// SYSTEM
+//=====================    
+    
+    private void updateModules() {
+        ctc.tick();
+        mbo.tick(systemTime);
+        //trackControllerWrapper.tick();
+        //trackModel.tick();
+        trainModelWrapper.tick();
+        trainControllerWrapper.tick();
+    }
+    
+    public void birthTrain() {
+    	
+    }
+    
+//=====================
+// CLOCK
+//=====================
 
     public void setSpeedMultiplier(int speedMultiplier) {
         this.speedMultiplier = speedMultiplier;
@@ -65,19 +86,9 @@ public class Simulator {
         }
     }
 
-    private void updateModules() {
-        ctc.tick();
-        mbo.tick(systemTime);
-        //trackControllerWrapper.tick();
-        //trackModel.tick();
-        trainModelWrapper.tick();
-        trainControllerWrapper.tick();
-    }
-
-    public static void main(String[] args ) throws InterruptedException {
-        Simulator simulator = new Simulator();
-        simulator.tick();
-    }
+//=====================
+// UIs
+//=====================
     
     public void showCTCUI() {
     	ctc.displayWindow();
@@ -87,9 +98,24 @@ public class Simulator {
 		mbo.showUI();
 	}
 	
+	public void showTrackControllerUI() {
+		
+	}
+	
+	public void showTrackModelUI() {
+		
+	}
+	
 	public void showTrainControllerUI() {
 		trainControllerWrapper.showUI();
 	}	
 	
+	public void showTrainModelUI() {
+		
+	}
 	
+    public static void main(String[] args ) throws InterruptedException {
+        Simulator simulator = new Simulator();
+        simulator.tick();
+    }
 }
