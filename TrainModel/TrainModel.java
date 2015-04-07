@@ -16,7 +16,7 @@ public class TrainModel{
 	//################
 	//###ATTRIBUTES###
 	//################
-	private TrainModelUI ui;
+	private static TrainModelUI ui;
 	private TrainModelWrapper tmWrapper;
 	private Antenna antenna;
 	private Simulator sim;
@@ -75,41 +75,43 @@ public class TrainModel{
 	private double departTime;
 	private double slope;
 	private double tickDistance;
+	private double dispVel;
 	
 	Random randomPass = new Random(System.currentTimeMillis());
 	
 	//###############
 	//###FUNCTIONS###
 	//###############
-	public TrainModel(int trainID, TrainModelUI ui){
+	public TrainModel(int trainID){
 		//initializing variables
-		this.ui = ui;
+		
 		setPower(150000.0);
 		trainAcceleration = 0.0;
 		trainVelocity = 0.0;
 		passengers = 0;
 		blockLocation = 0.0;
 		distanceTraveled = 0.0;
-
-		updateTrain(trainPower);
-		//setTxtFields();
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		//while(true){
+			//updateTrain(trainPower);
+			/*setDisplay();
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}*/
 	}
 	
 	//main  for testing
 	public static void main(String[] args){
-		TrainModelUI UI = new TrainModelUI();
-		TrainModel train = new TrainModel(1,UI);
-		UI.setTrain(train);
+		ui = new TrainModelUI();
+		TrainModel train = new TrainModel(1);
+		ui.setTrain(train);
 	}
 	
-	public void updateTrain(double power){
-		calcForce(power);
+	public void updateTrain(){
+		calcForce();
 		calcAcceleration();
 		calcVelocity();
 		if(trainVelocity == 0.0 & atStation){
@@ -121,7 +123,7 @@ public class TrainModel{
 	}
 	
 	//Calculation functions
-	public void calcForce(double power){
+	public void calcForce(){
 		double totalMass = getMass();
 		//calc force from grav
 		
@@ -133,9 +135,9 @@ public class TrainModel{
 			trainForce = BRAKE_DECEL*totalMass;
 		else{
 			if(trainVelocity == 0.0)
-				trainForce = power/.001; // N = W/(m/s) = kg*m/s^2
+				trainForce = trainPower/.001; // N = W/(m/s) = kg*m/s^2
 			else
-				trainForce = power/trainVelocity;	
+				trainForce = trainPower/trainVelocity;	
 		}
 		System.out.println("Train Force: "+trainForce+" N");
 	}
@@ -258,6 +260,10 @@ public class TrainModel{
 		return underground;
 	}
 	
+	public double getDepartTime(){
+		return departTime;
+	}
+	
 	public Block getBlock(){
 		return currentBlock;
 	}
@@ -298,6 +304,24 @@ public class TrainModel{
 	}
 	
 	public void setDisplay(){
-		
+		//Characteristics
+		double totalMass = getMass()/1000;
+		ui.setHeight(trainHeight);
+		ui.setWidth(trainWidth);
+		ui.setLength(trainLength);
+		ui.setMass(totalMass);
+		ui.setCrew(crew);
+		ui.setPass(passengers);
+		//Display
+		ui.setAcceleration(SigFig.format(trainAcceleration));
+		ui.setVelocity(SigFig.format(trainVelocity*METRIC_VEL_CONV));
+		//ui.setSlope(Slope);
+		//ui.setBrakes(brake);
+		//ui.setLights(lightStatus);
+		//ui.setDoors(doorStatus);
+		//ui.setNextStation(NextStation);
+		//ui.setArrival(Arrival);
+		//ui.setCurrBlock(CurrentBlock);
+		//ui.setCurrTrain(CurrentTrain);
 	}
 }

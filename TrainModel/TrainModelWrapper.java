@@ -7,14 +7,22 @@ import Simulator.Simulator;
 
 public class TrainModelWrapper{
 	//ATTRIBUTES
-	ArrayList<TrainModel> trains = new ArrayList<TrainModel>();
+	ArrayList<TrainModel> trains;
 	Simulator sim;
+	TrainControllerWrapper trainCtrlWrapper;
+	
+	public TrainModelWrapper(Simulator sim){
+		this.sim = sim;
+		this.trainCtrlWrapper = sim.trainControllerWrapper;
+		trains = new ArrayList<TrainModel>();
+	}
 	
 	//FUNCTIONS
 	public void birthTrain(){
 		int trainID = trains.size()+1;
 		TrainModel newTrain = new TrainModel(trainID);
 		trains.add(trainID,newTrain);
+		trainCtrlWrapper.createTrainController(newTrain);
 	}
 	
 	public void removeTrain(int trainID){
@@ -30,6 +38,8 @@ public class TrainModelWrapper{
 	}
 	
 	public void tick(){
-		
+		for(int i = 1; i < trains.size()+1;i++){
+			trains.get(i).updateTrain();
+		}	
 	}
 }
