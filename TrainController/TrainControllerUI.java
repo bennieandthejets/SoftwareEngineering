@@ -58,7 +58,7 @@ public class TrainControllerUI {
 	private final JButton eBrakeButton = new JButton("E-Brake");
 	private final JButton brakeButton = new JButton("Brake");
 	private final JRadioButton manRadio = new JRadioButton("Manual");
-	final JRadioButton autoRadio = new JRadioButton("Automatic");
+	private final JRadioButton autoRadio = new JRadioButton("Automatic");
 	
 	private JTextField setpointVelocityField;
 	private JTextField targetVelocityField;
@@ -397,9 +397,11 @@ public class TrainControllerUI {
 	}
 	
 	public void update() {
-		updateSetpointVelocity(controller.getSetpointVelocity() * MPS_TO_MPH);
-		updateVelocityFeedback(controller.getVelocityFeedback() * MPS_TO_MPH);
-		updateAuthority(controller.getAuthority() * METERS_TO_MILES);
+		if(controller != null) {
+			updateSetpointVelocity(controller.getSetpointVelocity() * MPS_TO_MPH);
+			updateVelocityFeedback(controller.getVelocityFeedback() * MPS_TO_MPH);
+			updateAuthority(controller.getAuthority() * METERS_TO_MILES);
+		}
 	}
 	
 	public void switchTrain(int trainID) {

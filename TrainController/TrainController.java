@@ -1,6 +1,7 @@
 package TrainController;
 import TrainModel.*;
 
+@SuppressWarnings("unused")
 public class TrainController {
 		
 	private final double	MPS_TO_MPH = 2.23694;		//Conversion ratio for meters per second to miles per hour
