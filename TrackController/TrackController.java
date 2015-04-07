@@ -10,19 +10,21 @@ import TrackModel.*;
 
 
 public class TrackController {
-	Block map[];
-	TrackModel myModel;
+	public Block map[];
+	private TrackModel myModel;
 	
-	ArrayList<Integer> present;
+	private ArrayList<Integer> present;
 	
-	ArrayList<Switch> switches;
-	int switchBlocks;
-	int stopBlocks;
+	private ArrayList<Switch> switches;
+	private int switchBlocks;
+	private int stopBlocks;
 	
-	HashMap<Integer, Train> trains;
+	public HashMap<Integer, Train> trains;
 	
-	Crossing crossing;
-	int crossingBlocks;
+	private Crossing crossing;
+	private int crossingBlocks;
+	
+	private PLC myPLC;
 
 	TrackController(Simulator simulator) {
 		myModel = simulator.trackModel;
@@ -71,19 +73,7 @@ public class TrackController {
 		}
 	}
 	
-	void populateTrainmap() {
-		for (int i = 0; i < map.length; i++) {
-			if (map[i].isTrainPresent()) {
-				present.add(i);
-			}
-		}
-		/*for (int i= 0; i < map_greenline.length; i++) {
-			if (map_greenline[i]) {
-				present_green.add(i);
-			}
-		}
-		*/
-	}
+	
 	
 		
 	public int getPosition() {
@@ -109,7 +99,7 @@ public class TrackController {
 	}
 	
 	
-	private class Train {
+	public class Train {
 		int position;
 		int destination;
 		double speed;
@@ -124,7 +114,7 @@ public class TrackController {
 		}
 	}
 	
-	private class Switch {
+	public class Switch {
 		int root;
 		int head1;
 		int head2;
@@ -158,7 +148,7 @@ public class TrackController {
 		}
 	}
 	
-	private class Crossing {
+	public class Crossing {
 		boolean lightsOn;
 		int position;
 		
@@ -166,10 +156,5 @@ public class TrackController {
 			lightsOn = false;
 			position = pos;
 		}
-	}
-	
-	
-	private interface PLC {
-		
 	}
 }
