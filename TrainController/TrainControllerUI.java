@@ -54,6 +54,11 @@ public class TrainControllerUI {
 	
 	private final ButtonGroup controlModes = new ButtonGroup();
 	private final JSlider velocitySlider = new JSlider();
+	private final JComboBox<Integer> trainSelectBox = new JComboBox<Integer>();
+	private final JButton eBrakeButton = new JButton("E-Brake");
+	private final JButton brakeButton = new JButton("Brake");
+	private final JRadioButton manRadio = new JRadioButton("Manual");
+	final JRadioButton autoRadio = new JRadioButton("Automatic");
 	
 	private JTextField setpointVelocityField;
 	private JTextField targetVelocityField;
@@ -68,9 +73,9 @@ public class TrainControllerUI {
 	private JTextField heatStatusField;
 	private JTextField acStatusField;
 	private JTextField authorityField;
-	private JComboBox<Integer> trainSelectBox;
 	
-	private JButton brakeButton = new JButton("Brake");
+	
+	
 
 	
 	private TrainControllerWrapper wrapper;
@@ -102,7 +107,6 @@ public class TrainControllerUI {
 		mainPanel.setBounds(0, 0, 748, 619);
 		frame.getContentPane().add(mainPanel);
 		
-		JRadioButton autoRadio = new JRadioButton("Automatic");
 		autoRadio.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent arg0) {
 				if(autoRadio.isSelected()) {
@@ -116,7 +120,6 @@ public class TrainControllerUI {
 		autoRadio.setBounds(391, 13, 98, 24);
 		mainPanel.add(autoRadio);
 		
-		JRadioButton manRadio = new JRadioButton("Manual");
 		manRadio.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent arg0) {
 				if(manRadio.isSelected()) {
@@ -162,10 +165,6 @@ public class TrainControllerUI {
 		mainPanel.add(notificationsLbl);
 		
 		JButton leftDoorButton = new JButton("Left Doors");
-		leftDoorButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
 		leftDoorButton.setBounds(524, 149, 104, 26);
 		mainPanel.add(leftDoorButton);
 		
@@ -177,7 +176,6 @@ public class TrainControllerUI {
 		lightsButton.setBounds(524, 109, 104, 26);
 		mainPanel.add(lightsButton);
 		
-		trainSelectBox = new JComboBox<Integer>();
 		trainSelectBox.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent arg0) {
 				if (arg0.getStateChange() == ItemEvent.SELECTED) {
@@ -248,7 +246,6 @@ public class TrainControllerUI {
 		brakeButton.setBounds(158, 407, 83, 26);
 		mainPanel.add(brakeButton);
 		
-		JButton eBrakeButton = new JButton("E-Brake");
 		eBrakeButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				switchEmergencyBrakeStatus();
