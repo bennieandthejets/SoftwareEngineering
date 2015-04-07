@@ -5,13 +5,20 @@ public class Switch {
 	int blockOne;
 	int blockTwo;
 	int blockRoot;
-	String position;
 	
 	public Switch(int blockRoot)
 	{
 		this.blockRoot = blockRoot;
-		//PARSE STRING SWITCHES INTO BLOCKONE AND BLOCKTWO
-		//SET POSITION
+	}
+	
+	public int getBlockOne()
+	{
+		return blockOne;
+	}
+	
+	public int getBlockTwo()
+	{
+		return blockTwo;
 	}
 	
 	public int[] getSwitchBlocks()
@@ -24,8 +31,4 @@ public class Switch {
 		return blockRoot;
 	}
 	
-	public String getPosition()
-	{
-		return position;
-	}
 }
