@@ -34,7 +34,8 @@ public class TrackController {
 	}
 	
 	TrackController() {
-		System.out.println(loadPLC("testPLC"));
+		System.out.println(loadPLC("TrackController.testPLC"));
+		System.out.println(myPLC.returnFive());
 	}
 	
 	public void setRoute(int trainBlock, int destination, double suggestedSpeed, int suggestedAuthority, int[] route) {
