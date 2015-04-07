@@ -157,7 +157,7 @@ public class CTC {
 		//load track somehow
 		//this.blocks = ben.getBlocks();	//call this once it exists
 		
-		this.blockCount = 1 // = blocks.length;
+		this.blockCount = 1; // = blocks.length;
 		
 		this.mode = 0; //manual
 		this.stops = 0;
