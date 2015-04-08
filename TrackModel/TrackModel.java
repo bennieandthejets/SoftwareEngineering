@@ -1,6 +1,7 @@
 package TrackModel;
 
 import java.awt.Color;
+import java.awt.EventQueue;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,7 +9,7 @@ import java.util.Scanner;
 
 import Simulator.Simulator;
 
-public class TrackModel {
+public class TrackModel extends TrackModelUI{
 
 	Block[] blocks;	
 	int trainOnBlock;
@@ -20,6 +21,19 @@ public class TrackModel {
 	{
 		this.s = s;
 		t = new TrackModelUI();
+	}
+	
+	public void showUI()
+	{
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					t.frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 	
 	public void tick()

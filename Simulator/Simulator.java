@@ -103,7 +103,7 @@ public class Simulator {
 	}
 	
 	public void showTrackModelUI() {
-		
+		trackModel.showUI();
 	}
 	
 	public void showTrainControllerUI() {

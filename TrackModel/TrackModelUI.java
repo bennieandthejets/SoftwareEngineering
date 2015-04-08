@@ -1,37 +1,26 @@
 package TrackModel;
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTable;
-
 import java.awt.BorderLayout;
-
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableModel;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.Choice;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Scanner;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Choice;
-import java.awt.GridLayout;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 public class TrackModelUI {
 
-	private JFrame frame;
+	JFrame frame;
 	String inputFile;
 	JPanel attributesPanel;
 	ArrayList<ArrayList<String>> line;
