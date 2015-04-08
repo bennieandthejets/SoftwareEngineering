@@ -1,7 +1,10 @@
 package TrackModel;
 
+import java.awt.Color;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import Simulator.Simulator;
 
@@ -11,11 +14,12 @@ public class TrackModel {
 	int trainOnBlock;
 	double trainMovedDist = 0.0;
 	Simulator s;
+	TrackModelUI t;
 
 	public TrackModel(Simulator s)
 	{
 		this.s = s;
-		TrackModelUI t = new TrackModelUI();
+		t = new TrackModelUI();
 	}
 	
 	public void tick()
@@ -36,6 +40,7 @@ public class TrackModel {
 	
 	public Block[] importTrack(String inputFile) throws IOException
 	{
+		//read in info for blocks
 		ExcelParser ex = new ExcelParser(inputFile);
 		ArrayList<ArrayList<String>> line = ex.getLine();
 		
@@ -56,6 +61,7 @@ public class TrackModel {
 					blocks[count].station = row.get(6);
 					blocks[count].beacon = new Beacon(count, this, s);
 					blocks[count].stationSide = row.get(15);
+					t.stationBlock(r, c);
 				}
 				blocks[count].toYard = false;
 				blocks[count].fromYard = false;
@@ -96,6 +102,70 @@ public class TrackModel {
 			}
 		}
 			
+		
+		//read in map file for UI
+		String mapFile = "";
+				
+		if(inputFile.equals("TrackLayoutGreenLine.csv"))
+			mapFile = "greenmap.txt";
+		else if(inputFile.equals("TrackLayoutRedLine.csv"))
+			mapFile = "redmap.txt";
+			
+		Scanner map = new Scanner(new File(mapFile));
+				
+		ArrayList<ArrayList<String>> mapRows = new ArrayList<ArrayList<String>>();
+			
+		while(map.hasNextLine())
+		{
+			String col = map.nextLine();
+			ArrayList<String> mapCol = new ArrayList<String>();
+			
+			String[] colArray = col.split("\\s+");
+			
+			for(int i=0; i<colArray.length; i++)
+			{
+				mapCol.add(colArray[i]);
+			}
+			mapRows.add(mapCol);
+		}
+
+		Object[][] data = new Object[mapRows.size()][mapRows.get(0).size()];
+		    
+		for(int i=0; i<mapRows.size(); i++)
+		{
+			ArrayList<String> mapCol = mapRows.get(i);
+				
+			for(int j=0; j<mapCol.size(); j++)
+			{
+				if(mapCol.get(j).equals("x"))
+					data[i][j] = new Color(143,105,255);
+				else if(mapCol.get(j).equals("Y"))
+					data[i][j] = new Color(255, 128, 0);
+				else
+				{
+					data[i][j] = new Color(105,255,161);
+					int blockNum = Integer.parseInt(mapCol.get(j));
+					if(blocks[blockNum].getSwitch() != null)
+					{
+						t.switchBlocks(i, j);
+					}
+					else if(blocks[blockNum].station != null && blocks[blockNum].stationSide.equals("right"))
+					{
+						t.stationBlock(i, j+1);
+					}
+					else if(blocks[blockNum].station != null && blocks[blockNum].stationSide.equals("left"))
+					{
+						t.stationBlock(i, j-1);
+					}
+							
+				}
+			}
+		}
+		
+		t.addMap(data);
+		map.close();
+				
+				
 		return blocks;
 	}
 	

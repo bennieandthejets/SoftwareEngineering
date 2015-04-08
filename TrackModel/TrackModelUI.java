@@ -55,7 +55,7 @@ public class TrackModelUI {
 	private Choice choice;
 	TrackModel t;
 	private JPanel mapPanel;
-
+	Object[][] data;
 
 	/**
 	 * Create the application.
@@ -101,54 +101,38 @@ public class TrackModelUI {
 
 	}
 	
-	public void addMap(String input) throws FileNotFoundException
+	public void addMap(Object[][] data) throws FileNotFoundException
 	{
-		String mapFile = "";
-		
-		if(input.equals("TrackLayoutGreenLine.csv"))
-			mapFile = "greenmap.txt";
-		else if(input.equals("TrackLayoutRedLine.csv"))
-			mapFile = "redmap.txt";
-		
-		Scanner map = new Scanner(new File(mapFile));
-		
-		ArrayList<ArrayList<String>> mapRows = new ArrayList<ArrayList<String>>();
-		
-		while(map.hasNextLine())
-		{
-			String col = map.nextLine();
-			ArrayList<String> mapCol = new ArrayList<String>();
-			
-			String[] colArray = col.split("\\s+");
-			
-			for(int i=0; i<colArray.length; i++)
-			{
-				mapCol.add(colArray[i]);
-			}
-			mapRows.add(mapCol);
-		}
-		
+		this.data = data;
 		mapPanel.setLayout(new GridLayout(1, 0, 0, 0));
-
-	    Object[][] data = new Object[mapRows.size()][mapRows.get(0).size()];
-	    
-		for(int i=0; i<mapRows.size(); i++)
-		{
-			ArrayList<String> mapCol = mapRows.get(i);
-			
-			for(int j=0; j<mapCol.size(); j++)
-			{
-				//data[i][j] = mapCol.get(j);
-				if(mapCol.get(j).equals("x"))
-					data[i][j] = new Color(143,105,255);
-				else
-					data[i][j] = new Color(105,255,161);
-			}
-		}
 		MyMap m = new MyMap(data);
 		mapPanel.add(m.getTable());
 	}
+	
+	public void stationBlock(int r, int c)
+	{
+		data[r][c] = new Color(255, 0, 191);
+		MyMap m = new MyMap(data);
+		mapPanel.removeAll();
+		mapPanel.add(m.getTable());
+	}
+	
+	public void switchBlocks(int r, int c)
+	{
+		data[r][c] = new Color(0,191,255);
+		MyMap m = new MyMap(data);
+		mapPanel.removeAll();
+		mapPanel.add(m.getTable());
+	}
 
+	public void trainOnBlock(int r, int c)
+	{
+		data[r][c] = new Color(255, 0 ,0);
+		MyMap m = new MyMap(data);
+		mapPanel.removeAll();
+		mapPanel.add(m.getTable());
+	}
+	
 	public void addBlockChoice() {
 		
 		for(int i=1; i<blocks.length; i++)
@@ -177,7 +161,6 @@ public class TrackModelUI {
 							.showInputDialog("Enter a file name to import: ");
 					try {
 						blocks = t.importTrack(inputFile);
-						addMap(inputFile);
 						addBlockChoice();
 						validInput = true;
 					} catch (IOException e) {
