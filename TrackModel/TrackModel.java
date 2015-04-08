@@ -61,7 +61,6 @@ public class TrackModel {
 					blocks[count].station = row.get(6);
 					blocks[count].beacon = new Beacon(count, this, s);
 					blocks[count].stationSide = row.get(15);
-					t.stationBlock(r, c);
 				}
 				blocks[count].toYard = false;
 				blocks[count].fromYard = false;
