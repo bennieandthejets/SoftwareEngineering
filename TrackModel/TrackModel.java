@@ -140,6 +140,8 @@ public class TrackModel {
 					data[i][j] = new Color(143,105,255);
 				else if(mapCol.get(j).equals("Y"))
 					data[i][j] = new Color(255, 128, 0);
+				else if(mapCol.get(j).equals("S"))
+					data[i][j] = new Color(255, 0, 191);
 				else
 				{
 					data[i][j] = new Color(105,255,161);
@@ -147,16 +149,7 @@ public class TrackModel {
 					if(blocks[blockNum].getSwitch() != null)
 					{
 						t.switchBlocks(i, j);
-					}
-					else if(blocks[blockNum].station != null && blocks[blockNum].stationSide.equals("right"))
-					{
-						t.stationBlock(i, j+1);
-					}
-					else if(blocks[blockNum].station != null && blocks[blockNum].stationSide.equals("left"))
-					{
-						t.stationBlock(i, j-1);
-					}
-							
+					}		
 				}
 			}
 		}

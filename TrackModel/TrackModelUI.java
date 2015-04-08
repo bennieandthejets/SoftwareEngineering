@@ -109,14 +109,6 @@ public class TrackModelUI {
 		mapPanel.add(m.getTable());
 	}
 	
-	public void stationBlock(int r, int c)
-	{
-		data[r][c] = new Color(255, 0, 191);
-		MyMap m = new MyMap(data);
-		mapPanel.removeAll();
-		mapPanel.add(m.getTable());
-	}
-	
 	public void switchBlocks(int r, int c)
 	{
 		data[r][c] = new Color(0,191,255);
