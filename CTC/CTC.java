@@ -70,56 +70,68 @@ public class CTC {
 		
 		
 		//update map
-		//blocks = ben.getBlocks(); //still doesn't exist
+		//blocks = ben.getBlocks(); 	
 		
 		
-		
-		for(int i = 0; i <blockCount; i++){
-			//boolean train = blocks[i].get;
-			//boolean broke = stat[i][1];
-			//closedBlocks[i] = blocks[i].;
-			//myWindow.setMapBlock(i,  train,  broke);
-			boolean train = false;
+		boolean[] known = new boolean[activeTrains];
+		//check current locations first 
+		for(int i = 0; i <activeTrains; i++){
+			known[i] = false;
 			
-			if(train){
-				boolean known = false; //keep track if this is a ghost train
-				//myWindow.setAnnouncement("train found at " + i + " " + activeTrains);
-				//see if a train position needs to be updated
-				for(int j = 0; j < activeTrains; j++){
-					if(locations[j] == i){
-						//ignore if a train was already here
-						//myWindow.setAnnouncement("already train at " + i);
-						known = true;
-						break;						
-					}
-					if(routes[j] != null){
-						//myWindow.setAnnouncement("not null, next dest " + routes[j].block);
-						if(routes[j].block == i){
-					
-						//train moved to this block, update position
-						routes[j] = routes[j].next;
-						locations[j] = i;	
-						myWindow.setLocation(j,  i,  -1);
-						//myWindow.setAnnouncement(j + " " + i );
-						known = true;
-						}
-					} else {
-						//myWindow.setAnnouncement("that shit null: block " + i + " train: " + j);
-					}
-				}
-				if(!known){
-					//kinda error: train where we didn't want one
-					myWindow.setAnnouncement("!!Unexpected Train at Block " + i + "!!");
-				}				
+			if(locations[i] > 0 && blocks[locations[i]].isTrainPresent()){
+				//assume this train is still the one on that block. should hold unless active train # approaches block number
+				known[i] = true;
 			}			
 		}
+		//check destinations to see if the trains made it 
+		for(int i = 0; i <activeTrains; i++){			
+			if(!known[i] && locations[i]>0){
+				//make sure a train isn't already there
+				boolean cockBlocked = false; 
+				for(int j = 0; j < activeTrains; j++){
+					if(locations[j] == routes[i].block){
+						cockBlocked = true;
+						break;
+					}
+				}
+				if(cockBlocked || !blocks[routes[i].block].isTrainPresent()){
+					//check for another switch path
+					Switch sw = blocks[locations[i]].getSwitch();
+					if(sw!=null){
+						int root = sw.getRoot();
+						int one = sw.getSwitchBlocks()[0];
+						int two = sw.getSwitchBlocks()[1];
+						int loc  = locations[i];
+						if((loc==root)){ // this is the only time a train could go to more than one place
+							if(loc==one&&blocks[two].isTrainPresent()){
+								myWindow.setLocation(i,  two, -1);
+								//!!! do something about the broken route
+							} else if (loc==two&&blocks[one].isTrainPresent()){
+								myWindow.setLocation(i,  one, -1);
+								//!!! do something about the broken route
+							}
+						}
+						
+					}
+				}
+			} else if(blocks[routes[i].block].isTrainPresent()){
+				//set current location to this one and cycle route
+				myWindow.setLocation(i,routes[i].block, -1);
+				locations[i] = routes[i].block;
+				known[i] = true;
+				routes[i] = routes[i].next;
+			
+			}
+		}
+			
 		
 		//verify that all train locations actually have a train on them
 		for(int i = 0;i<activeTrains;i++){
-			/*if(!stat[locations[i]][0]){
-				myWindow.setAnnouncement("!!Lost Train " + (i + 1) + "! What have you done?!?!");							
+			if(!known[i] && locations[i]>0){
+				myWindow.setAnnouncement("!!Lost Train " + (i + 1) + "! What have you done?!?!");
+				locations[i] = 0;
 			}
-			*/
+			
 		}
 		
 	}
@@ -157,7 +169,7 @@ public class CTC {
 		//load track somehow
 		//this.blocks = ben.getBlocks();	//call this once it exists
 		
-		this.blockCount = 1; // = blocks.length;
+		this.blockCount = 0; // = blocks.length;
 		
 		this.mode = 0; //manual
 		this.stops = 0;
@@ -240,18 +252,17 @@ public class CTC {
 		if(block > 0 ){
 			//route it
 			//calculate full path
-			int[] path = calcRoute(block, dest);
+			TrainRoute path = calcRoute(block, dest);
+			int length = routeLength(path);
+			routes[train] = path;
 			
-			//myWindow.setAnnouncement("path calculated");
 			
-			if(setRoute(train, path)){
+			
 				//this.faaake.routeTrain( block, speed, dest, path);			
 				//myWindow.setAnnouncement("route set");			
 				myWindow.setLocation(train, -1,  dest);
 				return true;
-			} else {
-				return false;
-			}
+			
 			
 			
 		} else {
@@ -268,35 +279,31 @@ public class CTC {
 		//!!! for demo don't optimize train selection. new trains will always be at the end of the array
 		
 		//use old max for index of new train
-		routes[activeTrains] = new TrainRoute(1, null); //!!! 1 is not the first block connected to the yard
+		routes[activeTrains] = new TrainRoute(fromYard, null); 
 		locations[activeTrains] = 0; //special flag for yard
 		
 		myWindow.setLocation(activeTrains, -1,  1);
 		
 		activeTrains++; 
 		
+		//make train puppy in sim
+		
 	}
 	
 	//sub to find the best route
-	private int[] calcRoute(int block, int dest){
+	private TrainRoute calcRoute(int block, int dest){
 		
 		//calculate both directions, choose shortest		
-		TrainRoute rtUp = new TrainRoute(block, null);
-		
-		TrainRoute rtDwn = new TrainRoute(block, null);
-		
-						
-		/*
-		//straight path for demo, return sequence
-		
-		for(int i =0; i < (dest-block) + 1; i++){
-			path[i] = block + i;
-			//myWindow.setAnnouncement("   " + Integer.toString(path[i]));
-		}		
-		*/
-		int path[] = new int[(dest-block) + 1];
-		return path;
-		
+		TrainRoute rtUp = calcRoute(block, dest, true);		
+		TrainRoute rtDwn = calcRoute(block, dest, false);
+		int upLength = routeLength(rtUp);
+		int downLength = routeLength(rtDwn);
+		if(upLength > downLength){
+			return rtDwn;
+		} else {
+			return rtUp;
+		}
+				
 	}
 	//sub to determine a path in a specific direction
 	private TrainRoute calcRoute(int block, int dest, boolean up){
@@ -310,8 +317,9 @@ public class CTC {
 			inc = -1;
 		}
 		
-		boolean hasSwitch = false; //!!!  fuck you jackie; commit yo' shit
-		Switch sw = new Switch(0, "fuckkkkkkkkk");
+		Switch sw = blocks[block].getSwitch();
+		boolean hasSwitch = (sw == null);
+		
 		int next = -1;
 		boolean justSwitched = false;
 		
@@ -320,7 +328,7 @@ public class CTC {
 				justSwitched = true;
 				if (sw.getRoot() == block){
 					//choose "One" or "Two"
-					int[] paths = sw.getBlocks();
+					int[] paths = sw.getSwitchBlocks();
 					//!!! dangerous assumption: paths[0] will be root + 1
 					if(onBranch(paths[0], dest)){
 						next = paths[0];
@@ -343,7 +351,7 @@ public class CTC {
 					next = block - inc;
 				}
 				//don't get turned around if you come off of a switch and you like another block from that switch
-				if ((hasSwitch)&&(next==sw.getRoot() || next==sw.getBlocks()[0] || next==sw.getBlocks()[1])){
+				if ((hasSwitch)&&(next==sw.getRoot() || next==sw.getSwitchBlocks()[0] || next==sw.getSwitchBlocks()[1])){
 					next = block - inc;
 				}
 				
@@ -353,21 +361,30 @@ public class CTC {
 				block = next;
 				TrainRoute rrrt = new TrainRoute(next, null);
 				rt.next = rrrt;
-				rt = rrrt;
-				
+				rt = rrrt;				
+			}			
+			
+		} //end while	
+		
+		return save;
+	}
+
+	//sub for determining route length. used to pick between up and down
+	private int routeLength(TrainRoute rt){
+		int length = 0;
+		
+		while(rt!=null){
+			if(rt.next == null){
+				length+=10;
+			} else {
+				length += blocks[rt.block].getBlockSize();
+				rt = rt.next;
 			}
 			
-						
-		} //end while
-		
-		
-		
-		
-		return rt;
+		}
+		return length;		
 	}
-	
-	
-	
+		
 	/* sub to check if the destination is on the branch path. 
 	*  Allows the main routing calculation to ignore branches
 	*/
