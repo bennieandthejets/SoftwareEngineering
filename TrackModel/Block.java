@@ -24,12 +24,17 @@ public class Block {
 	double cumElevation;
 	boolean toYard;
 	boolean fromYard;
+	String stationSide;
 	
 	public Block(int blockID)
 	{
 		this.blockID = blockID;
 	}
 	
+	public String getStationSide()
+	{
+		return stationSide;
+	}
 	public boolean isToYard()
 	{
 		return toYard;

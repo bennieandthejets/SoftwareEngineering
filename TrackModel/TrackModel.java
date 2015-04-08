@@ -3,25 +3,35 @@ package TrackModel;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import Simulator.Simulator;
+
 public class TrackModel {
 
 	Block[] blocks;	
-		
+	int trainOnBlock;
+	double trainMovedDist = 0.0;
+	Simulator s;
 
-	public double trainMovedDistance()
+	public TrackModel(Simulator s)
 	{
-		//find out how far train has moved
-		//get deploy time and place from reggie
-		//get speed constantly from reggie
-		//determine how far train has moved based on speed and position
-		//call findTrain
-		
-		return 0.0;
+		this.s = s;
+		TrackModelUI t = new TrackModelUI();
+	}
+	
+	public void tick()
+	{
+		findTrain();
 	}
 	
 	public void findTrain()
 	{
-		
+		if(trainMovedDist/blocks[trainOnBlock].blockSize == 1)
+		{
+			blocks[trainOnBlock].trainPresent = false;
+			trainMovedDist = 0.0;
+			trainOnBlock++;
+			blocks[trainOnBlock].trainPresent = true;
+		}
 	}
 	
 	public Block[] importTrack(String inputFile) throws IOException
@@ -41,7 +51,12 @@ public class TrackModel {
 				blocks[count].blockSize = Double.parseDouble(row.get(3));
 				blocks[count].grade = Double.parseDouble(row.get(4));
 				blocks[count].speedLimit = Integer.parseInt(row.get(5));
-				blocks[count].station = row.get(6);
+				if(row.get(6).length() > 1)
+				{
+					blocks[count].station = row.get(6);
+					blocks[count].beacon = new Beacon(count, this, s);
+					blocks[count].stationSide = row.get(15);
+				}
 				blocks[count].toYard = false;
 				blocks[count].fromYard = false;
 				if(row.get(7).equals("TRUE"))

@@ -29,7 +29,7 @@ import java.awt.Font;
 import java.awt.Choice;
 import java.awt.GridLayout;
 
-public class TrackModelUI extends TrackModel {
+public class TrackModelUI {
 
 	private JFrame frame;
 	String inputFile;
@@ -56,21 +56,6 @@ public class TrackModelUI extends TrackModel {
 	TrackModel t;
 	private JPanel mapPanel;
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					TrackModelUI window = new TrackModelUI();
-					window.frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 
 	/**
 	 * Create the application.
@@ -83,8 +68,6 @@ public class TrackModelUI extends TrackModel {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		
-		t = new TrackModel();
 		
 		frame = new JFrame();
 		frame.setBounds(100, 100, 710, 508);
