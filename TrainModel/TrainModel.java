@@ -84,8 +84,7 @@ public class TrainModel{
 	//###############
 	public TrainModel(int trainID){
 		//initializing variables
-		
-		setPower(150000.0);
+		setpoint = 10.0;
 		trainAcceleration = 0.0;
 		trainVelocity = 0.0;
 		passengers = 0;
@@ -231,7 +230,7 @@ public class TrainModel{
 	}
 	
 	public double getSetpointVelocity(){
-		return setpoint;
+		return setpoint ;
 	}
 	public double getAcceleration(){
 		return trainAcceleration;
