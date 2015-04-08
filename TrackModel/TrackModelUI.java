@@ -18,6 +18,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import Simulator.Simulator;
+
 public class TrackModelUI {
 
 	JFrame frame;
@@ -49,7 +51,8 @@ public class TrackModelUI {
 	/**
 	 * Create the application.
 	 */
-	public TrackModelUI() {
+	public TrackModelUI(TrackModel t) {
+		this.t = t;
 		initialize();
 	}
 
@@ -60,7 +63,6 @@ public class TrackModelUI {
 		
 		frame = new JFrame();
 		frame.setBounds(100, 100, 710, 508);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		attributesPanel = new JPanel();
 		attributesPanel.setBackground(new Color(255, 153, 0));
@@ -92,23 +94,24 @@ public class TrackModelUI {
 	
 	public void addMap(Object[][] data) throws FileNotFoundException
 	{
+		mapPanel.removeAll();
 		this.data = data;
 		mapPanel.setLayout(new GridLayout(1, 0, 0, 0));
 		MyMap m = new MyMap(data);
 		mapPanel.add(m.getTable());
 	}
 	
-	public void switchBlocks(int r, int c)
+	public void trainOnBlock(int r, int c)
 	{
-		data[r][c] = new Color(0,191,255);
+		data[r][c] = new Color(255, 0 ,0);
 		MyMap m = new MyMap(data);
 		mapPanel.removeAll();
 		mapPanel.add(m.getTable());
 	}
-
-	public void trainOnBlock(int r, int c)
+	
+	public void trainOffBlock(int r, int c)
 	{
-		data[r][c] = new Color(255, 0 ,0);
+		data[r][c] = new Color(143,105,255);
 		MyMap m = new MyMap(data);
 		mapPanel.removeAll();
 		mapPanel.add(m.getTable());

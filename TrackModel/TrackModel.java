@@ -9,7 +9,7 @@ import java.util.Scanner;
 
 import Simulator.Simulator;
 
-public class TrackModel extends TrackModelUI{
+public class TrackModel {
 
 	Block[] blocks;	
 	int trainOnBlock;
@@ -20,7 +20,7 @@ public class TrackModel extends TrackModelUI{
 	public TrackModel(Simulator s)
 	{
 		this.s = s;
-		t = new TrackModelUI();
+		t = new TrackModelUI(this);
 	}
 	
 	public void showUI()
@@ -151,18 +151,18 @@ public class TrackModel extends TrackModelUI{
 			for(int j=0; j<mapCol.size(); j++)
 			{
 				if(mapCol.get(j).equals("x"))
-					data[i][j] = new Color(143,105,255);
+					data[i][j] = new Color(255,255,255);
 				else if(mapCol.get(j).equals("Y"))
 					data[i][j] = new Color(255, 128, 0);
 				else if(mapCol.get(j).equals("S"))
 					data[i][j] = new Color(255, 0, 191);
 				else
 				{
-					data[i][j] = new Color(105,255,161);
+					data[i][j] = new Color(143,105,255);
 					int blockNum = Integer.parseInt(mapCol.get(j));
 					if(blocks[blockNum].getSwitch() != null)
 					{
-						t.switchBlocks(i, j);
+						data[i][j] = new Color(0,9,255);
 					}		
 				}
 			}
