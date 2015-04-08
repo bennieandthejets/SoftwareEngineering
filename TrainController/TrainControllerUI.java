@@ -44,6 +44,8 @@ import java.util.*;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
 
+import java.text.DecimalFormat;
+
 @SuppressWarnings("unused")
 public class TrainControllerUI {
 
@@ -51,6 +53,8 @@ public class TrainControllerUI {
 	
 	private final double	MPS_TO_MPH = 2.23694;			//Conversion ratio for meters per second to miles per hour
 	private final double	METERS_TO_MILES = 0.000621371;	//Conversion ratio for meters to miles
+	
+	private final DecimalFormat	formatter = new DecimalFormat("0.00");
 	
 	private final ButtonGroup controlModes = new ButtonGroup();
 	private final JSlider velocitySlider = new JSlider();
@@ -371,7 +375,7 @@ public class TrainControllerUI {
 			newVelocity = controller.getSetpointVelocity() * MPS_TO_MPH;
 		}
 		
-		targetVelocityField.setText(Double.toString(newVelocity));
+		targetVelocityField.setText(formatter.format(newVelocity));
 		
 		controller.setTargetVelocity(newVelocity / MPS_TO_MPH);
 	}
@@ -385,15 +389,15 @@ public class TrainControllerUI {
 	}
 	
 	private void updateSetpointVelocity(double newSetpointVelocity) {
-		setpointVelocityField.setText(Double.toString(newSetpointVelocity));
+		setpointVelocityField.setText(formatter.format(newSetpointVelocity));
 	}
 	
 	private void updateVelocityFeedback(double newSetpointVelocity) {
-		velocityFeedbackField.setText(Double.toString(newSetpointVelocity));
+		velocityFeedbackField.setText(formatter.format(newSetpointVelocity));
 	}
 	
 	private void updateAuthority(double newAuthority) {
-		authorityField.setText(Double.toString(newAuthority));
+		authorityField.setText(formatter.format(newAuthority));
 	}
 	
 	public void update() {

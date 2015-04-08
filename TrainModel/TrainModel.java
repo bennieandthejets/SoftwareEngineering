@@ -84,7 +84,7 @@ public class TrainModel{
 	//###############
 	public TrainModel(int trainID){
 		//initializing variables
-		setpoint = 10.0;
+		
 		trainAcceleration = 0.0;
 		trainVelocity = 0.0;
 		passengers = 0;
@@ -100,6 +100,11 @@ public class TrainModel{
 				e.printStackTrace();
 			}
 		}*/
+		
+		//TEST ONLY
+		setpoint = 18.0;
+		stopDistance = 100.0;
+		
 	}
 	
 	//main  for testing
@@ -134,9 +139,9 @@ public class TrainModel{
 			trainForce = BRAKE_DECEL*totalMass;
 		else{
 			if(trainVelocity == 0.0)
-				trainForce = trainPower/.001; // N = W/(m/s) = kg*m/s^2
+				trainForce = 1000* trainPower/.001; // N = W/(m/s) = kg*m/s^2
 			else
-				trainForce = trainPower/trainVelocity;	
+				trainForce = 1000* trainPower/trainVelocity;	
 		}
 		System.out.println("Train Force: "+trainForce+" N");
 	}
@@ -222,7 +227,8 @@ public class TrainModel{
 	}
 	
 	public double getStopDistance(){
-		return mbo.calculateStopDistance(trainVelocity);
+		//return mbo.calculateStopDistance(trainVelocity);
+		return 100.0;
 	}
 	
 	public double getVelocity(){

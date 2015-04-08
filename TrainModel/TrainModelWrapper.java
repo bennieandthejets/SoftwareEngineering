@@ -62,7 +62,7 @@ public class TrainModelWrapper{
 		while(true) {
 			trainModWrap.tick();
 			trainConWrap.tick();
-			Thread.sleep(1000);
+			Thread.sleep(100);
 		}
 	}
 }
