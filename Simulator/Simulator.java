@@ -31,7 +31,7 @@ public class Simulator {
         
         ctc = new CTC(this);
         mbo = new MBO(this);
-        trackControllerWrapper = new TrackCtrlWrapper(this);
+       // trackControllerWrapper = new TrackCtrlWrapper(this);
         trackModel = new TrackModel(this);
         trainControllerWrapper = new TrainControllerWrapper(this);
         trainModelWrapper = new TrainModelWrapper(this);
@@ -111,7 +111,7 @@ public class Simulator {
 	}	
 	
 	public void showTrainModelUI() {
-		
+		trainModelWrapper.showUI();
 	}
 	
     public static void main(String[] args ) throws InterruptedException {

@@ -133,6 +133,7 @@ public class SimulatorUI {
 		JButton trainModelButton = new JButton("Train Model");
 		trainModelButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				simulator.showTrainModelUI();
 			}
 		});
 		trainModelButton.setBounds(10, 206, 109, 28);
