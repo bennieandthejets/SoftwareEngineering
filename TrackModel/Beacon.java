@@ -10,6 +10,8 @@ public class Beacon {
 	String station;
 	String side;
 	Simulator s;
+	boolean fromNorth;
+	boolean fromSouth;
 		
 	public Beacon(int blockID, TrackModel t, Simulator s)
 	{
@@ -27,12 +29,27 @@ public class Beacon {
 	
 	public void findSide()
 	{
-		//when trainnear is true, find which block train is seen on first
-		//UPDATE CSV FILES to see which side of track station is on
-		//if train is coming from north and station is on right of track, side is left
-		//if train is coming from north and station is on left of track, side is right
-		//if train is coming from south and station is on right of track, side is right
-		//if train is coming from south and station is on left of track, side is on left
+		if(trainNear)
+		{
+			if(fromNorth && blocks[blockID].stationSide.equals("right"))
+			{
+				side = "left";
+			}
+			else if(fromNorth && blocks[blockID].stationSide.equals("left"))
+			{
+				side = "right";
+			}
+			else if(fromSouth && blocks[blockID].stationSide.equals("right"))
+			{
+				side = "right";
+			}
+			else if(fromSouth && blocks[blockID].stationSide.equals("left"))
+			{
+				side = "left";
+			}
+			else
+				side = null;
+		}
 	}
 	
 	public String getSide()
@@ -52,24 +69,55 @@ public class Beacon {
 	
 	public void searchForTrain()
 	{
-		//SEARCH DISTANCE FOR TRAIN
-		//USES WHERE TRAIN WAS/SPEED TO FIND WHERE TRAIN IS NOW
-		//CHANGE TRAINPRESENT VARIABLE
+		//searches for train from three blocks away
+		//TODO search based on distance rather than blocks
 		if(blocks[blockID+3].trainPresent)
+		{
 			trainNear = true;
+			fromNorth = false;
+			fromSouth = true;
+		}
 		else if(blocks[blockID+2].trainPresent)
+		{
 			trainNear = true;
+			fromNorth = false;
+			fromSouth = true;
+		}
 		else if(blocks[blockID+1].trainPresent)
+		{
 			trainNear = true;
+			fromNorth = false;
+			fromSouth = true;
+		}
 		else if(blocks[blockID].trainPresent)
+		{
 			trainNear = true;
+			fromNorth = false;
+			fromSouth = false;
+		}
 		else if(blocks[blockID+1].trainPresent)
+		{
 			trainNear = true;
+			fromNorth = true;
+			fromSouth = false;
+		}
 		else if(blocks[blockID+2].trainPresent)
+		{
 			trainNear = true;
+			fromNorth = true;
+			fromSouth = false;
+		}
 		else if(blocks[blockID+3].trainPresent)
+		{
 			trainNear = true;
+			fromNorth = true;
+			fromSouth = false;
+		}
 		else
+		{
 			trainNear = false;
+			fromNorth = false;
+			fromSouth = false;
+		}
 	}
 }

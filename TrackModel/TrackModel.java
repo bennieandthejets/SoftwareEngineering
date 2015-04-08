@@ -15,6 +15,7 @@ public class TrackModel {
 	public TrackModel(Simulator s)
 	{
 		this.s = s;
+		TrackModelUI t = new TrackModelUI();
 	}
 	
 	public void tick()
@@ -54,6 +55,7 @@ public class TrackModel {
 				{
 					blocks[count].station = row.get(6);
 					blocks[count].beacon = new Beacon(count, this, s);
+					blocks[count].stationSide = row.get(15);
 				}
 				blocks[count].toYard = false;
 				blocks[count].fromYard = false;
