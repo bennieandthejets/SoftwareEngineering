@@ -117,8 +117,7 @@ public class CTC {
 						}
 						
 					} 
-				}
-			} else if(blocks[routes[i].block].isTrainPresent()){
+				} else if(blocks[routes[i].block].isTrainPresent()){
 				//set current location to this one and cycle route
 				myWindow.setLocation(i,routes[i].block, -1);
 				locations[i] = routes[i].block;
@@ -126,6 +125,7 @@ public class CTC {
 				routes[i] = routes[i].next;
 			
 			}
+		}
 		}
 			
 		
@@ -308,7 +308,7 @@ public class CTC {
 		routes[activeTrains] = new TrainRoute(fromYard, null); 
 		locations[activeTrains] = 0; //special flag for yard
 		
-		myWindow.setLocation(activeTrains, -1,  1);
+		myWindow.setLocation(activeTrains, -1,  fromYard);
 		
 		activeTrains++; 
 		
