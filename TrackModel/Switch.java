@@ -5,7 +5,7 @@ public class Switch {
 	int blockOne;
 	int blockTwo;
 	int blockRoot;
-	int direction;
+	boolean direction;
 	
 	public Switch(int blockRoot)
 	{
@@ -14,13 +14,13 @@ public class Switch {
 	
 	public int getSwitchTaken()
 	{
-		if(direction == 1)
-			return blockOne;
-		else
+		if(direction)
 			return blockTwo;
+		else
+			return blockOne;
 	}
 	
-	public int getDirection()
+	public boolean getDirection()
 	{
 		return direction;
 	}

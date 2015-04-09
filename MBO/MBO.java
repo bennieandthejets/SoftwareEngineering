@@ -1,5 +1,6 @@
 package MBO;
 
+import java.util.ArrayList;
 import CTC.*;
 import Simulator.*;
 import TrackModel.*;
@@ -22,7 +23,8 @@ public class MBO
 	private int numTrains;
 		
 	// Map train ID to stuff
-	HashMap<Integer, TrainModel> trains;
+	private TrainModelWrapper trainModelWrapper;
+	ArrayList<Antenna> reggies;
 	HashMap<Integer, TrainSchedule> trainSchedules;
 	HashMap<Integer, CrewSchedule> crewSchedules;
 	HashMap<Integer, Double> authorities;
@@ -38,7 +40,6 @@ public class MBO
 	public MBO()
 	{
 		this.ui = new MBOUI();
-		trains = new HashMap<Integer, TrainModel>();
 		trainSchedules = new HashMap<Integer, TrainSchedule>();
 		crewSchedules = new HashMap<Integer, CrewSchedule>();
 		authorities = new HashMap<Integer, Double>();
@@ -52,6 +53,10 @@ public class MBO
 	public MBO(Simulator simulator) {
 		this();
 		this.simulator = simulator;
+	}
+	
+	public void setTrackModel(TrainModelWrapper trainModelWrapper) {
+		this.trainModelWrapper = trainModelWrapper;
 	}
 	
 	public void showUI() {
@@ -258,6 +263,10 @@ public class MBO
 		ui.setItems(this);
 	}
 	
+	public void trainAdded() {
+		this.reggies = trainModelWrapper.getAllAntennas();
+	}
+	
 	public long getTime() {
 		return this.systemTime;
 	}
@@ -314,5 +323,4 @@ public class MBO
 		prototype.createTrainSchedule(35);
 		ui.setItems(prototype);*/
 	}
-
 }

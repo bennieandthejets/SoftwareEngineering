@@ -139,7 +139,7 @@ public class TrackModel {
 					blocks[count].getSwitch().blockRoot = blocks[count].blockID;
 					blocks[count].getSwitch().blockOne = Integer.parseInt(row.get(12));
 					blocks[count].getSwitch().blockTwo = Integer.parseInt(row.get(13));
-					blocks[count].getSwitch().direction = 1;
+					blocks[count].getSwitch().direction = false;
 				}
 				blocks[count].switchRoot = -1;
 			}
