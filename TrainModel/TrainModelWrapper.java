@@ -10,7 +10,7 @@ import Simulator.Simulator;
 
 public class TrainModelWrapper{
 	//ATTRIBUTES
-	ArrayList<TrainModel> trains;
+	public ArrayList<TrainModel> trains;
 	ArrayList<Antenna> antennas;
 	Simulator sim;
 	TrainControllerWrapper trainCtrlWrapper;
