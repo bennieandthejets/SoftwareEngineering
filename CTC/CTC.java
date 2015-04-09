@@ -247,10 +247,9 @@ public class CTC {
 	
 	public boolean routeTrainCTC(int train, double speed, int dest){
 		//convert train number to block number
-		///!!! test without working train presence by using the train # as block #
-		//int block = locations[train];
-		int block = train + 1;
 		
+		int block = locations[train];
+				
 		
 		//myWindow.setAnnouncement("got location " + Integer.toString(block));
 		
@@ -258,16 +257,24 @@ public class CTC {
 			//route it
 			//calculate full path
 			TrainRoute path = calcRoute(block, dest);
-			int length = routeLength(path);
+			int[] lengths = routeLength(path);
 			routes[train] = path;
 			
+			int[] p = pathFromRoute(path, lengths[1]);
 			
-			
+			String ann = "Route: ";
+			for(int i = 0; i < lengths[1];i++){
+				ann = ann + p[i] + "-";
+			}
+			myWindow.setAnnouncement(ann);
+			System.out.println(ann);
 				//this.faaake.routeTrain( block, speed, dest, path);			
 				//myWindow.setAnnouncement("route set");			
 				myWindow.setLocation(train, -1,  dest);
 				return true;
 			
+				
+				
 			
 			
 		} else {
@@ -277,6 +284,16 @@ public class CTC {
 		
 		
 		
+	}
+	
+	private int[] pathFromRoute(TrainRoute rt, int length){
+		int[] p = new int[length];
+		
+		for (int i = 0; i < length; i++){
+			p[i] = rt.block;
+			rt = rt.next;
+		}		
+		return p;
 	}
 	
 	//choose a train to spawn and set it's destination to the spawn block
@@ -298,16 +315,16 @@ public class CTC {
 	//sub to find the best route
 	private TrainRoute calcRoute(int block, int dest){
 		
-		myWindow.setAnnouncement("entered calcRoute");
+		//myWindow.setAnnouncement("entered calcRoute");
 		
 		//calculate both directions, choose shortest	
-		myWindow.setAnnouncement("start calc up");
+		//myWindow.setAnnouncement("start calc up");
 		TrainRoute rtUp = calcRoute(block, dest, true);		
-		myWindow.setAnnouncement("start calc down");
+		//myWindow.setAnnouncement("start calc down");
 		TrainRoute rtDwn = calcRoute(block, dest, false);
-		myWindow.setAnnouncement("calced both directions");
-		int upLength = routeLength(rtUp);
-		int downLength = routeLength(rtDwn);
+		//myWindow.setAnnouncement("calced both directions");
+		int upLength = routeLength(rtUp)[0];
+		int downLength = routeLength(rtDwn)[0];
 		if(upLength > downLength){
 			return rtDwn;
 		} else {
@@ -336,38 +353,40 @@ public class CTC {
 			
 			Switch sw = blocks[block].getSwitch();			
 			boolean hasSwitch = (sw != null);
-			myWindow.setAnnouncement("route: " + block + ". has switch? " + hasSwitch);
+			//myWindow.setAnnouncement("route: " + block + ". has switch? " + hasSwitch);
 			if(hasSwitch && !justSwitched){
 				justSwitched = true;
 				if (sw.getRoot() == block){
-					myWindow.setAnnouncement("dat da root");
+					//myWindow.setAnnouncement("dat da root");
 					//choose "One" or "Two"
 					int[] paths = sw.getSwitchBlocks();
 					//!!! dangerous assumption: paths[0] will be root +/- 1
-					if(onBranch(paths[0], dest)){
-						myWindow.setAnnouncement("Dest on Branch " + paths[0]);
+					if(paths[0]==dest || onBranch(paths[0], dest)){
+						//myWindow.setAnnouncement("Dest on Branch " + paths[0]);
 						next = paths[0];
-					} else if (onBranch(paths[1], dest)){
-						myWindow.setAnnouncement("Dest on Branch " + paths[1]);
+					} else if (paths[1]==dest || onBranch(paths[1], dest)){
+						//myWindow.setAnnouncement("Dest on Branch " + paths[1]);
 						next = paths[1];
 					} else {
-						myWindow.setAnnouncement("neither path has dest, go to " + paths[0]);
+						//myWindow.setAnnouncement("neither path has dest, go to " + paths[0]);
 						next =  paths[0];
-					}
-					
+					}					
 				} else {
 					//cann only go to root block from a branch
-					myWindow.setAnnouncement("root: " + sw.getRoot() + ", block: " + block);
+					//myWindow.setAnnouncement("root: " + sw.getRoot() + ", block: " + block);
 					next = sw.getRoot();
-				}
-			
+				}			
 			} else if(blocks[block].getSwitchRoot() != -1 && !justSwitched){
-				myWindow.setAnnouncement("branch");
+				//myWindow.setAnnouncement("branch");
 				justSwitched = true;
 				next = blocks[block].getSwitchRoot();
 			} else {
 				justSwitched = false;
-				next = block + inc;
+				if (block > 66 && block < 77){
+					next = block - inc;
+				} else {
+					next = block + inc;
+				}				
 				//turn around if these blocks are pointing the other way
 				if (next == previous){
 					next = block - inc;
@@ -375,9 +394,7 @@ public class CTC {
 				//don't get turned around if you come off of a switch and you like another block from that switch
 				if (next == blocks[block].getSwitchRoot() || (sw != null && (next==sw.getSwitchBlocks()[0] || next==sw.getSwitchBlocks()[1]))){
 					next = block - inc;
-				}
-				
-											
+				}											
 			}	
 			//add new location to list (route)
 			previous = block;
@@ -387,7 +404,7 @@ public class CTC {
 			rt = rrrt;	
 			
 			if(block==previous || block == toYard || block == fromYard){
-				myWindow.setAnnouncement("fuckkkk");
+				//myWindow.setAnnouncement("fuckkkk");
 				break;
 			}
 			
@@ -397,16 +414,17 @@ public class CTC {
 	}
 
 	//sub for determining route length. used to pick between up and down
-	private int routeLength(TrainRoute rt){
-		int length = 0;
+	private int[] routeLength(TrainRoute rt){
+		int[] length = {0,0};
 		
 		while(rt!=null){
 			if(rt.next == null){
-				length+=10;
+				length[0]+=10;
 			} else {
-				length += blocks[rt.block].getBlockSize();
-				rt = rt.next;
+				length[0] += blocks[rt.block].getBlockSize();				
 			}
+			length[1]++;
+			rt = rt.next;
 			
 		}
 		return length;		
@@ -458,7 +476,7 @@ public class CTC {
 		for (int i = path.length - 1; i >= 0; i--){
 			if(closedBlocks[path[i]]){
 				//block route
-				myWindow.setAnnouncement("!!Cannot Route Over Broken Block " + path[i] + "!!");
+				//myWindow.setAnnouncement("!!Cannot Route Over Broken Block " + path[i] + "!!");
 				return false;
 			}else {
 				if (end){

@@ -577,7 +577,7 @@ public class ctcWindow {
 			public void actionPerformed(ActionEvent arg0) {
 				try{
 					//block invalid train and block numbers
-					if(Integer.parseInt(txtTrainNum.getText()) < 1 || Integer.parseInt(txtTrainNum.getText()) > owner.activeTrains){
+					if((Integer.parseInt(txtTrainNum.getText()) < 1 || Integer.parseInt(txtTrainNum.getText()) > owner.activeTrains)){
 						setAnnouncement("Routing Failed: invalid train number " + txtTrainNum.getText());
 					} else if(Integer.parseInt(txtDestBlockNum.getText()) < 0 || Integer.parseInt(txtDestBlockNum.getText()) > owner.blockCount){
 						setAnnouncement("Routing Failed: invalid block number " + txtDestBlockNum.getText());						
@@ -686,7 +686,7 @@ public class ctcWindow {
 		lblRecentCommands.setBounds(582, 402, 110, 14);
 		frmCtc.getContentPane().add(lblRecentCommands);
 		
-		JButton btnSpawn = new JButton("Spawn Train");
+		JButton btnSpawn = new JButton("Make Train Puppy From Train Embryo");
 		btnSpawn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//fakeShit.spawnTrain();
@@ -694,7 +694,7 @@ public class ctcWindow {
 			}
 		});
 		btnSpawn.setForeground(new Color(0, 0, 205));
-		btnSpawn.setBounds(821, 229, 110, 23);
+		btnSpawn.setBounds(690, 229, 241, 23);
 		frmCtc.getContentPane().add(btnSpawn);
 		
 		JScrollPane scrollPane = new JScrollPane();
