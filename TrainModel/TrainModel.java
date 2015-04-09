@@ -274,6 +274,10 @@ public class TrainModel{
 		return trainVelocity;
 	}
 	
+	public double getAuthority(){
+		return authority;
+	}
+	
 	public double getSetpointVelocity(){
 		return setpoint;
 	}
