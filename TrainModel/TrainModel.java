@@ -292,6 +292,10 @@ public class TrainModel{
 		trainPower = power;
 	}
 	
+	public void setAntenna(Antenna antenna){
+		this.antenna = antenna;
+	}
+	
 	public void setSafeAuthority(double auth){
 		authority = auth;
 	}
