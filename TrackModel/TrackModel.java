@@ -66,7 +66,14 @@ public class TrackModel {
 			blocks[trainOnBlock].trainPresent = false;
 			t.trainOffBlock(blocks[trainOnBlock].mapRow, blocks[trainOnBlock].mapCol);
 			trainMovedDist = 0.0;
-			trainOnBlock++;
+			if(blocks[trainOnBlock].getSwitch() != null)
+			{
+				trainOnBlock = blocks[trainOnBlock].getSwitch().getSwitchTaken();
+			}
+			else
+			{
+				trainOnBlock++;
+			}
 			blocks[trainOnBlock].trainPresent = true;
 			t.trainOnBlock(blocks[trainOnBlock].mapRow, blocks[trainOnBlock].mapCol);
 		}
@@ -99,7 +106,9 @@ public class TrackModel {
 				blocks[count].toYard = false;
 				blocks[count].fromYard = false;
 				if(row.get(7).equals("TRUE"))
+				{
 					blocks[count].sw = new Switch(count);
+				}
 				else if(row.get(7).equals("TO YARD"))
 				{
 					blocks[count].toYard = true;
@@ -130,6 +139,7 @@ public class TrackModel {
 					blocks[count].getSwitch().blockRoot = blocks[count].blockID;
 					blocks[count].getSwitch().blockOne = Integer.parseInt(row.get(12));
 					blocks[count].getSwitch().blockTwo = Integer.parseInt(row.get(13));
+					blocks[count].getSwitch().direction = 1;
 				}
 				blocks[count].switchRoot = -1;
 			}
