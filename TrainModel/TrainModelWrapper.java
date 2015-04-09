@@ -26,6 +26,7 @@ public class TrainModelWrapper{
 		this.sim = sim;
 		this.trainCtrlWrapper = sim.trainControllerWrapper;
 		trains = new ArrayList<TrainModel>();
+		antennas = new ArrayList<Antenna>();
 		ui = new TrainModelUI();
 	}
 	
