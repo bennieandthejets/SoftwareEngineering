@@ -31,6 +31,9 @@ public class MBO
 	HashMap<Integer, Double> setpoints;
 	HashMap<Integer, Double> stopDistances;
 	
+	ArrayList<Double> currentVelocities;
+	ArrayList<Block> currentLocations;
+	
 	private Simulator simulator;
 	public Block[] trackModel;
 	private MBOUI ui;
@@ -92,7 +95,13 @@ public class MBO
 	public double calculateStopDistance(double velocity) {
 		double timeToStop = timeToAttainSpeed(velocity, 0.0, TRAIN_SERVICE_BRAKE);
 		double d = (velocity * timeToStop) + (0.5 * TRAIN_SERVICE_BRAKE * Math.pow(timeToStop, 2));
-		return d;
+		double d2 = (velocity * timeToStop) + (0.5 * TRAIN_SERVICE_BRAKE * Math.pow(timeToStop, 2));
+		if(d == d2) {
+			return d;
+		}
+		else {
+			return -1.0;
+		}
 	}
 	
 	// Given medium acceleration, calculates how long it takes to travel from one station to another	

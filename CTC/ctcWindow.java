@@ -583,7 +583,7 @@ public class ctcWindow {
 		JButton btnRoute = new JButton("Route");
 		btnRoute.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				try{
+			//	try{
 					//block invalid train and block numbers
 					if((Integer.parseInt(txtTrainNum.getText()) < 1 || Integer.parseInt(txtTrainNum.getText()) > owner.activeTrains)){
 						setAnnouncement("Routing Failed: invalid train number " + txtTrainNum.getText());
@@ -601,10 +601,10 @@ public class ctcWindow {
 					}
 					
 					
-					}
-				}catch(Exception ex){
-					setAnnouncement("Error, Routing Failed: " + txtTrainNum.getText() + ", " + txtSpeedSet.getText() + ", " + txtDestBlockNum.getText());
 				}
+				/*}catch(Exception ex){
+					setAnnouncement("Error, Routing Failed: " + txtTrainNum.getText() + ", " + txtSpeedSet.getText() + ", " + txtDestBlockNum.getText());
+				}*/
 			}
 		});
 		btnRoute.setForeground(new Color(0, 128, 0));

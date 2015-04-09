@@ -40,6 +40,7 @@ public class MBOUI {
 	private JTextField txtStatus;
 	private JTextField txtStopDistance;
 	private JTextArea txtrStops;
+	private JComboBox trainSelectBox;
 	private MBO mbo;
 	
     private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
@@ -66,6 +67,10 @@ public class MBOUI {
 	public MBOUI() {
 		initialize();
 		//frame.setVisible(true);
+	}
+	
+	public void setComboBox(MBO mbo) {
+		//trainComboBox.set
 	}
 	
 	public void setItems(MBO mbo) {
@@ -107,7 +112,7 @@ public class MBOUI {
 		frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
-		JComboBox trainSelectBox = new JComboBox();
+		trainSelectBox = new JComboBox();
 		trainSelectBox.setBounds(12, 12, 125, 24);
 		frame.getContentPane().add(trainSelectBox);
 		

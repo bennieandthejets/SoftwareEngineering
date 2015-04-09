@@ -200,6 +200,10 @@ public class CTC {
 			
 	}
 	
+	public void setBen(TrackCtrlWrapper ben) {
+		this.ben = ben;
+	}
+	
 	//sub to initialize after a map is loaded
 	public void start(){
 		

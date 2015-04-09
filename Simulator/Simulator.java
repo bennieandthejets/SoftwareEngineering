@@ -36,6 +36,7 @@ public class Simulator {
         trackModel = new TrackModel(this);
         mbo.setTrainModel(trainModelWrapper);
         trackControllerWrapper = new TrackCtrlWrapper(this);
+        ctc.setBen(trackControllerWrapper);
     }
     
 //=====================
@@ -52,9 +53,10 @@ public class Simulator {
     }
     
     public void makeTrainPuppy() {
-    	trainModelWrapper.birthTrain();
+    	int trainID = trainModelWrapper.birthTrain();
     	mbo.trainAdded();
     	trackModel.trainBirthed();
+    	trackModel.addTrain(trainModelWrapper.getTrain(trainID));
     }
     
 //=====================
