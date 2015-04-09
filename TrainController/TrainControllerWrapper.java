@@ -1,10 +1,13 @@
 package TrainController;
 
 import java.awt.EventQueue;
+
 import java.util.*;
+
 import Simulator.*;
 import TrainModel.*;
 
+@SuppressWarnings("unused")
 public class TrainControllerWrapper {
 	
 	private Simulator simulator;
@@ -12,7 +15,7 @@ public class TrainControllerWrapper {
 	private int temperature;
 	private ArrayList<TrainController> controllers;
 	private TrainControllerUI ui;
-	
+
 	public TrainControllerWrapper() {
 		controllers = new ArrayList<TrainController>();
 		ui = new TrainControllerUI(this);

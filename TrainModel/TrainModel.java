@@ -37,6 +37,7 @@ public class TrainModel{
 	private static final int MAX_PASS = 222;
 	
 	//Train Characteristics
+	private int trainID;
 	private double trainHeight = 3.42;	// meters
 	private double trainWidth = 2.65;	// meters
 	private double trainLength = 32.20;	// meters
@@ -88,26 +89,27 @@ public class TrainModel{
 	//###############
 	public TrainModel(int trainID){
 		//initializing variables
+		this.trainID = trainID;
 		setPower(150000.0);
 		trainAcceleration = 0.0;
 		trainVelocity = 0.0;
 		passengers = 0;
 		blockLocation = 0.0;
 		distanceTraveled = 0.0;
-		while(true){
-			updateTrain();
-			setDisplay();
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+//		while(true){
+//			updateTrain();
+//			setDisplay();
+//			try {
+//				Thread.sleep(100);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}
 		
 		//TEST ONLY
-		//setpoint = 18.0;
-		//stopDistance = 100.0;
+		setpoint = 18.0;
+		stopDistance = 100.0;
 		
 	}
 	
@@ -127,6 +129,11 @@ public class TrainModel{
 			addPassengers();
 		}
 		calcDistance();
+		System.out.println("Train Force: "+trainForce+" N");
+		System.out.println("Train Accel: "+trainAcceleration+" m/s^2");
+		System.out.println("Train Velocity: "+trainVelocity+" m/s");
+		System.out.println("Tick Distance: "+ tickDistance);
+		System.out.println("Distance Traveled: "+ distanceTraveled);
 		System.out.println();
 	}
 	
@@ -147,7 +154,6 @@ public class TrainModel{
 			else
 				trainForce = 1000* trainPower/trainVelocity;	
 		}
-		System.out.println("Train Force: "+trainForce+" N");
 	}
 	
 	public void calcAcceleration(){
@@ -156,7 +162,8 @@ public class TrainModel{
 		//If calculated acceleration is greater than the limit, set to the limit
 		if(trainAcceleration > TRAIN_ACCELERATION_LIMIT)
 			trainAcceleration = TRAIN_ACCELERATION_LIMIT;
-		System.out.println("Train Accel: "+trainAcceleration+" m/s^2");
+		if(trainAcceleration < 0.0 & trainVelocity == 0.0)
+			trainAcceleration = 0.0;
 	}
 	
 	public void calcVelocity(){
@@ -164,15 +171,12 @@ public class TrainModel{
 		//If calculated velocity is less than 0, set to 0
 		if(trainVelocity < 0.0)
 			trainVelocity = 0.0;
-		System.out.println("Train Velocity: "+trainVelocity+" m/s");
 	}
 	
 	public void calcDistance(){
 		tickDistance = trainVelocity;
 		blockLocation += tickDistance;
 		distanceTraveled += tickDistance;
-		System.out.println("Tick Distance: "+ tickDistance);
-		System.out.println("Distance Traveled: "+ distanceTraveled);
 	}
 	
 	public void addPassengers(){
@@ -203,6 +207,9 @@ public class TrainModel{
 	}
 	
 	//Getter and Setter functions
+	public int getID(){
+		return trainID;
+	}
 	public double getMass(){
 		double totalMass = TRAIN_MASS + passengers*PASS_MASS;
 		return totalMass;
