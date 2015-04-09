@@ -98,7 +98,7 @@ public class CTC {
 						break;
 					}
 				}
-				if(cockBlocked || !blocks[routes[i].block].isTrainPresent()){
+				if(cockBlocked || (locations[i] > 0 && !blocks[routes[i].block].isTrainPresent())){
 					//check for another switch path
 					Switch sw = blocks[locations[i]].getSwitch();
 					if(sw!=null){
