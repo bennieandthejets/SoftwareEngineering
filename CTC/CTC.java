@@ -279,6 +279,10 @@ public class CTC {
 				//this.faaake.routeTrain( block, speed, dest, path);			
 				//myWindow.setAnnouncement("route set");			
 				myWindow.setLocation(train, -1,  dest);
+				
+				ben.setRoute( block,  dest, speed, lengths[0], p);
+				
+				
 				return true;
 			
 				
