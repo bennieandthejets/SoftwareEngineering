@@ -98,24 +98,24 @@ public class TrainModel{
 		mbo = sim.mbo;
 		antenna = new Antenna(this,track,mbo);
 		
-//		setPower(150000.0); //for testing
+		//setPower(150000.0); //for testing
 		trainAcceleration = 0.0;
 		trainVelocity = 0.0;
 		passengers = 0;
 		blockLocation = 0.0;
 		distanceTraveled = 0.0;
+		/*
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					ui.frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 		
-//		EventQueue.invokeLater(new Runnable() {
-//			public void run() {
-//				try {
-//					ui.frame.setVisible(true);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		});
-		
-		/*while(true){
+		while(true){
 			updateTrain();
 			setDisplay();
 			try {
@@ -374,6 +374,6 @@ public class TrainModel{
 		//ui.setNextStation(NextStation);
 		//ui.setArrival(Arrival);
 		//ui.setCurrBlock(CurrentBlock);
-		//ui.setCurrTrain(CurrentTrain);
+		ui.setCurrTrain(trainID);
 	}
 }
