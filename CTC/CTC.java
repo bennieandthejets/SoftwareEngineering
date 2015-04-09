@@ -134,6 +134,10 @@ public class CTC {
 			if(!known[i] && locations[i]>0){
 				myWindow.setAnnouncement("!!Lost Train " + (i + 1) + "! What have you done?!?!");
 				locations[i] = 0;
+			} else if(locations[i] > 0 && blocks[locations[i]].getStation() != null){
+				//record a stop
+				this.stops++;
+				myWindow.setStops(stops, 0, 0); //!!!not calculating expected yet
 			}
 			
 		}

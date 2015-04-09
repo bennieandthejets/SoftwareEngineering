@@ -152,6 +152,14 @@ public class ctcWindow {
 		
 	}
 	
+	public void setStops(int thisHour, double expect, int lastHour){
+		
+		valThisHour.setText("" + thisHour);
+		valExpected.setText("" + expect);
+		valLastHour.setText("" + lastHour);
+		
+	}
+	
 	/**
 	 * Initialize the contents of the frame.
 	 */
