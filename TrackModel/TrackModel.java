@@ -28,9 +28,9 @@ public class TrackModel {
 	{
 		this.s = s;
 		t = new TrackModelUI(this);
-		trainWrap = new TrainModelWrapper(s);
+		trainWrap = s.trainModelWrapper;
 		trainID = trainWrap.birthTrain();
-		train = trainWrap.getTrain(trainID);
+		//train = trainWrap.getTrain(trainID);
 	}
 	
 	public void showUI()
