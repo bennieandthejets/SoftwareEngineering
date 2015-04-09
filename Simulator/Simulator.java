@@ -31,6 +31,7 @@ public class Simulator {
         
         ctc = new CTC(this);
         mbo = new MBO(this);
+        trackControllerWrapper = new TrackCtrlWrapper(this);
         trackModel = new TrackModel(this);
         trainControllerWrapper = new TrainControllerWrapper(this);
         trainModelWrapper = new TrainModelWrapper(this);
@@ -74,7 +75,6 @@ public class Simulator {
     }
 
     public void tick() throws InterruptedException {
-
         while(true) {
             if ((isRunning)) {
                 systemTime += (1000);
