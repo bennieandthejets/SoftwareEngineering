@@ -36,7 +36,8 @@ public class TrackController {
 
 	TrackController(Simulator simulator, int fraction) {
 		myModel = simulator.trackModel;
-		present = new ArrayList<Integer>(); 	
+		present = new ArrayList<Integer>(); 
+		trains = new HashMap<>();
 		half = fraction;
 	}
 	

@@ -52,6 +52,9 @@ public class TrackCtrlWrapper {
 		upish = new TrackController(simulator,1);
 		downish = new TrackController(simulator,2);
 		myModel = simulator.trackModel;
+		
+		present = new HashSet<>();
+		trains = new HashMap<>();
 
 		
 		getBlocks();

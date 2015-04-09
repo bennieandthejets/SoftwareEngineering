@@ -80,10 +80,14 @@ public class UI {
 		
 		train_table = new JTable(0, 2);
 		train_table.setBounds(6, 23, 204, 143);
+		train_table.getColumnModel().getColumn(0).setHeaderValue("Train Number");
+		train_table.getColumnModel().getColumn(1).setHeaderValue("Position");
 		panel.add(train_table);
 		
 		switch_table = new JTable(0, 2);
 		switch_table.setBounds(222, 23, 222, 143);
+		train_table.getColumnModel().getColumn(0).setHeaderValue("Switch Root");
+		train_table.getColumnModel().getColumn(1).setHeaderValue("Pointing To");
 		panel.add(switch_table);
 		
 		
