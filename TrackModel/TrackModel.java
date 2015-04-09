@@ -96,6 +96,8 @@ public class TrackModel {
 					blocks[count].toYard = true;
 					blocks[count].fromYard = true;
 				}
+				else
+					blocks[count].sw = null;
 				if(row.get(8).equals("TRUE"))
 					blocks[count].underground = true;
 				else
@@ -112,9 +114,18 @@ public class TrackModel {
 					blocks[count].getSwitch().blockOne = Integer.parseInt(row.get(12));
 					blocks[count].getSwitch().blockTwo = Integer.parseInt(row.get(13));
 				}
+				blocks[count].switchRoot = -1;
 			}
 		}
 			
+		for(int i = 1; i < blocks.length; i++)
+		{
+			if(blocks[i] != null && blocks[i].getSwitch() != null)
+			{
+				blocks[blocks[i].getSwitch().blockOne].switchRoot = i;
+				blocks[blocks[i].getSwitch().blockTwo].switchRoot = i;
+			}
+		}
 		
 		//read in map file for UI
 		String mapFile = "";
@@ -156,6 +167,10 @@ public class TrackModel {
 					data[i][j] = new Color(255, 128, 0);
 				else if(mapCol.get(j).equals("S"))
 					data[i][j] = new Color(255, 0, 191);
+				else if(blocks[Integer.parseInt(mapCol.get(j))].switchRoot != -1)
+				{
+					data[i][j] = new Color(0,9,255);
+				}
 				else
 				{
 					data[i][j] = new Color(143,105,255);

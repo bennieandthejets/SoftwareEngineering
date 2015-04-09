@@ -25,12 +25,19 @@ public class Block {
 	boolean toYard;
 	boolean fromYard;
 	String stationSide;
+	int switchRoot;
+	int mapRow;
+	int mapCol;
 	
 	public Block(int blockID)
 	{
 		this.blockID = blockID;
 	}
 	
+	public int getSwitchRoot()
+	{
+		return switchRoot;
+	}
 	public String getStationSide()
 	{
 		return stationSide;
