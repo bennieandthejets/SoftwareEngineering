@@ -22,8 +22,9 @@ public class TrackModel {
 	Simulator s;
 	TrackModelUI t;
 	TrainModelWrapper trainWrap;
-	TrainModel train;
+	TrainModel train;	
 	int trainID;
+	int trainCounter;
 	ArrayList<TrainModel> trains;
 	
 	public TrackModel(Simulator s)
@@ -47,7 +48,7 @@ public class TrackModel {
 	
 	public void tick()
 	{
-		getAllTrains();
+		//getAllTrains();
 		
 		if (train != null) {
 			findTrain();
@@ -55,7 +56,7 @@ public class TrackModel {
 			t.paintMap();
 		}
 	}
-	
+	/*
 	public void getAllTrains()
 	{
 		trainWrap = s.trainModelWrapper;
@@ -64,6 +65,11 @@ public class TrackModel {
 		{
 			train = trains.get(0);
 		}
+	}
+	*/
+	public void addTrain(TrainModel currTrain)
+	{
+		this.train = currTrain;
 	}
 	
 	public void trainMoved()
@@ -265,6 +271,7 @@ public class TrackModel {
 		map.close();
 				
 				
+		//FOR TESTING
 		//trainWrap = s.trainModelWrapper;
 		//trainID = trainWrap.birthTrain();
 		//train = trainWrap.getTrain(trainID);
