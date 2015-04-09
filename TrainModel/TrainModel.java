@@ -89,31 +89,31 @@ public class TrainModel{
 	//###############
 	//###FUNCTIONS###
 	//###############
-	public TrainModel(int trainID){
+	public TrainModel(int trainID, Simulator newSimulator){
 		//initializing variables
 		this.trainID = trainID;
 		//ui = new TrainModelUI();
-		sim = new Simulator();
-		track = new TrackModel(sim);
-		mbo = new MBO();
+		sim = newSimulator;
+		track = sim.trackModel;
+		mbo = sim.mbo;
 		antenna = new Antenna(this,track,mbo);
 		
-		setPower(150000.0); //for testing
+//		setPower(150000.0); //for testing
 		trainAcceleration = 0.0;
 		trainVelocity = 0.0;
 		passengers = 0;
 		blockLocation = 0.0;
 		distanceTraveled = 0.0;
 		
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					ui.frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+//		EventQueue.invokeLater(new Runnable() {
+//			public void run() {
+//				try {
+//					ui.frame.setVisible(true);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		});
 		
 		/*while(true){
 			updateTrain();
@@ -135,7 +135,7 @@ public class TrainModel{
 	//main  for testing
 	public static void main(String[] args){
 		//ui = new TrainModelUI();
-		TrainModel train = new TrainModel(1);
+//		TrainModel train = new TrainModel(1);
 		//ui.setTrain(train);
 	}
 	

@@ -34,13 +34,11 @@ public class TrainModelWrapper{
 	//FUNCTIONS
 	public int birthTrain(){
 		int trainID = trains.size()+1;
-		TrainModel newTrain = new TrainModel(trainID);
-		Antenna newAntenna = new Antenna(newTrain,sim.trackModel,sim.mbo);
-		newTrain.setAntenna(newAntenna);
+		TrainModel newTrain = new TrainModel(trainID, sim);
 		newTrain.setUI(ui);
 		sim.trackModel.addTrain(newTrain);
 		trains.add(trainID-1,newTrain);
-		antennas.add(trainID-1,newAntenna);
+		antennas.add(trainID-1,newTrain.antenna);
 		trainCtrlWrapper.createTrainController(newTrain);
 		return trainID;
 	}
