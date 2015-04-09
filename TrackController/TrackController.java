@@ -34,7 +34,7 @@ public class TrackController {
 	
 	private int half;
 	
-	private UI ui;
+	public UI ui;
 
 	TrackController(Simulator simulator, int fraction) {
 		myModel = simulator.trackModel;
@@ -57,6 +57,8 @@ public class TrackController {
 		train.sugSpeed = suggestedSpeed;
 		train.sugAuthority = suggestedAuthority;
 		train.suggestedRoute = route;
+		
+		
 	}
 	
 	public void tick(HashMap<Integer, Train> trains, Block map[]) {

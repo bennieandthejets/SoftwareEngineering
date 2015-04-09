@@ -47,11 +47,21 @@ public class testPLC implements PLC{
 			return null;
 		}
 		for (int routeStep = 0; routeStep < route.length; routeStep++) {
+			//if the train is on block 77 (from yard) and 
+			if (routeStep == 0 && train.position == 77) {
+				HashMap<String,Integer> switchInfo = new HashMap<String,Integer>();
+				switchInfo.put("switchOn",77);
+				switchInfo.put("switchBlock",route[routeStep]);
+				switchInfo.put("afterSwitch",route[routeStep+1]);
+			}
+			
 			//step through the route until the current train position is found
 			boolean posFound = false;
 			if (route[routeStep] == train.position) {
 				posFound = true;
 			}
+			
+			
 			//find the first switch the train will encounter after its current position
 			if (switches.contains(route[routeStep]) && posFound && (route[routeStep] != train.position)) {
 				//return the block the train will occupy before it reaches the switch, and the block it will occupy after the switch
@@ -61,6 +71,9 @@ public class testPLC implements PLC{
 				switchInfo.put("afterSwitch", route[routeStep+1]);
 				return switchInfo;
 			}
+			/*if (switches.contains(route[routeStep]) && posFound && (route[routeStep] == train.position)) {
+				switchInfo.put("switchOn",);
+			}*/
 		}
 		
 		return null;
