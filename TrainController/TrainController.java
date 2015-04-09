@@ -111,7 +111,7 @@ public class TrainController {
 	
 	private void checkRemainingAuthority() {
 		//remainingAuthority = remainingAuthority - model.getDistanceTraveled();
-		stopDistance = model.getStopDistance();
+		stopDistance = model.antenna.getStopDistance();
 		if(remainingAuthority <= stopDistance) {
 			stopTrain();
 		}
