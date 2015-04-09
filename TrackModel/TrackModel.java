@@ -72,6 +72,18 @@ public class TrackModel {
 		this.train = currTrain;
 	}
 	
+	public void trainBirthed()
+	{
+		for(int i = 1; i < blocks.length; i++)
+		{
+			if(blocks[i] != null && blocks[i].fromYard)
+			{
+				trainOnBlock = i;
+				blocks[i].trainPresent = true;
+			}
+		}
+	}
+	
 	public void trainMoved()
 	{
 		totalDist = train.getDistanceTraveled();
@@ -198,8 +210,6 @@ public class TrackModel {
 				if(blocks[i].getSwitch().fromYardSwitch)
 				{
 					blocks[blocks[i].getSwitch().blockTwo].fromYard = true;
-					trainOnBlock = i;
-					blocks[trainOnBlock].trainPresent = true;
 				}
 				if(blocks[i].getSwitch().toYardSwitch)
 				{
