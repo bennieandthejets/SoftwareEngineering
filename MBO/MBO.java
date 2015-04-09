@@ -40,6 +40,7 @@ public class MBO
 	public MBO()
 	{
 		this.ui = new MBOUI();
+		reggies = new ArrayList<Antenna>();
 		trainSchedules = new HashMap<Integer, TrainSchedule>();
 		crewSchedules = new HashMap<Integer, CrewSchedule>();
 		authorities = new HashMap<Integer, Double>();
@@ -261,6 +262,9 @@ public class MBO
 	public void tick(long systemTime) {
 		this.systemTime = systemTime;
 		ui.setItems(this);
+		for(Antenna reggie : reggies) {
+			
+		}
 	}
 	
 	public void trainAdded() {
