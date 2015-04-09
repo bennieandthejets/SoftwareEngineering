@@ -149,24 +149,24 @@ public class TrackModel {
 				if(row.get(7).equals("TRUE"))
 				{
 					blocks[count].sw = new Switch(count);
+					blocks[count].sw.toYardSwitch = false;
+					blocks[count].sw.fromYardSwitch = false;
 				}
 				else if(row.get(7).equals("TO YARD"))
 				{
-					blocks[Integer.parseInt(row.get(13))].toYard = true;
 					blocks[count].sw = new Switch(count);
+					blocks[count].sw.toYardSwitch = true;
 				}
 				else if(row.get(7).equals("FROM YARD"))
 				{
-					blocks[Integer.parseInt(row.get(13))].fromYard = true;
-					trainOnBlock = count;
 					blocks[count].sw = new Switch(count);
+					blocks[count].sw.fromYardSwitch = true;
 				}
 				else if(row.get(7).equals("TO YARD/FROM YARD"))
 				{
-					blocks[Integer.parseInt(row.get(13))].toYard = true;
-					blocks[Integer.parseInt(row.get(13))].fromYard = true;
-					trainOnBlock = count;
 					blocks[count].sw = new Switch(count);
+					blocks[count].sw.toYardSwitch = true;
+					blocks[count].sw.fromYardSwitch = true;
 				}
 				else
 					blocks[count].sw = null;
@@ -195,6 +195,14 @@ public class TrackModel {
 		{
 			if(blocks[i] != null && blocks[i].getSwitch() != null)
 			{
+				if(blocks[i].getSwitch().fromYardSwitch)
+				{
+					blocks[blocks[i].getSwitch().blockTwo].fromYard = true;
+				}
+				if(blocks[i].getSwitch().toYardSwitch)
+				{
+					blocks[blocks[i].getSwitch().blockTwo].toYard = true;
+				}
 				blocks[blocks[i].getSwitch().blockOne].switchRoot = i;
 				blocks[blocks[i].getSwitch().blockTwo].switchRoot = i;
 			}
