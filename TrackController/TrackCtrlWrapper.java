@@ -13,7 +13,7 @@ import Simulator.Simulator;
 public class TrackCtrlWrapper {
 	private static TrackController upish;
 	private static TrackController downish;
-	private static UI ui;
+	//private static UI ui;
 	private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 	private Block map[];
 	private int penis = 0;
