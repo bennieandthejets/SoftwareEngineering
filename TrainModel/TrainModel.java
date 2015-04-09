@@ -275,7 +275,9 @@ public class TrainModel{
 	}
 	
 	public double getAuthority(){
-		return authority;
+		double tempAuth = authority;
+		this.authority = -1;
+		return tempAuth;
 	}
 	
 	public double getSetpointVelocity(){
