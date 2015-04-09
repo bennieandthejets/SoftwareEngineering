@@ -31,11 +31,11 @@ public class Simulator {
         
         ctc = new CTC(this);
         mbo = new MBO(this);
-        //trackControllerWrapper = new TrackCtrlWrapper(this);
         trainControllerWrapper = new TrainControllerWrapper(this);
         trainModelWrapper = new TrainModelWrapper(this);
         trackModel = new TrackModel(this);
         mbo.setTrainModel(trainModelWrapper);
+        trackControllerWrapper = new TrackCtrlWrapper(this);
     }
     
 //=====================
