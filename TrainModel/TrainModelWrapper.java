@@ -34,7 +34,7 @@ public class TrainModelWrapper{
 	public int birthTrain(){
 		int trainID = trains.size()+1;
 		TrainModel newTrain = new TrainModel(trainID);
-		Antenna newAntenna = new Antenna(newTrain);
+		Antenna newAntenna = new Antenna(newTrain,sim.trackModel,sim.mbo);
 		trains.add(trainID-1,newTrain);
 		antennas.add(trainID-1,newAntenna);
 		trainCtrlWrapper.createTrainController(newTrain);
