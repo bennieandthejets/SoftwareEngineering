@@ -129,6 +129,7 @@ public class TrainModel{
 			addPassengers();
 		}
 		calcDistance();
+		setDisplay();
 		System.out.println("Train Force: "+trainForce+" N");
 		System.out.println("Train Accel: "+trainAcceleration+" m/s^2");
 		System.out.println("Train Velocity: "+trainVelocity+" m/s");
