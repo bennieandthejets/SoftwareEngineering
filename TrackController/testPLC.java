@@ -2,7 +2,7 @@ package TrackController;
 
 import java.util.*;
 
-import TrackController.TrackController.Train;
+import TrackController.TrackCtrlWrapper.Train;
 import TrackModel.Block;
 
 public class testPLC implements PLC{
