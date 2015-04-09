@@ -32,11 +32,11 @@ public class TrainModelWrapper{
 	
 	//FUNCTIONS
 	public int birthTrain(){
-		int trainID = trains.size();
+		int trainID = trains.size()+1;
 		TrainModel newTrain = new TrainModel(trainID);
 		Antenna newAntenna = new Antenna(newTrain);
-		trains.add(trainID,newTrain);
-		antennas.add(trainID,newAntenna);
+		trains.add(trainID-1,newTrain);
+		antennas.add(trainID-1,newAntenna);
 		trainCtrlWrapper.createTrainController(newTrain);
 		return trainID;
 	}
