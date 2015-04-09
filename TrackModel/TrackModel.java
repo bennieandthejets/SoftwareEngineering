@@ -115,9 +115,32 @@ public class TrackModel {
 			blocks[trainOnBlock].trainPresent = false;
 			t.trainOffBlock(blocks[trainOnBlock].mapRow, blocks[trainOnBlock].mapCol);
 			trainMovedDist = 0.0;
-			if(blocks[trainOnBlock].getSwitch() != null)
+			
+			Switch sw = blocks[trainOnBlock].getSwitch();
+			if(sw != null && sw.getSwitchBlocks()[0] != blocks[trainOnBlock].cameFrom &&
+					sw.getSwitchBlocks()[1] != blocks[trainOnBlock].cameFrom) {
+				trainOnBlock = sw.getSwitchTaken();
+			}
+			else if(blocks[trainOnBlock].getSwitchRoot() != -1 && blocks[trainOnBlock].getSwitchRoot() != blocks[trainOnBlock].cameFrom) {
+				trainOnBlock = blocks[trainOnBlock].getSwitchRoot();
+			}
+			else if(blocks[trainOnBlock].cameFrom != trainOnBlock + 1) {
+				if(sw != null) {
+					if(sw.getSwitchBlocks()[0] == trainOnBlock+1 || sw.getSwitchBlocks()[1] == trainOnBlock+1) {
+						trainOnBlock--;
+					}
+				}
+				else {
+					trainOnBlock++;
+				}
+			}
+			else {
+				trainOnBlock--;
+			}
+			/*if(blocks[trainOnBlock].getSwitch() != null)
 			{
-				if(blocks[trainOnBlock].getSwitch().blockOne == blocks[trainOnBlock].cameFrom || blocks[trainOnBlock].getSwitch().blockTwo == blocks[trainOnBlock].cameFrom)
+				
+				/*if(blocks[trainOnBlock].getSwitch().blockOne == blocks[trainOnBlock].cameFrom || blocks[trainOnBlock].getSwitch().blockTwo == blocks[trainOnBlock].cameFrom)
 				{
 					t.trainOffSwitch(blocks[trainOnBlock].mapRow, blocks[trainOnBlock].mapCol);
 					trainOnBlock++;
@@ -131,12 +154,20 @@ public class TrackModel {
 			else if(blocks[trainOnBlock].switchRoot != -1 && blocks[blocks[trainOnBlock].switchRoot].sw.blockOne == trainOnBlock)
 			{
 				t.trainOffSwitch(blocks[trainOnBlock].mapRow, blocks[trainOnBlock].mapCol);
+				
 				trainOnBlock++;
 			}
 			else
 			{
 				trainOnBlock++;
 			}
+			if(trainOnBlock == 78) {
+				
+			} 
+			else {
+				
+			}*/
+			blocks[prevBlock].trainPresent = false;
 			blocks[trainOnBlock].cameFrom = prevBlock;
 			blocks[trainOnBlock].trainPresent = true;
 			t.trainOnBlock(blocks[trainOnBlock].mapRow, blocks[trainOnBlock].mapCol);
