@@ -95,19 +95,19 @@ public class Beacon {
 			fromNorth = false;
 			fromSouth = false;
 		}
-		else if(blocks[blockID+1].trainPresent)
+		else if(blocks[blockID-1].trainPresent)
 		{
 			trainNear = true;
 			fromNorth = true;
 			fromSouth = false;
 		}
-		else if(blocks[blockID+2].trainPresent)
+		else if(blocks[blockID-2].trainPresent)
 		{
 			trainNear = true;
 			fromNorth = true;
 			fromSouth = false;
 		}
-		else if(blocks[blockID+3].trainPresent)
+		else if(blocks[blockID-3].trainPresent)
 		{
 			trainNear = true;
 			fromNorth = true;

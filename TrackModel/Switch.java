@@ -5,10 +5,24 @@ public class Switch {
 	int blockOne;
 	int blockTwo;
 	int blockRoot;
+	int direction;
 	
 	public Switch(int blockRoot)
 	{
 		this.blockRoot = blockRoot;
+	}
+	
+	public int getSwitchTaken()
+	{
+		if(direction == 1)
+			return blockOne;
+		else
+			return blockTwo;
+	}
+	
+	public int getDirection()
+	{
+		return direction;
 	}
 	
 	public int getBlockOne()
