@@ -33,12 +33,16 @@ public class TrackController {
 	private PLC myPLC;
 	
 	private int half;
+	
+	//private UI ui;
 
 	TrackController(Simulator simulator, int fraction) {
 		myModel = simulator.trackModel;
 		present = new ArrayList<Integer>(); 
 		trains = new HashMap<>();
 		half = fraction;
+		//ui = new UI(this);
+		//ui.setvisible(true);
 	}
 	
 	TrackController() {

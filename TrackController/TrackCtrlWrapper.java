@@ -54,10 +54,7 @@ public class TrackCtrlWrapper {
 		myModel = simulator.trackModel;
 		
 		present = new HashSet<>();
-		trains = new HashMap<>();
-
-		
-		getBlocks();
+		trains = new HashMap<>();		
 	}
 	
 	public void getBlocks() {

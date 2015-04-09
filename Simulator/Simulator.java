@@ -35,7 +35,7 @@ public class Simulator {
         trainModelWrapper = new TrainModelWrapper(this);
         trackModel = new TrackModel(this);
         mbo.setTrainModel(trainModelWrapper);
-        //trackControllerWrapper = new TrackCtrlWrapper(this);
+        trackControllerWrapper = new TrackCtrlWrapper(this);
     }
     
 //=====================
@@ -45,7 +45,7 @@ public class Simulator {
     private void updateModules() {
         ctc.tick();
         mbo.tick(systemTime);
-        //trackControllerWrapper.tick();
+        trackControllerWrapper.tick();
         trackModel.tick();
         trainModelWrapper.tick();
         trainControllerWrapper.tick();
