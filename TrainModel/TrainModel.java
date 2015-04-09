@@ -290,12 +290,12 @@ public class TrainModel{
 		trainPower = power;
 	}
 	
-	public void setAuthority(double auth){
+	public void setSafeAuthority(double auth){
 		authority = auth;
 	}
 	
-	public void setSetpointVelocity(double setpointVel){
-		safeSetpoint = setpointVel;
+	public void setSafeVelocity(double safeVel){
+		safeSetpoint = safeVel;
 	}
 	
 	public void setLeftDoor(boolean doorStatus){
