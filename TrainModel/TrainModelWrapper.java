@@ -1,6 +1,7 @@
 package TrainModel;
 
 import TrainController.*;
+import TrackModel.*;
 
 import java.awt.EventQueue;
 import java.util.ArrayList;
@@ -36,6 +37,7 @@ public class TrainModelWrapper{
 		TrainModel newTrain = new TrainModel(trainID);
 		Antenna newAntenna = new Antenna(newTrain,sim.trackModel,sim.mbo);
 		newTrain.setAntenna(newAntenna);
+		sim.trackModel.addTrain(newTrain);
 		trains.add(trainID-1,newTrain);
 		antennas.add(trainID-1,newAntenna);
 		trainCtrlWrapper.createTrainController(newTrain);

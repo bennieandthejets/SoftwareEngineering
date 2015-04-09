@@ -1,9 +1,10 @@
 package TrainModel;
 
+import java.awt.EventQueue;
 import java.text.DecimalFormat;
 import java.util.*;
 
-import TrackModel.Block;
+import TrackModel.*;
 import MBO.*;
 import Simulator.*;
 
@@ -18,6 +19,7 @@ public class TrainModel{
 	//################
 	private static TrainModelUI ui;
 	private TrainModelWrapper tmWrapper;
+	private TrackModel track;
 	public Antenna antenna;
 	private Simulator sim;
 	private MBO mbo;
@@ -90,27 +92,43 @@ public class TrainModel{
 	public TrainModel(int trainID){
 		//initializing variables
 		this.trainID = trainID;
-		ui = new TrainModelUI();
-		//setPower(150000.0); for testing
+		//ui = new TrainModelUI();
+		sim = new Simulator();
+		track = new TrackModel(sim);
+		mbo = new MBO();
+		antenna = new Antenna(this,track,mbo);
+		
+		setPower(150000.0); //for testing
 		trainAcceleration = 0.0;
 		trainVelocity = 0.0;
 		passengers = 0;
 		blockLocation = 0.0;
 		distanceTraveled = 0.0;
-//		while(true){
-//			updateTrain();
-//			setDisplay();
-//			try {
-//				Thread.sleep(100);
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
+		
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					ui.frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		
+		while(true){
+			updateTrain();
+			setDisplay();
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		
 		//TEST ONLY
-		setpoint = 18.0;
-		stopDistance = 100.0;
+		//setpoint = 18.0;
+		//stopDistance = 100.0;
 		
 	}
 	
@@ -179,6 +197,11 @@ public class TrainModel{
 		tickDistance = trainVelocity;
 		blockLocation += tickDistance;
 		distanceTraveled += tickDistance;
+		
+		//Check which block train is on, communicate with Track Model
+		//if(blockLocation > currentBlock.getBlockSize()){
+			
+		//}
 	}
 	
 	public void addPassengers(){
@@ -242,8 +265,8 @@ public class TrainModel{
 	}
 	
 	public double getStopDistance(){
-		//return mbo.calculateStopDistance(trainVelocity);
-		return 100.0;
+		return mbo.calculateStopDistance(trainVelocity);
+		//return 100.0;
 	}
 	
 	public double getVelocity(){
@@ -251,7 +274,7 @@ public class TrainModel{
 	}
 	
 	public double getSetpointVelocity(){
-		return setpoint ;
+		return setpoint;
 	}
 	public double getAcceleration(){
 		return trainAcceleration;
