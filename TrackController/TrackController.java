@@ -1,13 +1,17 @@
 package TrackController;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.net.URLClassLoader;
 import java.io.*;
 
 import Simulator.*;
 import TrackModel.*;
+import TrackController.TrackCtrlWrapper.Train;
 
 
 
@@ -27,10 +31,13 @@ public class TrackController {
 	private int crossingBlocks;
 	
 	private PLC myPLC;
+	
+	private int half;
 
-	TrackController(Simulator simulator) {
+	TrackController(Simulator simulator, int fraction) {
 		myModel = simulator.trackModel;
-		present = new ArrayList<Integer>(); 				
+		present = new ArrayList<Integer>(); 	
+		half = fraction;
 	}
 	
 	TrackController() {
@@ -45,6 +52,13 @@ public class TrackController {
 		train.sugSpeed = suggestedSpeed;
 		train.sugAuthority = suggestedAuthority;
 		train.suggestedRoute = route;
+	}
+	
+	public void tick(HashMap<Integer, Train> trains, Block map[]) {
+		myPLC.checkRoutes(trains);
+		myPLC.checkSwitches(map);
+		
+		return;
 	}
 	
 	public boolean loadPLC(String filename) {
@@ -95,21 +109,60 @@ public class TrackController {
 		TrackController TC = new TrackController();
 	}
 	
-	
-	public class Train {
-		int position;
-		int destination;
-		double speed;
-		double sugSpeed;
-		int sugAuthority;
-		int[] suggestedRoute;
-		
-		Train(int pos, int dest) {
-			position = pos;
-			destination = dest;
-			speed = 0;
-		}
+	public void updateTrains(HashSet<Integer> present) {
+		/*Iterator it = present.iterator();
+		int count = 0;
+		while (it.hasNext()) {
+			//Map.Entry pair = (Map.Entry) it.next();
+			//Train train = (Train) pair.getValue();
+			//int key = (Integer) pair.getKey();
+			int presentBlock = (Integer)it.next();
+			
+			//If there are more trains present than there are in the trains structure, add a new one
+			if (count == trains.size()) {
+				trains.put(presentBlock, );
+				count++;
+				continue;
+			}
+			
+			//If the block that is reported occupied was already occupied in the previous tick, assume it is the same train
+			if (trains.get(presentBlock) != null) {
+				trains.get(presentBlock).oldposition = presentBlock;
+				continue;
+			}
+			
+			//If the block was NOT occupied, go through each train and see if its next step would be this block
+			Iterator trainsIT = trains.entrySet().iterator();
+			while (it.hasNext()) {
+				Map.Entry pair = (Map.Entry) it.next();
+				Train train = (Train) pair.getValue();
+				int trainPos = (Integer) pair.getKey();
+				
+				int[] route = train.suggestedRoute;
+				//iterate over the route until the trains current position is found
+				for (int i=0; i < route.length; i++) {
+					//when the position is found, check the next block the train should occupy
+					if (route[i] == train.position) {
+						//if it is the newly present block, update the train with the new value
+						if (route[i+1] == presentBlock) {
+							trains.put(presentBlock, train);
+							trains.remove(trainPos);
+							break;
+						}
+						//if it is not the newly present block,move on to the next train
+						else {
+							continue;
+						}
+					}
+				}
+			}
+			
+			
+			
+		}*/
 	}
+	
+	
 	
 	public class Switch {
 		int root;
