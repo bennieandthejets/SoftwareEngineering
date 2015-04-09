@@ -110,8 +110,10 @@ public class TrainController {
 	}
 	
 	private void checkRemainingAuthority() {
-		if(model.getAuthority() > -1) {
-			remainingAuthority = model.getAuthority();
+		
+		double auth = model.getAuthority();
+		if(auth > -1) {
+			remainingAuthority = auth;
 		}
 		
 		remainingAuthority = remainingAuthority - model.getDistanceTraveled();
