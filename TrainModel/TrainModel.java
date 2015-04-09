@@ -90,7 +90,8 @@ public class TrainModel{
 	public TrainModel(int trainID){
 		//initializing variables
 		this.trainID = trainID;
-		setPower(150000.0);
+		ui = new TrainModelUI();
+		//setPower(150000.0); for testing
 		trainAcceleration = 0.0;
 		trainVelocity = 0.0;
 		passengers = 0;
