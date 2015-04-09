@@ -66,6 +66,8 @@ public class TrackCtrlWrapper {
 	public void tick() {
 		getBlocks();
 		
+		//upish.ui.panel.repaint();
+		
 		int[] trainlocs = simulator.ctc.locations;
 		for (int trainID = 0; trainID < trainlocs.length; trainID++) {
 			//If trainlocs[trainid] is -1, there is no train there!

@@ -25,7 +25,8 @@ import java.awt.TextField;
 
 public class UI {
 
-	private JFrame frame;
+	public JPanel panel;
+	public JFrame frame;
 	private TrackController owner;
 	private JLabel lblNewLabel;
 	private JTable train_table;
@@ -80,7 +81,7 @@ public class UI {
 		frame.setBounds(100, 100, 450, 300);
 		frame.getContentPane().setLayout(new GridLayout(1, 0, 0, 0));
 		
-		JPanel panel = new JPanel();
+		panel = new JPanel();
 		frame.getContentPane().add(panel);
 		panel.setLayout(null);
 		
@@ -123,27 +124,27 @@ public class UI {
 		
 	}
 	public void addTrain(int trainNum, int pos) {
-		DefaultTableModel model = (DefaultTableModel) train_table.getModel();
-		model.addRow(new Object[]{Integer.toString(trainNum), Integer.toString(pos)});
+		/*DefaultTableModel model = (DefaultTableModel) train_table.getModel();
+		model.addRow(new Object[]{Integer.toString(trainNum), Integer.toString(pos)});*/
 	}
 	public void updatePosition(int trainNum, int newPos) {
-		DefaultTableModel model = (DefaultTableModel) train_table.getModel();
+		/*DefaultTableModel model = (DefaultTableModel) train_table.getModel();
 
 		for (int row = 0; row < model.getRowCount(); row++) {
-			int num = (Integer) model.getValueAt(row, 0);
+			int num = Integer.parseInt(model.getValueAt(row, 0));
 			
 			if (num == trainNum) {
 				model.setValueAt(Integer.toString(newPos), row, 1);
 			}
-		}
+		}*/
 	}
 	
 	public void addSwitch(int switchRoot, int pos) {
-		DefaultTableModel model = (DefaultTableModel) train_table.getModel();
-		model.addRow(new Object[]{Integer.toString(switchRoot), Integer.toString(pos)});
+		/*DefaultTableModel model = (DefaultTableModel) train_table.getModel();
+		model.addRow(new Object[]{Integer.toString(switchRoot), Integer.toString(pos)});*/
 	}
 	public void updateSwitchPoint(int switchRoot, int newPoint) {
-		DefaultTableModel model = (DefaultTableModel) train_table.getModel();
+		/*DefaultTableModel model = (DefaultTableModel) train_table.getModel();
 
 		for (int row = 0; row < model.getRowCount(); row++) {
 			int num = (Integer) model.getValueAt(row, 0);
@@ -151,7 +152,7 @@ public class UI {
 			if (num == switchRoot) {
 				model.setValueAt(Integer.toString(newPoint), row, 1);
 			}
-		}
+		}*/
 	}
 	
 	public void updateSwitches() {
