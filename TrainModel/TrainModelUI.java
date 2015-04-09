@@ -418,8 +418,8 @@ public class TrainModelUI{ //implements ActionListener{
 		txtCurrBlock.setText(new Integer(currblock).toString());
 	}
 	
-	public void setCurrTrain(String train){
-		txtCurrTrain.setText(train);
+	public void setCurrTrain(int train){
+		txtCurrTrain.setText(new Integer(train).toString());
 	}
 	
 	public void setDistTrav(String dist){
