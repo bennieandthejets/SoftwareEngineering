@@ -132,17 +132,20 @@ public class TrackModel {
 				else if(row.get(7).equals("TO YARD"))
 				{
 					blocks[count].toYard = true;
+					blocks[count].sw = new Switch(count);
 				}
 				else if(row.get(7).equals("FROM YARD"))
 				{
 					blocks[count].fromYard = true;
 					trainOnBlock = count;
+					blocks[count].sw = new Switch(count);
 				}
 				else if(row.get(7).equals("TO YARD/FROM YARD"))
 				{
 					blocks[count].toYard = true;
 					blocks[count].fromYard = true;
 					trainOnBlock = count;
+					blocks[count].sw = new Switch(count);
 				}
 				else
 					blocks[count].sw = null;
@@ -169,7 +172,7 @@ public class TrackModel {
 			
 		for(int i = 1; i < blocks.length; i++)
 		{
-			if(blocks[i] != null && (blocks[i].getSwitch() != null || blocks[i].toYard || blocks[i].fromYard))
+			if(blocks[i] != null && blocks[i].getSwitch() != null)
 			{
 				blocks[blocks[i].getSwitch().blockOne].switchRoot = i;
 				blocks[blocks[i].getSwitch().blockTwo].switchRoot = i;

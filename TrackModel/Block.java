@@ -29,6 +29,8 @@ public class Block {
 	int mapRow;
 	int mapCol;
 	int cameFrom;
+	int toYardBlock;
+	int fromYardBlock;
 	
 	public Block(int blockID)
 	{
