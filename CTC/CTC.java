@@ -166,6 +166,7 @@ public class CTC {
 		this.ben = reggie.trackControllerWrapper;
 		this.drewBaby = reggie.mbo;
 		
+		
 		//load track somehow
 		//this.blocks = ben.getBlocks();	//call this once it exists
 		
@@ -188,34 +189,34 @@ public class CTC {
 		//setup window(s)		
 		//faaake = new fakeWindow();
 		myWindow = new ctcWindow(this);
+			
+	}
+	
+	//sub to initialize after a map is loaded
+	public void start(){
 		
+		//load track somehow
+		//this.blocks = ben.getBlocks();	//call this once it exists
 		
-		/*
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-										
-					//ctcWindow window = new ctcWindow();
-					myWindow.frmCtc.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});		
+		//!!!call jackie directly until ben gets his shit together
+		this.blocks = notReggie.trackModel.getBlocks();
 		
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					//fakeWindow window = new fakeWindow();
-					faaake.frmCtcDemo.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-		*/
+		this.blockCount = blocks.length;
 		
+		this.mode = 0; //manual
+		this.stops = 0;
+		this.stopsLastHour = 0;
+		this.activeTrains = 0;
+		//use block count as size of block and train lists; more than one train per block would be crazy 
 		
+		this.closedBlocks = new boolean[blockCount];
+		this.locations = new int[blockCount];
+		this.routes = new TrainRoute[blockCount]; 
+		Arrays.fill(closedBlocks, false);
+		Arrays.fill(locations,  -1); //use -1 for trains that don't exist yet
+		Arrays.fill(routes,  null);//new TrainRoute(-1, null));
+		
+		myWindow.setAnnouncement("loaded a map with " + blockCount + " blocks");
 	}
 	
 	//method to display the ctcWindow associated with this CTC
@@ -245,8 +246,12 @@ public class CTC {
 	
 	
 	public boolean routeTrainCTC(int train, double speed, int dest){
-		//convert train number to block number 	
-		int block = locations[train];
+		//convert train number to block number
+		///!!! test without working train presence by using the train # as block #
+		//int block = locations[train];
+		int block = train + 1;
+		
+		
 		//myWindow.setAnnouncement("got location " + Integer.toString(block));
 		
 		if(block > 0 ){
@@ -293,9 +298,14 @@ public class CTC {
 	//sub to find the best route
 	private TrainRoute calcRoute(int block, int dest){
 		
-		//calculate both directions, choose shortest		
+		myWindow.setAnnouncement("entered calcRoute");
+		
+		//calculate both directions, choose shortest	
+		myWindow.setAnnouncement("start calc up");
 		TrainRoute rtUp = calcRoute(block, dest, true);		
+		myWindow.setAnnouncement("start calc down");
 		TrainRoute rtDwn = calcRoute(block, dest, false);
+		myWindow.setAnnouncement("calced both directions");
 		int upLength = routeLength(rtUp);
 		int downLength = routeLength(rtDwn);
 		if(upLength > downLength){
@@ -317,13 +327,16 @@ public class CTC {
 			inc = -1;
 		}
 		
-		Switch sw = blocks[block].getSwitch();
-		boolean hasSwitch = (sw == null);
+		
 		
 		int next = -1;
 		boolean justSwitched = false;
 		
 		while(block!=dest){
+			
+			Switch sw = blocks[block].getSwitch();			
+			boolean hasSwitch = (sw != null);
+			myWindow.setAnnouncement("route: " + block + ". has switch? " + hasSwitch);
 			if(hasSwitch && !justSwitched){
 				justSwitched = true;
 				if (sw.getRoot() == block){
@@ -394,9 +407,7 @@ public class CTC {
 		//find direction of initial switch 
 		int increment;
 		
-		int fuckOffEclipse = 0;
-		//!!! jackie needs to expose switch presence   if(blocks[block-1].hasSwitch()){
-		if(fuckOffEclipse == 0){ 
+		if(blocks[block].getSwitch() != null){ 
 			block++;
 			increment = 1;
 		} 
@@ -405,10 +416,12 @@ public class CTC {
 			increment = -1;
 		}
 		
-		//!!! while (!blocks[block].hasSwitch){		
-		while(fuckOffEclipse == 1){
+		while (blocks[block].getSwitch() == null){ //!!! && blocks.getSwitchRoot() == -1 ){		
 			if (block == dest){
-				return true;
+				return true;				
+			}
+			if(block == toYard || block == fromYard ){
+				break;
 			}
 			block += increment;
 		}	
@@ -417,7 +430,6 @@ public class CTC {
 		if (block == dest){
 			return true;
 		}
-		block += increment;
 		
 	return false;
 	}
