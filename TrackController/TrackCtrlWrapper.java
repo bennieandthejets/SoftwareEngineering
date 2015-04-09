@@ -88,6 +88,15 @@ public class TrackCtrlWrapper {
 		downish.tick(trains, map);
 	}
 	
+	public void setRoute(int trainBlock, int destination, double suggestedSpeed, int suggestedAuthority, int[] route) {
+		Train train = trains.get(trainBlock);
+		
+		train.destination = destination;
+		train.sugSpeed = suggestedSpeed;
+		train.sugAuthority = suggestedAuthority;
+		train.suggestedRoute = route;
+	}
+	
 	void populateTrainmap() {
 		present.clear();
 		for (int i = 1; i < map.length; i++) {

@@ -60,8 +60,10 @@ public class TrackController {
 	}
 	
 	public void tick(HashMap<Integer, Train> trains, Block map[]) {
-		myPLC.checkRoutes(trains);
-		myPLC.checkSwitches(map);
+		if (myPLC != null ) {
+			myPLC.checkRoutes(trains);
+			myPLC.checkSwitches(map);
+		}
 		
 		return;
 	}
