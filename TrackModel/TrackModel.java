@@ -250,10 +250,10 @@ public class TrackModel {
 		map.close();
 				
 				
-		trainWrap = s.trainModelWrapper;
-		trainID = trainWrap.birthTrain();
-		train = trainWrap.getTrain(trainID);
-		s.start();
+		//trainWrap = s.trainModelWrapper;
+		//trainID = trainWrap.birthTrain();
+		//train = trainWrap.getTrain(trainID);
+		//s.start();
 		
 		return blocks;
 	}
