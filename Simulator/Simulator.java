@@ -54,6 +54,7 @@ public class Simulator {
     public void makeTrainPuppy() {
     	trainModelWrapper.birthTrain();
     	mbo.trainAdded();
+    	trackModel.trainBirthed();
     }
     
 //=====================
