@@ -166,9 +166,15 @@ public class TrainModel{
 		//calc force from power
 		//first check if brakes are applied
 		if(eBrake)
-			trainForce = E_BRAKE_DECEL*totalMass;
+			if(trainVelocity == 0.0)
+				trainForce = 0.0;
+			else
+				trainForce = E_BRAKE_DECEL*totalMass;
 		else if(brake)
-			trainForce = BRAKE_DECEL*totalMass;
+			if(trainVelocity == 0.0)
+				trainForce = 0.0;
+			else
+				trainForce = BRAKE_DECEL*totalMass;
 		else{
 			if(trainVelocity == 0.0)
 				trainForce = 1000* trainPower/.001; // N = W/(m/s) = kg*m/s^2
