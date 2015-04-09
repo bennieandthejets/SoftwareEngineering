@@ -342,7 +342,7 @@ public class CTC {
 				if (sw.getRoot() == block){
 					//choose "One" or "Two"
 					int[] paths = sw.getSwitchBlocks();
-					//!!! dangerous assumption: paths[0] will be root + 1
+					//!!! dangerous assumption: paths[0] will be root +/- 1
 					if(onBranch(paths[0], dest)){
 						next = paths[0];
 					} else if (onBranch(paths[1], dest)){
