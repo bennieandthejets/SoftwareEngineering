@@ -292,7 +292,7 @@ public class CTC {
 		activeTrains++; 
 		
 		//make train puppy in sim
-		
+		notReggie.makeTrainPuppy();
 	}
 	
 	//sub to find the best route

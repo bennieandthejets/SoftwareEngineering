@@ -35,6 +35,7 @@ public class Simulator {
         trainControllerWrapper = new TrainControllerWrapper(this);
         trainModelWrapper = new TrainModelWrapper(this);
         trackModel = new TrackModel(this);
+        mbo.setTrainModel(trainModelWrapper);
     }
     
 //=====================

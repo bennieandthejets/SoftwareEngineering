@@ -56,7 +56,7 @@ public class MBO
 		this.simulator = simulator;
 	}
 	
-	public void setTrackModel(TrainModelWrapper trainModelWrapper) {
+	public void setTrainModel(TrainModelWrapper trainModelWrapper) {
 		this.trainModelWrapper = trainModelWrapper;
 	}
 	
