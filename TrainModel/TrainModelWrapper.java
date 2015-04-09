@@ -29,11 +29,12 @@ public class TrainModelWrapper{
 	}
 	
 	//FUNCTIONS
-	public void birthTrain(){
+	public int birthTrain(){
 		int trainID = trains.size();
 		TrainModel newTrain = new TrainModel(trainID);
 		trains.add(trainID,newTrain);
 		trainCtrlWrapper.createTrainController(newTrain);
+		return trainID;
 	}
 	
 	public void removeTrain(int trainID){
@@ -66,10 +67,11 @@ public class TrainModelWrapper{
 	
 	public static void main(String[] args) throws InterruptedException{
 		//double setpoint = Double.parseDouble(args[0]);
+		int ID;
 		TrainControllerWrapper trainConWrap = new TrainControllerWrapper();
 		TrainModelWrapper trainModWrap = new TrainModelWrapper(trainConWrap);
 		trainConWrap.showUI();
-		trainModWrap.birthTrain();
+		ID = trainModWrap.birthTrain();
 		
 		while(true) {
 			trainModWrap.tick();
