@@ -23,6 +23,7 @@ public class MBO
 	private int numTrains;
 		
 	// Map train ID to stuff
+	private TrainModelWrapper trainModelWrapper;
 	ArrayList<Antenna> reggies;
 	HashMap<Integer, TrainSchedule> trainSchedules;
 	HashMap<Integer, CrewSchedule> crewSchedules;
@@ -52,6 +53,10 @@ public class MBO
 	public MBO(Simulator simulator) {
 		this();
 		this.simulator = simulator;
+	}
+	
+	public void setTrackModel(TrainModelWrapper trainModelWrapper) {
+		this.trainModelWrapper = trainModelWrapper;
 	}
 	
 	public void showUI() {
@@ -259,7 +264,7 @@ public class MBO
 	}
 	
 	public void trainAdded() {
-		this.reggies = trainModelWrapper.getAntennas();
+		this.reggies = trainModelWrapper.getAllAntennas();
 	}
 	
 	public long getTime() {
