@@ -18,7 +18,7 @@ public class CTC {
 	public int blockCount;
 	private boolean[] closedBlocks;
 	public int activeTrains;
-	private int[] locations;
+	public int[] locations;
 	private TrainRoute[] routes;
 	private ctcWindow myWindow;
 	private fakeWindow faaake;
@@ -340,22 +340,31 @@ public class CTC {
 			if(hasSwitch && !justSwitched){
 				justSwitched = true;
 				if (sw.getRoot() == block){
+					myWindow.setAnnouncement("dat da root");
 					//choose "One" or "Two"
 					int[] paths = sw.getSwitchBlocks();
 					//!!! dangerous assumption: paths[0] will be root +/- 1
 					if(onBranch(paths[0], dest)){
+						myWindow.setAnnouncement("Dest on Branch " + paths[0]);
 						next = paths[0];
 					} else if (onBranch(paths[1], dest)){
+						myWindow.setAnnouncement("Dest on Branch " + paths[1]);
 						next = paths[1];
 					} else {
-						next =  block + inc;
+						myWindow.setAnnouncement("neither path has dest, go to " + paths[0]);
+						next =  paths[0];
 					}
 					
 				} else {
 					//cann only go to root block from a branch
+					myWindow.setAnnouncement("root: " + sw.getRoot() + ", block: " + block);
 					next = sw.getRoot();
 				}
 			
+			} else if(blocks[block].getSwitchRoot() != -1 && !justSwitched){
+				myWindow.setAnnouncement("branch");
+				justSwitched = true;
+				next = blocks[block].getSwitchRoot();
 			} else {
 				justSwitched = false;
 				next = block + inc;
@@ -364,18 +373,23 @@ public class CTC {
 					next = block - inc;
 				}
 				//don't get turned around if you come off of a switch and you like another block from that switch
-				if ((hasSwitch)&&(next==sw.getRoot() || next==sw.getSwitchBlocks()[0] || next==sw.getSwitchBlocks()[1])){
+				if (next == blocks[block].getSwitchRoot() || (sw != null && (next==sw.getSwitchBlocks()[0] || next==sw.getSwitchBlocks()[1]))){
 					next = block - inc;
 				}
 				
-				
-				//add new location to list (route)
-				previous = block;
-				block = next;
-				TrainRoute rrrt = new TrainRoute(next, null);
-				rt.next = rrrt;
-				rt = rrrt;				
-			}			
+											
+			}	
+			//add new location to list (route)
+			previous = block;
+			block = next;
+			TrainRoute rrrt = new TrainRoute(next, null);
+			rt.next = rrrt;
+			rt = rrrt;	
+			
+			if(block==previous || block == toYard || block == fromYard){
+				myWindow.setAnnouncement("fuckkkk");
+				break;
+			}
 			
 		} //end while	
 		
@@ -404,10 +418,11 @@ public class CTC {
 	private boolean onBranch(int block, int dest){
 		//!!! account for hitting the yard to avoid infinite loop
 		
+		
 		//find direction of initial switch 
 		int increment;
 		
-		if(blocks[block].getSwitch() != null){ 
+		if(blocks[block].getSwitchRoot() == block - 1 ){ 
 			block++;
 			increment = 1;
 		} 
@@ -416,7 +431,8 @@ public class CTC {
 			increment = -1;
 		}
 		
-		while (blocks[block].getSwitch() == null){ //!!! && blocks.getSwitchRoot() == -1 ){		
+		while (blocks[block].getSwitch() == null && blocks[block].getSwitchRoot() == -1 ){	
+			myWindow.setAnnouncement("looking for dest on Block " + block);
 			if (block == dest){
 				return true;				
 			}
