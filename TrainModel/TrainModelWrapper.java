@@ -11,6 +11,7 @@ import Simulator.Simulator;
 public class TrainModelWrapper{
 	//ATTRIBUTES
 	ArrayList<TrainModel> trains;
+	ArrayList<Antenna> antennas;
 	Simulator sim;
 	TrainControllerWrapper trainCtrlWrapper;
 	TrainModelUI ui;
@@ -32,7 +33,9 @@ public class TrainModelWrapper{
 	public int birthTrain(){
 		int trainID = trains.size();
 		TrainModel newTrain = new TrainModel(trainID);
+		Antenna newAntenna = new Antenna(newTrain);
 		trains.add(trainID,newTrain);
+		antennas.add(trainID,newAntenna);
 		trainCtrlWrapper.createTrainController(newTrain);
 		return trainID;
 	}
@@ -45,6 +48,10 @@ public class TrainModelWrapper{
 	public TrainModel getTrain(int trainID){
 		trainID -= 1;
 		return trains.get(trainID);
+	}
+	
+	public ArrayList<Antenna> getAllAntennas(){
+		return antennas;
 	}
 	
 	public void showUI(){
