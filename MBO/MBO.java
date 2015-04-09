@@ -47,7 +47,6 @@ public class MBO
 		setpoints = new HashMap<Integer, Double>();
 		stopDistances = new HashMap<Integer, Double>();
 		
-		loadTrack();
 		ui.setItems(this);
 	}
 	
@@ -63,8 +62,6 @@ public class MBO
 	public void showUI() {
 		ui.setVisible(true);
 	}
-	
-
 	
 	/// Set the throughput for the system
 	/// Returns: none
@@ -180,14 +177,14 @@ public class MBO
 			iThroughput = 0;
 			i = 0;
 			while(iThroughput < throughput) {
-				lengthBtwStations += trackModel[i].length;
+				lengthBtwStations += trackModel[i].getBlockSize();
 				if(i < 39) {
 					i++;
 				}
 				else {
 					i = 0;
 				}
-				if(trackModel[i].hasStation) {
+				if(!trackModel[i].getStation().equals("")) {
 					iThroughput++;
 					//System.out.println("Station #" + iThroughput + ": Must travel " + lengthBtwStations + " meters.");
 					//System.out.print(trackModel[i].stationName + ": ");
@@ -198,9 +195,9 @@ public class MBO
 						throughput = iThroughput;
 					}
 					else {
-						trainSchedule.addStop(roundedMinute, trackModel[i].stationName);
+						trainSchedule.addStop(roundedMinute, trackModel[i].getStation());
 					}
-					secsElapsed += trackModel[i].dwellTime;
+					//secsElapsed += trackModel[i].dwellTime;
 					lengthBtwStations = 0;
 				}
 			}
@@ -263,7 +260,8 @@ public class MBO
 		this.systemTime = systemTime;
 		ui.setItems(this);
 		for(Antenna reggie : reggies) {
-			
+			Block location = reggie.getBlock();
+			double velocity = reggie.getVelocity();
 		}
 	}
 	
@@ -273,51 +271,6 @@ public class MBO
 	
 	public long getTime() {
 		return this.systemTime;
-	}
-	
-	public void loadTrack() {
-		this.trackModel = new Block[] {
-			new Block(1, 100, false, "", 0),	
-			new Block(2, 100, false, "", 0),	
-			new Block(3, 100, false, "", 0),	
-			new Block(4, 100, false, "", 0),	
-			new Block(5, 100, false, "", 0),	
-			new Block(6, 100, true, "SHADYSIDE", 180),	
-			new Block(7, 100, false, "", 0),	
-			new Block(8, 100, false, "", 0),	
-			new Block(9, 100, false, "", 0),	
-			new Block(10, 100, false, "", 0),	
-			new Block(11, 100, false, "", 0),	
-			new Block(12, 100, false, "", 0),	
-			new Block(13, 100, false, "", 0),	
-			new Block(14, 100, false, "", 0),	
-			new Block(15, 100, false, "", 0),	
-			new Block(16, 100, false, "", 0),	
-			new Block(17, 100, true, "EAST LIBERTY", 120),	
-			new Block(18, 100, false, "", 0),	
-			new Block(19, 100, false, "", 0),	
-			new Block(20, 100, false, "", 0),	
-			new Block(21, 100, false, "", 0),	
-			new Block(22, 100, false, "", 0),	
-			new Block(23, 100, false, "", 0),	
-			new Block(24, 100, false, "", 0),	
-			new Block(25, 100, false, "", 0),	
-			new Block(26, 100, true, "SQUIRREL HILL", 90),	
-			new Block(27, 100, false, "", 0),	
-			new Block(28, 100, false, "", 0),	
-			new Block(29, 100, false, "", 0),	
-			new Block(30, 100, false, "", 0),	
-			new Block(31, 100, false, "", 0),	
-			new Block(32, 100, false, "", 0),	
-			new Block(33, 100, true, "ANDREW\'S HOUSE", 120),	
-			new Block(34, 100, false, "", 0),	
-			new Block(35, 100, false, "", 0),	
-			new Block(36, 100, false, "", 0),	
-			new Block(37, 100, false, "", 0),	
-			new Block(38, 100, false, "", 0),	
-			new Block(39, 100, false, "", 0),	
-			new Block(40, 100, false, "", 0),	
-		};
 	}
 	
 	public static void main(String args[]) throws InterruptedException {
