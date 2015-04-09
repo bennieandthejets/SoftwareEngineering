@@ -1,7 +1,7 @@
 package MBO;
 
 import java.awt.EventQueue;
-
+import java.awt.FileDialog;
 import javax.swing.JFrame;
 import javax.swing.JComboBox;
 import javax.swing.JScrollPane;
@@ -82,6 +82,17 @@ public class MBOUI {
 	
 	public void setVisible(boolean visible) {
 		frame.setVisible(visible);
+	}
+	
+	public void showFileDialog() {
+		FileDialog fd = new FileDialog(this.frame, "Load Train Schedule", FileDialog.LOAD);
+		fd.setDirectory(System.getProperty("user.dir"));
+		fd.setFile("*.txt");
+		fd.setVisible(true);
+		String filePath = fd.getDirectory() + fd.getFile();
+		if (filePath != null) {
+			mbo.loadTrainSchedule(filePath);
+		}
 	}
 
 	/**
@@ -274,6 +285,7 @@ public class MBOUI {
 		JButton btnLoadSchedule = new JButton("Load Schedule");
 		btnLoadSchedule.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				showFileDialog();
 			}
 		});
 		btnLoadSchedule.setBounds(67, 341, 125, 30);

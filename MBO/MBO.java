@@ -6,6 +6,8 @@ import TrackModel.*;
 import TrainModel.*;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.io.File;
+import java.io.FileNotFoundException;
 
 public class MBO
 {
@@ -55,6 +57,8 @@ public class MBO
 	public void showUI() {
 		ui.setVisible(true);
 	}
+	
+
 	
 	/// Set the throughput for the system
 	/// Returns: none
@@ -239,35 +243,15 @@ public class MBO
 		this.travelTimeBetweenStations(1000);*/
 	}
 	
+	public void loadTrainSchedule(String filePath) {
+		File file = new File(filePath);
+	}
+	
 	/// Creates a crew schedule for a train
 	/// Called when the system has started, or when a crew's shift has ended
 	public void createCrewSchedule() {
 		
 	}
-	
-	/*private void loop() throws InterruptedException 
-	{
-		long timeStamp = System.currentTimeMillis();
-		long currentTime;
-		
-		while (true)
-		{
-			currentTime = System.currentTimeMillis();			
-			if ((running) && (currentTime - timeStamp >= (TIMESTEP / factor)))
-			{
-				//tick();
-				
-				simTime += TIMESTEP;
-				//simTimeField.setText(formatTime(simTime));
-				
-				timeStamp = System.currentTimeMillis();
-			}
-			
-			sysTime = System.currentTimeMillis();
-			//sysTimeField.setText(formatTime(sysTime));
-			Thread.sleep(TIMESTEP / factor);
-		}
-	}*/
 	
 	public void tick(long systemTime) {
 		this.systemTime = systemTime;
