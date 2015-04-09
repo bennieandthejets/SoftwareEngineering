@@ -28,6 +28,7 @@ public class Block {
 	int switchRoot;
 	int mapRow;
 	int mapCol;
+	int cameFrom;
 	
 	public Block(int blockID)
 	{

@@ -92,6 +92,13 @@ public class TrackModelUI {
 
 	}
 	
+	public void paintMap()
+	{
+		MyMap m = new MyMap(data);
+		mapPanel.removeAll();
+		mapPanel.add(m.getTable());
+	}
+	
 	public void addMap(Object[][] data) throws FileNotFoundException
 	{
 		mapPanel.removeAll();
@@ -117,6 +124,14 @@ public class TrackModelUI {
 		mapPanel.add(m.getTable());
 	}
 	
+	public void trainOffSwitch(int r, int c)
+	{
+		data[r][c] = new Color(0,9,255);
+		MyMap m = new MyMap(data);
+		mapPanel.removeAll();
+		mapPanel.add(m.getTable());
+	}
+	
 	public void addBlockChoice() {
 		
 		for(int i=1; i<blocks.length; i++)
@@ -127,6 +142,10 @@ public class TrackModelUI {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				resetLabels(blocks[Integer.parseInt(choice.getSelectedItem())]);
+				//FOR TESTING ONLY
+				//trainOnBlock(blocks[Integer.parseInt(choice.getSelectedItem())].mapRow, blocks[Integer.parseInt(choice.getSelectedItem())].mapCol);
+				//if(blocks[Integer.parseInt(choice.getSelectedItem())].blockID > 1)
+				//	trainOffBlock(blocks[Integer.parseInt(choice.getSelectedItem())-1].mapRow, blocks[Integer.parseInt(choice.getSelectedItem())-1].mapCol);
 			}
 		});
 	}

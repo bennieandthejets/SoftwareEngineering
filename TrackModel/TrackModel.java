@@ -18,6 +18,7 @@ public class TrackModel {
 	double trainMovedDist = 0.0;
 	double lastDist = 0.0;
 	double totalDist;
+	int prevBlock;
 	Simulator s;
 	TrackModelUI t;
 	TrainModelWrapper trainWrap;
@@ -28,9 +29,6 @@ public class TrackModel {
 	{
 		this.s = s;
 		t = new TrackModelUI(this);
-		trainWrap = s.trainModelWrapper;
-		trainID = trainWrap.birthTrain();
-		//train = trainWrap.getTrain(trainID);
 	}
 	
 	public void showUI()
@@ -50,6 +48,7 @@ public class TrackModel {
 	{
 		findTrain();
 		trainMoved();
+		t.paintMap();
 	}
 	
 	public void trainMoved()
@@ -60,20 +59,41 @@ public class TrackModel {
 	
 	public void findTrain()
 	{
-		if(trainMovedDist/blocks[trainOnBlock].blockSize == 1)
+		System.out.println("TOTAL DIST = " + totalDist);
+		System.out.println("TRAIN MOVED DIST = " + trainMovedDist);
+		System.out.println("BLOCK SIZE = " + blocks[trainOnBlock].blockSize);
+		System.out.println("ON BLOCK " + trainOnBlock);
+		System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+		if(trainMovedDist/blocks[trainOnBlock].blockSize >= 1)
 		{
+			prevBlock = trainOnBlock;
 			lastDist = totalDist;
 			blocks[trainOnBlock].trainPresent = false;
 			t.trainOffBlock(blocks[trainOnBlock].mapRow, blocks[trainOnBlock].mapCol);
 			trainMovedDist = 0.0;
 			if(blocks[trainOnBlock].getSwitch() != null)
 			{
-				trainOnBlock = blocks[trainOnBlock].getSwitch().getSwitchTaken();
+				if(blocks[trainOnBlock].getSwitch().blockOne == blocks[trainOnBlock].cameFrom || blocks[trainOnBlock].getSwitch().blockTwo == blocks[trainOnBlock].cameFrom)
+				{
+					t.trainOffSwitch(blocks[trainOnBlock].mapRow, blocks[trainOnBlock].mapCol);
+					trainOnBlock++;
+				}
+				else
+				{
+					t.trainOffSwitch(blocks[trainOnBlock].mapRow, blocks[trainOnBlock].mapCol);
+					trainOnBlock = blocks[trainOnBlock].getSwitch().getSwitchTaken();
+				}
+			}
+			else if(blocks[trainOnBlock].switchRoot != -1 && blocks[blocks[trainOnBlock].switchRoot].sw.blockOne == trainOnBlock)
+			{
+				t.trainOffSwitch(blocks[trainOnBlock].mapRow, blocks[trainOnBlock].mapCol);
+				trainOnBlock++;
 			}
 			else
 			{
 				trainOnBlock++;
 			}
+			blocks[trainOnBlock].cameFrom = prevBlock;
 			blocks[trainOnBlock].trainPresent = true;
 			t.trainOnBlock(blocks[trainOnBlock].mapRow, blocks[trainOnBlock].mapCol);
 		}
@@ -116,11 +136,13 @@ public class TrackModel {
 				else if(row.get(7).equals("FROM YARD"))
 				{
 					blocks[count].fromYard = true;
+					trainOnBlock = count;
 				}
 				else if(row.get(7).equals("TO YARD/FROM YARD"))
 				{
 					blocks[count].toYard = true;
 					blocks[count].fromYard = true;
+					trainOnBlock = count;
 				}
 				else
 					blocks[count].sw = null;
@@ -147,7 +169,7 @@ public class TrackModel {
 			
 		for(int i = 1; i < blocks.length; i++)
 		{
-			if(blocks[i] != null && blocks[i].getSwitch() != null)
+			if(blocks[i] != null && (blocks[i].getSwitch() != null || blocks[i].toYard || blocks[i].fromYard))
 			{
 				blocks[blocks[i].getSwitch().blockOne].switchRoot = i;
 				blocks[blocks[i].getSwitch().blockTwo].switchRoot = i;
@@ -225,6 +247,11 @@ public class TrackModel {
 		map.close();
 				
 				
+		trainWrap = s.trainModelWrapper;
+		trainID = trainWrap.birthTrain();
+		train = trainWrap.getTrain(trainID);
+		s.start();
+		
 		return blocks;
 	}
 	
