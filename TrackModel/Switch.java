@@ -5,7 +5,7 @@ public class Switch {
 	int blockOne;
 	int blockTwo;
 	int blockRoot;
-	boolean direction;
+	public boolean direction;
 	
 	public Switch(int blockRoot)
 	{
