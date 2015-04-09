@@ -67,6 +67,17 @@ public class TrackModel {
 		}
 	}
 	*/
+	
+	public void setSpeed(double speed)
+	{
+		train.setVelocity(speed);
+	}
+	
+	public void setAuthority(double authority)
+	{
+		train.setAuthority(authority);
+	}
+	
 	public void addTrain(TrainModel currTrain)
 	{
 		this.train = currTrain;
