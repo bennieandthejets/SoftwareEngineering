@@ -63,6 +63,9 @@ public class CTC {
 	//made public for prototype, will be private later
 	public void tick(){
 		
+		if(blockCount == 0){
+			start();
+		}
 		
 		//update time
 		time = notReggie.getTime();
@@ -70,7 +73,8 @@ public class CTC {
 		
 		
 		//update map
-		//blocks = ben.getBlocks(); 	
+		//blocks = ben.getBlocks(); 
+		notReggie.trackModel.getBlocks();
 		
 		
 		boolean[] known = new boolean[activeTrains];
