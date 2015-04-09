@@ -17,7 +17,7 @@ public class TrainModel{
 	//################
 	//###ATTRIBUTES###
 	//################
-	private static TrainModelUI ui;
+	private TrainModelUI ui;
 	private TrainModelWrapper tmWrapper;
 	private TrackModel track;
 	public Antenna antenna;
@@ -115,7 +115,7 @@ public class TrainModel{
 			}
 		});
 		
-		while(true){
+		/*while(true){
 			updateTrain();
 			setDisplay();
 			try {
@@ -124,7 +124,7 @@ public class TrainModel{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}
+		}*/
 		
 		//TEST ONLY
 		//setpoint = 18.0;
@@ -134,9 +134,9 @@ public class TrainModel{
 	
 	//main  for testing
 	public static void main(String[] args){
-		ui = new TrainModelUI();
+		//ui = new TrainModelUI();
 		TrainModel train = new TrainModel(1);
-		ui.setTrain(train);
+		//ui.setTrain(train);
 	}
 	
 	public void updateTrain(){
@@ -348,6 +348,10 @@ public class TrainModel{
 	}
 	public void setFailure(int fail){
 		failure[fail] = true;
+	}
+	
+	public void setUI(TrainModelUI ui) {
+		this.ui = ui;
 	}
 	
 	public void setDisplay(){
