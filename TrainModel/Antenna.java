@@ -1,18 +1,21 @@
 package TrainModel;
 
 import TrackModel.*;
+import MBO.*;
 
 public class Antenna{
 	//ATTRIBUTES
-	TrainModel train;
-	//Signal signal; //Signal object from Track Model
+	private TrainModel train;
+	
+	
 	
 	//FUNCTIONS
 	public Antenna(TrainModel train){
 		
 	}
 	
-	/*public void setSignal(Signal signal){
+	public void sendStationInfo(double distance, String stationName, String stationSide){
 		
-	}*/
+	}
+
 }
