@@ -89,7 +89,19 @@ public class TrackCtrlWrapper {
 	}
 	
 	public void setRoute(int trainBlock, int destination, double suggestedSpeed, int suggestedAuthority, int[] route) {
-		Train train = trains.get(trainBlock);
+		Train train = null;
+		Iterator it = trains.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry pair = (Map.Entry) it.next();
+			train = (Train) pair.getValue();
+			
+			if (train.position == trainBlock) 
+				break;
+		}
+		if (train == null) {
+			System.out.println("No train at block " + trainBlock);
+		}
+		
 		
 		train.destination = destination;
 		train.sugSpeed = suggestedSpeed;
