@@ -89,7 +89,7 @@ public class CTC {
 		}
 		//check destinations to see if the trains made it 
 		for(int i = 0; i <activeTrains; i++){			
-			if(!known[i] && locations[i]>0){
+			if(!known[i]){
 				//make sure a train isn't already there
 				boolean cockBlocked = false; 
 				for(int j = 0; j < activeTrains; j++){
@@ -116,7 +116,7 @@ public class CTC {
 							}
 						}
 						
-					}
+					} 
 				}
 			} else if(blocks[routes[i].block].isTrainPresent()){
 				//set current location to this one and cycle route
