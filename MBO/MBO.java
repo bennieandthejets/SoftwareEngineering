@@ -258,11 +258,19 @@ public class MBO
 	
 	public void tick(long systemTime) {
 		this.systemTime = systemTime;
-		ui.setItems(this);
+		ArrayList<Double> currentVelocities = new ArrayList<Double>();
+		ArrayList<Block> currentLocations = new ArrayList<Block>();
 		for(Antenna reggie : reggies) {
 			Block location = reggie.getBlock();
-			double velocity = reggie.getVelocity();
+			double currentVelocity = reggie.getVelocity();
+			
+			currentLocations.add(location);
+			currentVelocities.add(currentVelocity);
 		}
+		
+		calculateAuthorities();
+		calculateSetpoints();
+		ui.setItems(this);
 	}
 	
 	public void trainAdded() {

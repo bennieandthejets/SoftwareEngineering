@@ -22,8 +22,10 @@ public class TrackModel {
 	Simulator s;
 	TrackModelUI t;
 	TrainModelWrapper trainWrap;
-	TrainModel train;
+	TrainModel train;	
 	int trainID;
+	int trainCounter;
+	ArrayList<TrainModel> trains;
 	
 	public TrackModel(Simulator s)
 	{
@@ -46,10 +48,39 @@ public class TrackModel {
 	
 	public void tick()
 	{
+		//getAllTrains();
+		
 		if (train != null) {
 			findTrain();
 			trainMoved();
 			t.paintMap();
+		}
+	}
+	/*
+	public void getAllTrains()
+	{
+		trainWrap = s.trainModelWrapper;
+		trains = trainWrap.trains;
+		if(trains.size() > 0)
+		{
+			train = trains.get(0);
+		}
+	}
+	*/
+	public void addTrain(TrainModel currTrain)
+	{
+		this.train = currTrain;
+	}
+	
+	public void trainBirthed()
+	{
+		for(int i = 1; i < blocks.length; i++)
+		{
+			if(blocks[i] != null && blocks[i].fromYard)
+			{
+				trainOnBlock = i;
+				blocks[i].trainPresent = true;
+			}
 		}
 	}
 	
@@ -130,24 +161,24 @@ public class TrackModel {
 				if(row.get(7).equals("TRUE"))
 				{
 					blocks[count].sw = new Switch(count);
+					blocks[count].sw.toYardSwitch = false;
+					blocks[count].sw.fromYardSwitch = false;
 				}
 				else if(row.get(7).equals("TO YARD"))
 				{
-					blocks[count].toYard = true;
 					blocks[count].sw = new Switch(count);
+					blocks[count].sw.toYardSwitch = true;
 				}
 				else if(row.get(7).equals("FROM YARD"))
 				{
-					blocks[count].fromYard = true;
-					trainOnBlock = count;
 					blocks[count].sw = new Switch(count);
+					blocks[count].sw.fromYardSwitch = true;
 				}
 				else if(row.get(7).equals("TO YARD/FROM YARD"))
 				{
-					blocks[count].toYard = true;
-					blocks[count].fromYard = true;
-					trainOnBlock = count;
 					blocks[count].sw = new Switch(count);
+					blocks[count].sw.toYardSwitch = true;
+					blocks[count].sw.fromYardSwitch = true;
 				}
 				else
 					blocks[count].sw = null;
@@ -176,6 +207,14 @@ public class TrackModel {
 		{
 			if(blocks[i] != null && blocks[i].getSwitch() != null)
 			{
+				if(blocks[i].getSwitch().fromYardSwitch)
+				{
+					blocks[blocks[i].getSwitch().blockTwo].fromYard = true;
+				}
+				if(blocks[i].getSwitch().toYardSwitch)
+				{
+					blocks[blocks[i].getSwitch().blockTwo].toYard = true;
+				}
 				blocks[blocks[i].getSwitch().blockOne].switchRoot = i;
 				blocks[blocks[i].getSwitch().blockTwo].switchRoot = i;
 			}
@@ -184,9 +223,9 @@ public class TrackModel {
 		//read in map file for UI
 		String mapFile = "";
 				
-		if(inputFile.equals("TrackLayoutGreenLine.csv"))
+		if(inputFile.equals("Green.csv"))
 			mapFile = "greenmap.txt";
-		else if(inputFile.equals("TrackLayoutRedLine.csv"))
+		else if(inputFile.equals("Red.csv"))
 			mapFile = "redmap.txt";
 			
 		Scanner map = new Scanner(new File("src//" + mapFile));
@@ -252,6 +291,7 @@ public class TrackModel {
 		map.close();
 				
 				
+		//FOR TESTING
 		//trainWrap = s.trainModelWrapper;
 		//trainID = trainWrap.birthTrain();
 		//train = trainWrap.getTrain(trainID);

@@ -6,6 +6,8 @@ public class Switch {
 	int blockTwo;
 	int blockRoot;
 	public boolean direction;
+	boolean toYardSwitch;
+	boolean fromYardSwitch;
 	
 	public Switch(int blockRoot)
 	{

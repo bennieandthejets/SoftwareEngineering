@@ -112,8 +112,12 @@ public class TrainController {
 	private void checkRemainingAuthority() {
 		remainingAuthority = remainingAuthority - model.getDistanceTraveled();
 		stopDistance = model.antenna.getStopDistance();
-		if(remainingAuthority <= stopDistance) {
+		if(remainingAuthority <= stopDistance && model.getVelocity() != 0 && brakeStatus != true && eBrakeStatus != true ) {
 			stopTrain();
+		}
+		else if (remainingAuthority != 0) {
+			releaseServiceBrakes();
+			releaseEmergencyBrakes();
 		}
 		return;
 	}

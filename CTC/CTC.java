@@ -89,7 +89,7 @@ public class CTC {
 		}
 		//check destinations to see if the trains made it 
 		for(int i = 0; i <activeTrains; i++){			
-			if(!known[i] && locations[i]>0){
+			if(!known[i]){
 				//make sure a train isn't already there
 				boolean cockBlocked = false; 
 				for(int j = 0; j < activeTrains; j++){
@@ -98,7 +98,7 @@ public class CTC {
 						break;
 					}
 				}
-				if(cockBlocked || !blocks[routes[i].block].isTrainPresent()){
+				if(cockBlocked || (locations[i] > 0 && !blocks[routes[i].block].isTrainPresent())){
 					//check for another switch path
 					Switch sw = blocks[locations[i]].getSwitch();
 					if(sw!=null){
@@ -116,9 +116,8 @@ public class CTC {
 							}
 						}
 						
-					}
-				}
-			} else if(blocks[routes[i].block].isTrainPresent()){
+					} 
+				} else if(blocks[routes[i].block].isTrainPresent()){
 				//set current location to this one and cycle route
 				myWindow.setLocation(i,routes[i].block, -1);
 				locations[i] = routes[i].block;
@@ -127,6 +126,7 @@ public class CTC {
 			
 			}
 		}
+		}
 			
 		
 		//verify that all train locations actually have a train on them
@@ -134,6 +134,10 @@ public class CTC {
 			if(!known[i] && locations[i]>0){
 				myWindow.setAnnouncement("!!Lost Train " + (i + 1) + "! What have you done?!?!");
 				locations[i] = 0;
+			} else if(locations[i] > 0 && blocks[locations[i]].getStation() != null){
+				//record a stop
+				this.stops++;
+				myWindow.setStops(stops, 0, 0); //!!!not calculating expected yet
 			}
 			
 		}
@@ -308,7 +312,7 @@ public class CTC {
 		routes[activeTrains] = new TrainRoute(fromYard, null); 
 		locations[activeTrains] = 0; //special flag for yard
 		
-		myWindow.setLocation(activeTrains, -1,  1);
+		myWindow.setLocation(activeTrains, -1,  fromYard);
 		
 		activeTrains++; 
 		

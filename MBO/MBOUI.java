@@ -71,6 +71,8 @@ public class MBOUI {
 	public void setItems(MBO mbo) {
 		this.mbo = mbo;
 		this.txtRequiredThroughput.setText("" + mbo.getThroughput());
+		//this.txtStopsThisHour.setText("" + mbo.getStopsThisHour());
+		//this.txtAuthority.setText("" + mbo.get)
 		displayTime();
 		//this.txtrStops.setText(mbo.trainSchedules.get(1).toString());
 	}
