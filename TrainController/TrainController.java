@@ -1,4 +1,5 @@
 package TrainController;
+
 import TrainModel.*;
 
 @SuppressWarnings("unused")
@@ -11,8 +12,8 @@ public class TrainController {
 //	private final double	BRAKE_DECEL = -1.2;			//Service brake deceleration (m/s^2)
 //	private final double	E_BRAKE_DECEL = -2.73;		//Emergency brake deceleration (m/s^2)
 	private final double	TIME_PERIOD = 1;			//Sample period of time (s)
-	private	final double	Ki = .2;					//Integral Gain
-	private	final double	Kp = 60;					//Proportional Gain
+	private	final double	Ki = 0.00000001;						//Integral Gain
+	private	final double	Kp = 50;					//Proportional Gain
 	
 	private int			ID;
 	private	int			mode;							//0 for automatic, 1 for manual		
@@ -24,7 +25,8 @@ public class TrainController {
 	private double[]	velocityError = new double[2];	//Current [1] and most recent [0] velocity velocityError
 	private double		remainingAuthority;
 	private double		stopDistance;
-	private boolean		stopped;
+	public boolean		brakeStatus;
+	public boolean		eBrakeStatus;
 	
 	private TrainModel			model;
 	private TrainControllerUI	ui;
@@ -44,7 +46,8 @@ public class TrainController {
 		velocityError[1] = 0.0;
 		u[0] = 0;
 		u[1] = 0;
-		stopped = true;
+		brakeStatus = false;
+		eBrakeStatus = false;
 		
 		//TEST
 		remainingAuthority = 1000.0;
@@ -76,7 +79,7 @@ public class TrainController {
 		
 		velocityFeedback = model.getVelocity();
 		
-		velocityError[1] = (targetVelocity - velocityFeedback)/2;
+		velocityError[1] = targetVelocity - velocityFeedback;
 		
 		if(powerCommand[1] < MAX_POWER) {
 			u[1] = u[0] + (TIME_PERIOD/2) * (velocityError[1] + velocityError[0]);
@@ -125,6 +128,7 @@ public class TrainController {
 		model.setPower(0);
 		powerCommand[0] = 0;
 		model.activateServiceBrakes();
+		brakeStatus = true;
 		return;
 	}
 	
@@ -132,12 +136,21 @@ public class TrainController {
 		model.setPower(0);
 		powerCommand[0] = 0;
 		model.activateEmergencyBrakes();
+		eBrakeStatus = true;
 		return;
 	}
 	
-	public void releaseBrakes() {
-		if(stopped == true) {
-			
+	public void releaseServiceBrakes() {
+		if(brakeStatus == true) {
+			model.deactivateServiceBrakes();
+			brakeStatus = false;
+		}
+	}
+		
+	public void releaseEmergencyBrakes() {
+		if(eBrakeStatus == true) {
+			model.deactivateEmergencyBrakes();
+			eBrakeStatus = false;
 		}
 	}
 	
@@ -148,7 +161,9 @@ public class TrainController {
 		if(mode == 1) {
 			setTargetVelocity(setpointVelocity);
 		}
-		calculatePower();
+		if(!brakeStatus && !eBrakeStatus) {
+			calculatePower();
+		}
 		
 		//controlSubsystems(currentTime, currentTemp);
 		

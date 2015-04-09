@@ -381,11 +381,25 @@ public class TrainControllerUI {
 	}
 	
 	public void switchServiceBrakeStatus() {
-		
+		if(brakeStatusField.getText().equals("OFF")) {
+			controller.stopTrain();
+			brakeStatusField.setText("ON");
+		}
+		else {
+			controller.releaseServiceBrakes();
+			brakeStatusField.setText("OFF");
+		}
 	}
 	
 	public void switchEmergencyBrakeStatus() {
-		
+		if(eBrakeStatusField.getText().equals("OFF")) {
+			controller.emergencyStop();
+			eBrakeStatusField.setText("ON");
+		}
+		else {
+			controller.releaseEmergencyBrakes();
+			eBrakeStatusField.setText("OFF");
+		}
 	}
 	
 	private void updateSetpointVelocity(double newSetpointVelocity) {
@@ -405,6 +419,23 @@ public class TrainControllerUI {
 			updateSetpointVelocity(controller.getSetpointVelocity() * MPS_TO_MPH);
 			updateVelocityFeedback(controller.getVelocityFeedback() * MPS_TO_MPH);
 			updateAuthority(controller.getAuthority() * METERS_TO_MILES);
+			checkBrakes();
+		}
+	}
+	
+	public void checkBrakes() {
+		if(controller.brakeStatus) {
+			brakeStatusField.setText("ON");
+		}
+		else {
+			brakeStatusField.setText("OFF");
+		}
+		
+		if(controller.eBrakeStatus) {
+			eBrakeStatusField.setText("ON");
+		}
+		else {
+			eBrakeStatusField.setText("OFF");
 		}
 	}
 	
