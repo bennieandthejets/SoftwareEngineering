@@ -1,31 +1,60 @@
 package TrackModel;
 
+import java.awt.Color;
+import java.awt.EventQueue;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Scanner;
+
+import Simulator.Simulator;
 
 public class TrackModel {
 
 	Block[] blocks;	
-		
+	int trainOnBlock;
+	double trainMovedDist = 0.0;
+	Simulator s;
+	TrackModelUI t;
 
-	public double trainMovedDistance()
+	public TrackModel(Simulator s)
 	{
-		//find out how far train has moved
-		//get deploy time and place from reggie
-		//get speed constantly from reggie
-		//determine how far train has moved based on speed and position
-		//call findTrain
-		
-		return 0.0;
+		this.s = s;
+		t = new TrackModelUI(this);
+	}
+	
+	public void showUI()
+	{
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					t.frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+	
+	public void tick()
+	{
+		findTrain();
 	}
 	
 	public void findTrain()
 	{
-		
+		if(trainMovedDist/blocks[trainOnBlock].blockSize == 1)
+		{
+			blocks[trainOnBlock].trainPresent = false;
+			trainMovedDist = 0.0;
+			trainOnBlock++;
+			blocks[trainOnBlock].trainPresent = true;
+		}
 	}
 	
 	public Block[] importTrack(String inputFile) throws IOException
 	{
+		//read in info for blocks
 		ExcelParser ex = new ExcelParser(inputFile);
 		ArrayList<ArrayList<String>> line = ex.getLine();
 		
@@ -41,7 +70,12 @@ public class TrackModel {
 				blocks[count].blockSize = Double.parseDouble(row.get(3));
 				blocks[count].grade = Double.parseDouble(row.get(4));
 				blocks[count].speedLimit = Integer.parseInt(row.get(5));
-				blocks[count].station = row.get(6);
+				if(row.get(6).length() > 1)
+				{
+					blocks[count].station = row.get(6);
+					blocks[count].beacon = new Beacon(count, this, s);
+					blocks[count].stationSide = row.get(15);
+				}
 				blocks[count].toYard = false;
 				blocks[count].fromYard = false;
 				if(row.get(7).equals("TRUE"))
@@ -81,6 +115,63 @@ public class TrackModel {
 			}
 		}
 			
+		
+		//read in map file for UI
+		String mapFile = "";
+				
+		if(inputFile.equals("TrackLayoutGreenLine.csv"))
+			mapFile = "greenmap.txt";
+		else if(inputFile.equals("TrackLayoutRedLine.csv"))
+			mapFile = "redmap.txt";
+			
+		Scanner map = new Scanner(new File(mapFile));
+				
+		ArrayList<ArrayList<String>> mapRows = new ArrayList<ArrayList<String>>();
+			
+		while(map.hasNextLine())
+		{
+			String col = map.nextLine();
+			ArrayList<String> mapCol = new ArrayList<String>();
+			
+			String[] colArray = col.split("\\s+");
+			
+			for(int i=0; i<colArray.length; i++)
+			{
+				mapCol.add(colArray[i]);
+			}
+			mapRows.add(mapCol);
+		}
+
+		Object[][] data = new Object[mapRows.size()][mapRows.get(0).size()];
+		    
+		for(int i=0; i<mapRows.size(); i++)
+		{
+			ArrayList<String> mapCol = mapRows.get(i);
+				
+			for(int j=0; j<mapCol.size(); j++)
+			{
+				if(mapCol.get(j).equals("x"))
+					data[i][j] = new Color(255,255,255);
+				else if(mapCol.get(j).equals("Y"))
+					data[i][j] = new Color(255, 128, 0);
+				else if(mapCol.get(j).equals("S"))
+					data[i][j] = new Color(255, 0, 191);
+				else
+				{
+					data[i][j] = new Color(143,105,255);
+					int blockNum = Integer.parseInt(mapCol.get(j));
+					if(blocks[blockNum].getSwitch() != null)
+					{
+						data[i][j] = new Color(0,9,255);
+					}		
+				}
+			}
+		}
+		
+		t.addMap(data);
+		map.close();
+				
+				
 		return blocks;
 	}
 	

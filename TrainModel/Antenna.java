@@ -8,9 +8,9 @@ public class Antenna{
 	//Signal signal; //Signal object from Track Model
 	
 	//FUNCTIONS
-	/*public Signal getSignal(){
+	public Antenna(TrainModel train){
 		
-	}*/
+	}
 	
 	/*public void setSignal(Signal signal){
 		

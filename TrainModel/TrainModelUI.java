@@ -16,16 +16,15 @@ import java.awt.Color;
 import java.awt.event.*;
 
 
-public class TrainModelUI implements ActionListener{
+public class TrainModelUI{ //implements ActionListener{
 
-	private JFrame frame;
+	public JFrame frame;
 	private JTextField txtHeight;
 	private JTextField txtCrewMems;
 	private JTextField txtWidth;
 	private JTextField txtLength;
 	private JTextField txtMass;
 	private JTextField txtPassengers;
-	private JTextField txtNumofCars;
 	private JTextField txtAccel;
 	private JTextField txtVelocity;
 	private JTextField txtSlope;
@@ -37,10 +36,9 @@ public class TrainModelUI implements ActionListener{
 	private JTextField txtCurrBlock;
 	private JTextField txtCurrTrain;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
-	private JButton btnBrakes;
-	private JButton btnEmergencyBrakes;
 	private TrainModel train;
 	private String brakeType;
+	private JTextField txtDistance;
 
 	public void setTrain(TrainModel train){
 		this.train = train;
@@ -66,7 +64,7 @@ public class TrainModelUI implements ActionListener{
 	 */
 	public TrainModelUI() {
 		initialize();
-		frame.setVisible(true);
+		//frame.setVisible(true);
 	}
 
 	/**
@@ -96,17 +94,17 @@ public class TrainModelUI implements ActionListener{
 		lblFailureModes.setBounds(423, 11, 125, 14);
 		frame.getContentPane().add(lblFailureModes);
 		
-		JLabel lblHeight = new JLabel("Height (m)");
+		JLabel lblHeight = new JLabel("Height (ft)");
 		lblHeight.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		lblHeight.setBounds(10, 36, 60, 14);
 		frame.getContentPane().add(lblHeight);
 		
-		JLabel lblWidth = new JLabel("Width (m)");
+		JLabel lblWidth = new JLabel("Width (ft)");
 		lblWidth.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		lblWidth.setBounds(10, 61, 60, 14);
 		frame.getContentPane().add(lblWidth);
 		
-		JLabel lblLength = new JLabel("Length (m)");
+		JLabel lblLength = new JLabel("Length (ft)");
 		lblLength.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		lblLength.setBounds(10, 86, 65, 14);
 		frame.getContentPane().add(lblLength);
@@ -125,11 +123,6 @@ public class TrainModelUI implements ActionListener{
 		lblPassengers.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		lblPassengers.setBounds(10, 163, 75, 14);
 		frame.getContentPane().add(lblPassengers);
-		
-		JLabel lblNewLabel_1 = new JLabel("Number of Cars");
-		lblNewLabel_1.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		lblNewLabel_1.setBounds(10, 188, 87, 14);
-		frame.getContentPane().add(lblNewLabel_1);
 		
 		txtHeight = new JTextField();
 		txtHeight.setHorizontalAlignment(SwingConstants.CENTER);
@@ -173,13 +166,6 @@ public class TrainModelUI implements ActionListener{
 		txtPassengers.setBounds(112, 161, 55, 20);
 		frame.getContentPane().add(txtPassengers);
 		
-		txtNumofCars = new JTextField();
-		txtNumofCars.setHorizontalAlignment(SwingConstants.CENTER);
-		txtNumofCars.setEditable(false);
-		txtNumofCars.setColumns(10);
-		txtNumofCars.setBounds(112, 186, 55, 20);
-		frame.getContentPane().add(txtNumofCars);
-		
 		JSeparator separator = new JSeparator();
 		separator.setBounds(192, 247, 43, -30);
 		frame.getContentPane().add(separator);
@@ -194,12 +180,12 @@ public class TrainModelUI implements ActionListener{
 		separator_2.setBounds(403, 11, 10, 255);
 		frame.getContentPane().add(separator_2);
 		
-		JLabel lblAcceleration = new JLabel("Acceleration (m/s^2)");
+		JLabel lblAcceleration = new JLabel("Acceleration (ft/s^2)");
 		lblAcceleration.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		lblAcceleration.setBounds(189, 37, 120, 14);
 		frame.getContentPane().add(lblAcceleration);
 		
-		JLabel lblNewLabel_2 = new JLabel("Velocity (km/hr)");
+		JLabel lblNewLabel_2 = new JLabel("Velocity (mph)");
 		lblNewLabel_2.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		lblNewLabel_2.setBounds(189, 62, 90, 14);
 		frame.getContentPane().add(lblNewLabel_2);
@@ -306,36 +292,18 @@ public class TrainModelUI implements ActionListener{
 		separator_3.setBounds(417, 135, 145, 2);
 		frame.getContentPane().add(separator_3);
 		
-		JLabel lblBrakes_1 = new JLabel("Brakes");
-		lblBrakes_1.setHorizontalAlignment(SwingConstants.CENTER);
-		lblBrakes_1.setFont(new Font("Tahoma", Font.BOLD, 12));
-		lblBrakes_1.setBounds(423, 148, 125, 14);
-		frame.getContentPane().add(lblBrakes_1);
-		
-		btnBrakes= new JButton("Brake");
-		btnBrakes.setBackground(new Color(255, 255, 102));
-		btnBrakes.setBounds(425, 180, 125, 25);
-		btnBrakes.addActionListener(this);
-		frame.getContentPane().add(btnBrakes);
-		
-		btnEmergencyBrakes = new JButton("E-Brake");
-		btnEmergencyBrakes.setBackground(new Color(255, 51, 0));
-		btnEmergencyBrakes.setBounds(425, 225, 125, 25);
-		btnEmergencyBrakes.addActionListener(this);
-		frame.getContentPane().add(btnEmergencyBrakes);
-		
 		JSeparator separator_4 = new JSeparator();
-		separator_4.setBounds(10, 213, 160, 2);
+		separator_4.setBounds(10, 188, 160, 2);
 		frame.getContentPane().add(separator_4);
 		
 		JLabel lblTrainSelection = new JLabel("Train Selection");
 		lblTrainSelection.setHorizontalAlignment(SwingConstants.CENTER);
 		lblTrainSelection.setFont(new Font("Tahoma", Font.BOLD, 12));
-		lblTrainSelection.setBounds(10, 220, 160, 14);
+		lblTrainSelection.setBounds(10, 203, 160, 14);
 		frame.getContentPane().add(lblTrainSelection);
 		
 		JComboBox comboBox = new JComboBox();
-		comboBox.setBounds(10, 238, 160, 20);
+		comboBox.setBounds(10, 227, 160, 20);
 		frame.getContentPane().add(comboBox);
 		
 		JSeparator separator_5 = new JSeparator();
@@ -345,7 +313,7 @@ public class TrainModelUI implements ActionListener{
 		JLabel lblNewLabel_4 = new JLabel("  Current Train");
 		lblNewLabel_4.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel_4.setFont(new Font("Tahoma", Font.BOLD, 12));
-		lblNewLabel_4.setBounds(10, 274, 550, 14);
+		lblNewLabel_4.setBounds(220, 274, 130, 14);
 		frame.getContentPane().add(lblNewLabel_4);
 		
 		txtCurrTrain = new JTextField();
@@ -370,27 +338,40 @@ public class TrainModelUI implements ActionListener{
 		chckbxBrakeFailure.setBounds(419, 103, 109, 23);
 		frame.getContentPane().add(chckbxBrakeFailure);
 		
-		JLabel lbleverythingCurrentlyIn = new JLabel("* Everything currently in metric");
+		JLabel lbleverythingCurrentlyIn = new JLabel("* UI under construction");
 		lbleverythingCurrentlyIn.setFont(new Font("Tahoma", Font.ITALIC, 11));
 		lbleverythingCurrentlyIn.setBounds(10, 282, 150, 14);
 		frame.getContentPane().add(lbleverythingCurrentlyIn);
+		
+		JLabel lblDistanceTraveled = new JLabel("Distance Traveled");
+		lblDistanceTraveled.setHorizontalAlignment(SwingConstants.CENTER);
+		lblDistanceTraveled.setFont(new Font("Tahoma", Font.BOLD, 12));
+		lblDistanceTraveled.setBounds(398, 275, 130, 14);
+		frame.getContentPane().add(lblDistanceTraveled);
+		
+		txtDistance = new JTextField();
+		txtDistance.setHorizontalAlignment(SwingConstants.CENTER);
+		txtDistance.setEditable(false);
+		txtDistance.setColumns(10);
+		txtDistance.setBounds(423, 293, 90, 20);
+		frame.getContentPane().add(txtDistance);
 	}
 	//Methods to set all of the text fields
 	//Train Characteristics
-	public void setHeight(double height){
-		txtHeight.setText(new Double(height).toString());
+	public void setHeight(String height){
+		txtHeight.setText(height);
 	}
 	
-	public void setWidth(double width){
-		txtWidth.setText(new Double(width).toString());
+	public void setWidth(String width){
+		txtWidth.setText(width);
 	}
 	
-	public void setLength(double length){
-		txtLength.setText(new Double(length).toString());
+	public void setLength(String length){
+		txtLength.setText(length);
 	}
 	
-	public void setMass(double mass){
-		txtMass.setText(new Double(mass).toString());
+	public void setMass(String mass){
+		txtMass.setText(mass);
 	}
 	
 	public void setCrew(int crew){
@@ -401,9 +382,6 @@ public class TrainModelUI implements ActionListener{
 		txtPassengers.setText(new Integer(pass).toString());
 	}
 	
-	public void setCars(int cars){
-		txtNumofCars.setText(new Integer(cars).toString());
-	}
 	//Display
 	public void setAcceleration(String accel){
 		txtAccel.setText(accel);
@@ -443,17 +421,11 @@ public class TrainModelUI implements ActionListener{
 	public void setCurrTrain(String train){
 		txtCurrTrain.setText(train);
 	}
-	//Getting events from buttons
-	public void actionPerformed(ActionEvent e){
-		if(e.getSource() == getBtnBrakes()){
-			brakeType = "brakes";
-			switchbrakes(txtBrakes.getText());
-		}
-		else if(e.getSource() == btnEmergencyBrakes){
-			brakeType = "Ebrakes";
-			switchbrakes(txtBrakes.getText());
-		}
+	
+	public void setDistTrav(String dist){
+		txtDistance.setText(dist);
 	}
+
 	
 	//testing stuff
 	public void switchbrakes(String brakes){
@@ -463,12 +435,6 @@ public class TrainModelUI implements ActionListener{
 			txtBrakes.setText("In Use");
 	}
 	
-	public JButton getBtnBrakes() {
-		return btnBrakes;
-	}
-	public void setBtnBrakes(JButton btnBrakes) {
-		this.btnBrakes = btnBrakes;
-	}
 	//Return value of brakes to main prototype
 	public String getBrakes(){
 		return txtBrakes.getText();

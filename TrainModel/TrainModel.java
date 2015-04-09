@@ -24,6 +24,10 @@ public class TrainModel{
 	
 	//Constants
 	private static final double METRIC_VEL_CONV = 3.6;	// Used to convert from km/h --> m/s 
+	private static final double METER_TO_FEET = 3.28084; 
+	private static final double METRIC_TO_US = 1.10231131;
+	private static final double KM_TO_MI = 0.621371;
+	
 	private static final double TRAIN_VELOCITY_LIMIT = 19.444;	// 19.44m/s --> 70.0 km/h
 	private static final double TRAIN_ACCELERATION_LIMIT = 0.5;	// m/s^2
 	private static final double BRAKE_DECEL = -1.2;	// m/s^2
@@ -84,22 +88,27 @@ public class TrainModel{
 	//###############
 	public TrainModel(int trainID){
 		//initializing variables
-		setpoint = 10.0;
+		setPower(150000.0);
 		trainAcceleration = 0.0;
 		trainVelocity = 0.0;
 		passengers = 0;
 		blockLocation = 0.0;
 		distanceTraveled = 0.0;
-		//while(true){
-			//updateTrain(trainPower);
-			/*setDisplay();
+		while(true){
+			updateTrain();
+			setDisplay();
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}*/
+		}
+		
+		//TEST ONLY
+		//setpoint = 18.0;
+		//stopDistance = 100.0;
+		
 	}
 	
 	//main  for testing
@@ -134,9 +143,9 @@ public class TrainModel{
 			trainForce = BRAKE_DECEL*totalMass;
 		else{
 			if(trainVelocity == 0.0)
-				trainForce = trainPower/.001; // N = W/(m/s) = kg*m/s^2
+				trainForce = 1000* trainPower/.001; // N = W/(m/s) = kg*m/s^2
 			else
-				trainForce = trainPower/trainVelocity;	
+				trainForce = 1000* trainPower/trainVelocity;	
 		}
 		System.out.println("Train Force: "+trainForce+" N");
 	}
@@ -162,6 +171,8 @@ public class TrainModel{
 		tickDistance = trainVelocity;
 		blockLocation += tickDistance;
 		distanceTraveled += tickDistance;
+		System.out.println("Tick Distance: "+ tickDistance);
+		System.out.println("Distance Traveled: "+ distanceTraveled);
 	}
 	
 	public void addPassengers(){
@@ -222,7 +233,8 @@ public class TrainModel{
 	}
 	
 	public double getStopDistance(){
-		return mbo.calculateStopDistance(trainVelocity);
+		//return mbo.calculateStopDistance(trainVelocity);
+		return 100.0;
 	}
 	
 	public double getVelocity(){
@@ -305,15 +317,16 @@ public class TrainModel{
 	public void setDisplay(){
 		//Characteristics
 		double totalMass = getMass()/1000;
-		ui.setHeight(trainHeight);
-		ui.setWidth(trainWidth);
-		ui.setLength(trainLength);
-		ui.setMass(totalMass);
+		ui.setHeight(SigFig.format(trainHeight*METER_TO_FEET));
+		ui.setWidth(SigFig.format(trainWidth*METER_TO_FEET));
+		ui.setLength(SigFig.format(trainLength*METER_TO_FEET));
+		ui.setMass(SigFig.format(totalMass*METRIC_TO_US));
 		ui.setCrew(crew);
 		ui.setPass(passengers);
 		//Display
-		ui.setAcceleration(SigFig.format(trainAcceleration));
-		ui.setVelocity(SigFig.format(trainVelocity*METRIC_VEL_CONV));
+		ui.setAcceleration(SigFig.format(trainAcceleration*METER_TO_FEET));
+		ui.setVelocity(SigFig.format(trainVelocity*METRIC_VEL_CONV*KM_TO_MI));
+		ui.setDistTrav(SigFig.format(distanceTraveled*KM_TO_MI/1000)+" mi");
 		//ui.setSlope(Slope);
 		//ui.setBrakes(brake);
 		//ui.setLights(lightStatus);

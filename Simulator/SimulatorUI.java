@@ -116,6 +116,7 @@ public class SimulatorUI {
 		JButton trackModelButton = new JButton("Track Model");
 		trackModelButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				simulator.showTrackModelUI();
 			}
 		});
 		trackModelButton.setBounds(10, 128, 109, 28);
@@ -133,6 +134,7 @@ public class SimulatorUI {
 		JButton trainModelButton = new JButton("Train Model");
 		trainModelButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				simulator.showTrainModelUI();
 			}
 		});
 		trainModelButton.setBounds(10, 206, 109, 28);

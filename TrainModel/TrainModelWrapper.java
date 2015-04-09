@@ -2,6 +2,7 @@ package TrainModel;
 
 import TrainController.*;
 
+import java.awt.EventQueue;
 import java.util.ArrayList;
 
 import Simulator.Simulator;
@@ -12,16 +13,19 @@ public class TrainModelWrapper{
 	ArrayList<TrainModel> trains;
 	Simulator sim;
 	TrainControllerWrapper trainCtrlWrapper;
+	TrainModelUI ui;
 	
 	public TrainModelWrapper(TrainControllerWrapper trainCtrlWrapper){
 		this.trainCtrlWrapper = trainCtrlWrapper;
 		trains = new ArrayList<TrainModel>();
+		ui = new TrainModelUI();
 	}
 	
 	public TrainModelWrapper(Simulator sim){
 		this.sim = sim;
 		this.trainCtrlWrapper = sim.trainControllerWrapper;
 		trains = new ArrayList<TrainModel>();
+		ui = new TrainModelUI();
 	}
 	
 	//FUNCTIONS
@@ -43,7 +47,15 @@ public class TrainModelWrapper{
 	}
 	
 	public void showUI(){
-		
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					ui.frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 	
 	public void tick(){
@@ -62,7 +74,7 @@ public class TrainModelWrapper{
 		while(true) {
 			trainModWrap.tick();
 			trainConWrap.tick();
-			Thread.sleep(1000);
+			Thread.sleep(100);
 		}
 	}
 }

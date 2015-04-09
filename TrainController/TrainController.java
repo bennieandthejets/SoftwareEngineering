@@ -11,8 +11,8 @@ public class TrainController {
 //	private final double	BRAKE_DECEL = -1.2;			//Service brake deceleration (m/s^2)
 //	private final double	E_BRAKE_DECEL = -2.73;		//Emergency brake deceleration (m/s^2)
 	private final double	TIME_PERIOD = 1;			//Sample period of time (s)
-	private	final double	Ki = 1.0;					//Integral Gain
-	private	final double	Kp = 12;					//Proportional Gain
+	private	final double	Ki = .2;					//Integral Gain
+	private	final double	Kp = 60;					//Proportional Gain
 	
 	private int			ID;
 	private	int			mode;							//0 for automatic, 1 for manual		
@@ -45,6 +45,9 @@ public class TrainController {
 		u[0] = 0;
 		u[1] = 0;
 		stopped = true;
+		
+		//TEST
+		remainingAuthority = 1000.0;
 	}
 	
 	public int getID() {
@@ -73,7 +76,7 @@ public class TrainController {
 		
 		velocityFeedback = model.getVelocity();
 		
-		velocityError[1] = targetVelocity - velocityFeedback;
+		velocityError[1] = (targetVelocity - velocityFeedback)/2;
 		
 		if(powerCommand[1] < MAX_POWER) {
 			u[1] = u[0] + (TIME_PERIOD/2) * (velocityError[1] + velocityError[0]);
@@ -82,11 +85,7 @@ public class TrainController {
 			u[1] = u[0];
 		}
 		
-		powerCommand[1] = Ki * velocityError[1] + Kp * u[1];
-		
-		if(powerCommand[1] < 0) {
-			powerCommand[1] = 0;
-		}
+		powerCommand[1] = Kp * velocityError[1] + Ki * u[1];
 			
 		u[0] = u[1];
 		powerCommand[0] = powerCommand[1];
@@ -108,7 +107,7 @@ public class TrainController {
 	}
 	
 	private void checkRemainingAuthority() {
-		remainingAuthority = remainingAuthority - model.getDistanceTraveled();
+		//remainingAuthority = remainingAuthority - model.getDistanceTraveled();
 		stopDistance = model.getStopDistance();
 		if(remainingAuthority <= stopDistance) {
 			stopTrain();

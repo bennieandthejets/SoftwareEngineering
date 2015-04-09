@@ -1,42 +1,123 @@
 package TrackModel;
 
+import Simulator.Simulator;
+
 public class Beacon {
 
-	int radius;
 	int blockID;
-	double blockSize;
-	boolean trainPresent;
-	
-	//TODO ALL OF BEACON SOS
-	
-	public Beacon(int blockID)
+	boolean trainNear;
+	Block[] blocks;
+	String station;
+	String side;
+	Simulator s;
+	boolean fromNorth;
+	boolean fromSouth;
+		
+	public Beacon(int blockID, TrackModel t, Simulator s)
 	{
 		this.blockID = blockID;
-		TrackModel t = new TrackModel();
-		Block[] blocks = t.getBlocks();
-		this.blockSize = blocks[blockID].blockSize;
+		blocks = t.getBlocks();
+		this.station = blocks[blockID].station;
+		this.s = s;
 	}
 	
-	public int getRadius()
+	public void tick()
 	{
-		return radius;
+		searchForTrain();
+		findSide();
 	}
 	
-	public boolean isTrainPresent()
+	public void findSide()
 	{
-		return trainPresent;
+		if(trainNear)
+		{
+			if(fromNorth && blocks[blockID].stationSide.equals("right"))
+			{
+				side = "left";
+			}
+			else if(fromNorth && blocks[blockID].stationSide.equals("left"))
+			{
+				side = "right";
+			}
+			else if(fromSouth && blocks[blockID].stationSide.equals("right"))
+			{
+				side = "right";
+			}
+			else if(fromSouth && blocks[blockID].stationSide.equals("left"))
+			{
+				side = "left";
+			}
+			else
+				side = null;
+		}
 	}
 	
-	public int distance()
+	public String getSide()
 	{
-		//search for train three blocks away
-		return (int) blockSize*3;
+		return side;
+	}
+	
+	public String getStation()
+	{
+		return station;
+	}
+	
+	public boolean isTrainNear()
+	{
+		return trainNear;
 	}
 	
 	public void searchForTrain()
 	{
-		//SEARCH DISTANCE FOR TRAIN
-		//USES WHERE TRAIN WAS/SPEED TO FIND WHERE TRAIN IS NOW
-		//CHANGE TRAINPRESENT VARIABLE
+		//searches for train from three blocks away
+		//TODO search based on distance rather than blocks
+		if(blocks[blockID+3].trainPresent)
+		{
+			trainNear = true;
+			fromNorth = false;
+			fromSouth = true;
+		}
+		else if(blocks[blockID+2].trainPresent)
+		{
+			trainNear = true;
+			fromNorth = false;
+			fromSouth = true;
+		}
+		else if(blocks[blockID+1].trainPresent)
+		{
+			trainNear = true;
+			fromNorth = false;
+			fromSouth = true;
+		}
+		else if(blocks[blockID].trainPresent)
+		{
+			trainNear = true;
+			fromNorth = false;
+			fromSouth = false;
+		}
+		else if(blocks[blockID+1].trainPresent)
+		{
+			trainNear = true;
+			fromNorth = true;
+			fromSouth = false;
+		}
+		else if(blocks[blockID+2].trainPresent)
+		{
+			trainNear = true;
+			fromNorth = true;
+			fromSouth = false;
+		}
+		else if(blocks[blockID+3].trainPresent)
+		{
+			trainNear = true;
+			fromNorth = true;
+			fromSouth = false;
+		}
+		else
+		{
+			trainNear = false;
+			fromNorth = false;
+			fromSouth = false;
+		}
 	}
 }
