@@ -8,19 +8,29 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import Simulator.Simulator;
+import TrainModel.TrainModel;
+import TrainModel.TrainModelWrapper;
 
 public class TrackModel {
 
 	Block[] blocks;	
 	int trainOnBlock;
 	double trainMovedDist = 0.0;
+	double lastDist = 0.0;
+	double totalDist;
 	Simulator s;
 	TrackModelUI t;
-
+	TrainModelWrapper trainWrap;
+	TrainModel train;
+	int trainID;
+	
 	public TrackModel(Simulator s)
 	{
 		this.s = s;
 		t = new TrackModelUI(this);
+		trainWrap = new TrainModelWrapper(s);
+		trainID = trainWrap.birthTrain();
+		train = trainWrap.getTrain(trainID);
 	}
 	
 	public void showUI()
@@ -39,23 +49,33 @@ public class TrackModel {
 	public void tick()
 	{
 		findTrain();
+		trainMoved();
+	}
+	
+	public void trainMoved()
+	{
+		totalDist = train.getDistanceTraveled();
+		trainMovedDist += totalDist - lastDist;
 	}
 	
 	public void findTrain()
 	{
 		if(trainMovedDist/blocks[trainOnBlock].blockSize == 1)
 		{
+			lastDist = totalDist;
 			blocks[trainOnBlock].trainPresent = false;
+			t.trainOffBlock(blocks[trainOnBlock].mapRow, blocks[trainOnBlock].mapCol);
 			trainMovedDist = 0.0;
 			trainOnBlock++;
 			blocks[trainOnBlock].trainPresent = true;
+			t.trainOnBlock(blocks[trainOnBlock].mapRow, blocks[trainOnBlock].mapCol);
 		}
 	}
 	
 	public Block[] importTrack(String inputFile) throws IOException
 	{
 		//read in info for blocks
-		ExcelParser ex = new ExcelParser(inputFile);
+		ExcelParser ex = new ExcelParser("src//" + inputFile);
 		ArrayList<ArrayList<String>> line = ex.getLine();
 		
 		blocks = new Block[line.size()];
@@ -82,17 +102,14 @@ public class TrackModel {
 					blocks[count].sw = new Switch(count);
 				else if(row.get(7).equals("TO YARD"))
 				{
-					blocks[count].sw = new Switch(count);
 					blocks[count].toYard = true;
 				}
 				else if(row.get(7).equals("FROM YARD"))
 				{
-					blocks[count].sw = new Switch(count);
 					blocks[count].fromYard = true;
 				}
 				else if(row.get(7).equals("TO YARD/FROM YARD"))
 				{
-					blocks[count].sw = new Switch(count);
 					blocks[count].toYard = true;
 					blocks[count].fromYard = true;
 				}
@@ -135,7 +152,7 @@ public class TrackModel {
 		else if(inputFile.equals("TrackLayoutRedLine.csv"))
 			mapFile = "redmap.txt";
 			
-		Scanner map = new Scanner(new File(mapFile));
+		Scanner map = new Scanner(new File("src//" + mapFile));
 				
 		ArrayList<ArrayList<String>> mapRows = new ArrayList<ArrayList<String>>();
 			
@@ -169,7 +186,16 @@ public class TrackModel {
 					data[i][j] = new Color(255, 0, 191);
 				else if(blocks[Integer.parseInt(mapCol.get(j))].switchRoot != -1)
 				{
-					data[i][j] = new Color(0,9,255);
+					if(blocks[blocks[Integer.parseInt(mapCol.get(j))].switchRoot].sw.blockTwo == Integer.parseInt(mapCol.get(j)))
+					{
+						data[i][j] = new Color(0,9,255);
+					}
+					else
+					{
+						data[i][j] = new Color(143,105,255);
+					}
+					blocks[Integer.parseInt(mapCol.get(j))].mapRow = i;
+					blocks[Integer.parseInt(mapCol.get(j))].mapCol = j;
 				}
 				else
 				{
@@ -179,6 +205,8 @@ public class TrackModel {
 					{
 						data[i][j] = new Color(0,9,255);
 					}		
+					blocks[Integer.parseInt(mapCol.get(j))].mapRow = i;
+					blocks[Integer.parseInt(mapCol.get(j))].mapCol = j;
 				}
 			}
 		}
