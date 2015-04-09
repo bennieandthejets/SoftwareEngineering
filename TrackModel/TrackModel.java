@@ -203,9 +203,9 @@ public class TrackModel {
 		//read in map file for UI
 		String mapFile = "";
 				
-		if(inputFile.equals("TrackLayoutGreenLine.csv"))
+		if(inputFile.equals("Green.csv"))
 			mapFile = "greenmap.txt";
-		else if(inputFile.equals("TrackLayoutRedLine.csv"))
+		else if(inputFile.equals("Red.csv"))
 			mapFile = "redmap.txt";
 			
 		Scanner map = new Scanner(new File("src//" + mapFile));
