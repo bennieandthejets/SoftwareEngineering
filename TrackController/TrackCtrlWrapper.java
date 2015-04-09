@@ -95,6 +95,9 @@ public class TrackCtrlWrapper {
 		train.sugSpeed = suggestedSpeed;
 		train.sugAuthority = suggestedAuthority;
 		train.suggestedRoute = route;
+		
+		myModel.setAuthority((double) suggestedAuthority);
+		myModel.setSpeed(suggestedSpeed);
 	}
 	
 	void populateTrainmap() {
