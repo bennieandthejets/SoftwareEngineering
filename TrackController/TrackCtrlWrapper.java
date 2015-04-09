@@ -66,6 +66,8 @@ public class TrackCtrlWrapper {
 	public void tick() {
 		getBlocks();
 		
+		//upish.ui.panel.repaint();
+		
 		int[] trainlocs = simulator.ctc.locations;
 		for (int trainID = 0; trainID < trainlocs.length; trainID++) {
 			//If trainlocs[trainid] is -1, there is no train there!
@@ -77,10 +79,16 @@ public class TrackCtrlWrapper {
 			if (trackedTrain != null) {
 				trackedTrain.oldposition = trackedTrain.position;
 				trackedTrain.position = trainlocs[trainID];
+				
+				upish.ui.updatePosition(trainID, trainlocs[trainID]);
+				downish.ui.updatePosition(trainID, trainlocs[trainID]);
+
 			}
 			//If there is not a train already with this ID, add one
 			else {
 				trains.put(trainID, new Train(trainlocs[trainID]));
+				upish.ui.addTrain(trainID, trainlocs[trainID]);
+				downish.ui.addTrain(trainID, trainlocs[trainID]);
 			}
 		}
 		
@@ -109,6 +117,21 @@ public class TrackCtrlWrapper {
 		train.suggestedRoute = route;
 		
 		myModel.setAuthority((double) suggestedAuthority);
+		int routeStep;
+		for (routeStep = 0; routeStep < train.suggestedRoute.length; routeStep++) {
+			if (train.suggestedRoute[routeStep] == train.position) {
+				break;
+			}
+		}
+		
+		/*double currentLimit = map[train.suggestedRoute[routeStep]].getSpeedLimit();
+		double nextLimit = map[train.suggestedRoute[routeStep+1]].getSpeedLimit();
+		double thirdLimit = map[train.suggestedRoute[routeStep+2]].getSpeedLimit();
+		double safespeed = Math.min(suggestedSpeed, currentLimit);
+		safespeed = Math.min(safespeed, nextLimit);
+		safespeed = Math.min(safespeed, thirdLimit);
+		
+		myModel.setSpeed(safespeed);*/
 		myModel.setSpeed(suggestedSpeed);
 	}
 	

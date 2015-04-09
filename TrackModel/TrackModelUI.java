@@ -94,7 +94,7 @@ public class TrackModelUI {
 	
 	public void paintMap()
 	{
-		mapPanel.repaint();
+		//mapPanel.repaint();
 		MyMap m = new MyMap(data);
 		mapPanel.removeAll();
 		mapPanel.add(m.getTable());
