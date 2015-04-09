@@ -46,9 +46,11 @@ public class TrackModel {
 	
 	public void tick()
 	{
-		findTrain();
-		trainMoved();
-		t.paintMap();
+		if (train != null) {
+			findTrain();
+			trainMoved();
+			t.paintMap();
+		}
 	}
 	
 	public void trainMoved()

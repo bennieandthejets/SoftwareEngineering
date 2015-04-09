@@ -15,7 +15,7 @@ public class TrackCtrlWrapper {
 	private static TrackController downish;
 	//private static UI ui;
 	private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-	private Block map[];
+	private Block[] map;
 	private int penis = 0;
 	private Simulator simulator;
 	private TrackModel myModel;
@@ -52,14 +52,15 @@ public class TrackCtrlWrapper {
 		upish = new TrackController(simulator,1);
 		downish = new TrackController(simulator,2);
 		myModel = simulator.trackModel;
-		
 		present = new HashSet<>();
 		trains = new HashMap<>();		
 	}
 	
-	public void getBlocks() {
+	public Block[] getBlocks() {
 		map = myModel.getBlocks();
 		populateTrainmap();
+		
+		return map;
 	}
 	
 	public void tick() {
@@ -67,6 +68,10 @@ public class TrackCtrlWrapper {
 		
 		int[] trainlocs = simulator.ctc.locations;
 		for (int trainID = 0; trainID < trainlocs.length; trainID++) {
+			//If trainlocs[trainid] is -1, there is no train there!
+			if (trainlocs[trainID] == -1) {
+				continue;
+			}
 			//If there is already a train with this ID being tracked, update its location
 			Train trackedTrain = trains.get(trainID);
 			if (trackedTrain != null) {
@@ -85,11 +90,16 @@ public class TrackCtrlWrapper {
 	
 	void populateTrainmap() {
 		present.clear();
-		for (int i = 0; i < map.length; i++) {
+		for (int i = 1; i < map.length; i++) {
 			if (map[i].isTrainPresent()) {
 				present.add(i);
 			}
 		}
+	}
+	
+	public void showUI() {
+		upish.showUI();
+		downish.showUI();
 	}
 	
 	public class Train {

@@ -100,7 +100,7 @@ public class Simulator {
 	}
 	
 	public void showTrackControllerUI() {
-		
+		trackControllerWrapper.showUI();
 	}
 	
 	public void showTrackModelUI() {

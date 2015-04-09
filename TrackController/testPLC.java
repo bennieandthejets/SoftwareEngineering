@@ -20,23 +20,32 @@ public class testPLC implements PLC{
 	
 	}
 	public boolean checkRoutes(HashMap<Integer, Train> trains) {
+		if (trains.size() == 0) {
+			return false;
+		}
 		Iterator it = trains.entrySet().iterator();
 		while (it.hasNext()) {
 			Map.Entry pair = (Map.Entry) it.next();
 			Train train = (Train) pair.getValue();
 			
+			
 			HashMap<String,Integer> nextSwitchInfo = findNextSwitch(train);
+			if (nextSwitchInfo == null) {
+				return false;
+			}
 			train.nextSwitch = nextSwitchInfo.get("switchBlock");
 			train.blockBefore = nextSwitchInfo.get("switchOn");
 			train.blockAfter = nextSwitchInfo.get("afterSwitch");
 			
 		}
-		return false;
+		return true;
 	}
 	
 	private HashMap<String, Integer> findNextSwitch(Train train) {
 		int[] route = train.suggestedRoute;
-		
+		if (route == null) {
+			return null;
+		}
 		for (int routeStep = 0; routeStep < route.length; routeStep++) {
 			//step through the route until the current train position is found
 			boolean posFound = false;

@@ -34,14 +34,14 @@ public class TrackController {
 	
 	private int half;
 	
-	//private UI ui;
+	private UI ui;
 
 	TrackController(Simulator simulator, int fraction) {
 		myModel = simulator.trackModel;
 		present = new ArrayList<Integer>(); 
 		trains = new HashMap<>();
 		half = fraction;
-		//ui = new UI(this);
+		ui = new UI(this);
 		//ui.setvisible(true);
 	}
 	
@@ -75,7 +75,7 @@ public class TrackController {
 			URL[] urls = new URL[]{url};
 			
 			ClassLoader cl = new URLClassLoader(urls);*/
-			
+			System.out.println("Loaded successfully!");
 			Class cls = cl.loadClass(filename);
 			Object o = cls.newInstance();
 			
@@ -112,6 +112,10 @@ public class TrackController {
 		}*/
 		
 		TrackController TC = new TrackController();
+	}
+	
+	public void showUI() {
+		ui.setvisible(true);
 	}
 	
 	public void updateTrains(HashSet<Integer> present) {

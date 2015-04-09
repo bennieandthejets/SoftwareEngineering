@@ -107,7 +107,7 @@ public class SimulatorUI {
 		JButton trackControllerButton = new JButton("Track Controller");
 		trackControllerButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				
+				simulator.showTrackControllerUI();
 			}
 		});
 		trackControllerButton.setBounds(10, 89, 109, 28);
