@@ -152,19 +152,19 @@ public class TrackModel {
 				}
 				else if(row.get(7).equals("TO YARD"))
 				{
-					blocks[count].toYard = true;
+					blocks[Integer.parseInt(row.get(13))].toYard = true;
 					blocks[count].sw = new Switch(count);
 				}
 				else if(row.get(7).equals("FROM YARD"))
 				{
-					blocks[count].fromYard = true;
+					blocks[Integer.parseInt(row.get(13))].fromYard = true;
 					trainOnBlock = count;
 					blocks[count].sw = new Switch(count);
 				}
 				else if(row.get(7).equals("TO YARD/FROM YARD"))
 				{
-					blocks[count].toYard = true;
-					blocks[count].fromYard = true;
+					blocks[Integer.parseInt(row.get(13))].toYard = true;
+					blocks[Integer.parseInt(row.get(13))].fromYard = true;
 					trainOnBlock = count;
 					blocks[count].sw = new Switch(count);
 				}
