@@ -199,6 +199,7 @@ public class TrackModel {
 				{
 					blocks[blocks[i].getSwitch().blockTwo].fromYard = true;
 					trainOnBlock = i;
+					blocks[trainOnBlock].trainPresent = true;
 				}
 				if(blocks[i].getSwitch().toYardSwitch)
 				{
