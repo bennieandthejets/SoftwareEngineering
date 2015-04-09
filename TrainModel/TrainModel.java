@@ -18,7 +18,7 @@ public class TrainModel{
 	//################
 	private static TrainModelUI ui;
 	private TrainModelWrapper tmWrapper;
-	private Antenna antenna;
+	public Antenna antenna;
 	private Simulator sim;
 	private MBO mbo;
 	

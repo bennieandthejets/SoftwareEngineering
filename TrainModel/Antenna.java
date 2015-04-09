@@ -37,5 +37,10 @@ public class Antenna{
 	public void setSafeAuthority(double auth){
 		train.setSafeAuthority(auth);
 	}
+	
+	//Train Controller Communication
+	public double getStopDistance(){
+		return mbo.calculateStopDistance(getVelocity());
+	}
 
 }
