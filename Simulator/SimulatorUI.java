@@ -75,10 +75,48 @@ public class SimulatorUI {
         
         this.frmBennieAndThe.setVisible(true);
 	}
+	
+//=====================
+// Change Methods
+//=====================	
+	
+	/// Start ticking
+    public void startButtonClicked() {
+        simulator.start();
+    }
 
-	/**
-	 * Initialize the contents of the frame.
-	 */
+    /// Stop ticking
+    public void stopButtonClicked() {
+        simulator.stop();
+    }
+    
+    /// Called from the system to update the time text box
+    public void setTxtSystemTime(long systemTime) {
+        Date date = new Date(systemTime);
+        txtSystemTime.setText(timeFormat.format(date));
+    }
+    
+    /// Change the slider position based on text box
+    public void txtSimulatorSpeedChanged() {
+        String value = txtSimulatorSpeed.getText();
+        setSliderValue(Integer.parseInt(value));
+    }
+
+    /// Change the text box based on slider position
+    public void setTxtSimulationSpeed(int speed) {
+        txtSimulatorSpeed.setText(Integer.toString(speed));
+        simulator.setSpeedMultiplier(speed);
+    }
+
+    public void setSliderValue(int speed) {
+        sliderSimulationTime.setValue(speed);
+        simulator.setSpeedMultiplier(speed);
+    }
+    
+//=====================
+// INIT
+//=====================
+   
 	private void initialize() {
 		frmBennieAndThe = new JFrame();
 		frmBennieAndThe.setTitle("Bennie and the Jets");
@@ -185,32 +223,4 @@ public class SimulatorUI {
 		frmBennieAndThe.getContentPane().add(lblWave);
 		
 	}
-	
-    public void startButtonClicked() {
-        simulator.start();
-    }
-
-    public void stopButtonClicked() {
-        simulator.stop();
-    }
-
-    public void setTxtSystemTime(long systemTime) {
-        Date date = new Date(systemTime);
-        txtSystemTime.setText(timeFormat.format(date));
-    }
-    
-    public void txtSimulatorSpeedChanged() {
-        String value = txtSimulatorSpeed.getText();
-        setSliderValue(Integer.parseInt(value));
-    }
-
-    public void setTxtSimulationSpeed(int speed) {
-        txtSimulatorSpeed.setText(Integer.toString(speed));
-        simulator.setSpeedMultiplier(speed);
-    }
-
-    public void setSliderValue(int speed) {
-        sliderSimulationTime.setValue(speed);
-        simulator.setSpeedMultiplier(speed);
-    }
 }

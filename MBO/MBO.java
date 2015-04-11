@@ -18,62 +18,68 @@ public class MBO
 	private static final double METERS_TO_MPH = 2.23694;		// Multiply m/s by this to get mph
 	private static final double METERS_TO_FT = 3.28084;			// Multiply meters by this to get feet
 	
-	private int throughput;
-	private int actualThroughput;
-	private int numTrains;
+	protected int throughput;
+	protected int actualThroughput;
 		
-	// Map train ID to stuff
-	private TrainModelWrapper trainModelWrapper;
-	ArrayList<Antenna> reggies;
-	HashMap<Integer, TrainSchedule> trainSchedules;
-	HashMap<Integer, CrewSchedule> crewSchedules;
-	HashMap<Integer, Double> authorities;
-	HashMap<Integer, Double> setpoints;
-	HashMap<Integer, Double> stopDistances;
-	
-	ArrayList<Double> currentVelocities;
-	ArrayList<Block> currentLocations;
-	
 	private Simulator simulator;
-	public Block[] trackModel;
 	private MBOUI ui;
-	private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-	private long systemTime;
+	private TrainModelWrapper trainModelWrapper;
+	private CTC ctc;
+	private TrackModel trackModel;
+	
+	private HashMap<Integer, TrainSchedule> trainSchedules;
+	private HashMap<Integer, CrewSchedule> crewSchedules;	
+	
+	protected ArrayList<Antenna> reggies;
+	protected ArrayList<Double> currentVelocities;
+	protected ArrayList<Double> currentAuthorities;
+	protected ArrayList<Block> currentLocations;
+	protected ArrayList<Double> movingBlockAuthorities;
+	protected ArrayList<Double> safeVelocities;
+	
+	protected long systemTime;
 
 	public MBO()
 	{
-		this.ui = new MBOUI();
-		reggies = new ArrayList<Antenna>();
+		this.actualThroughput = -1;
+		
+		reggies = new ArrayList<Antenna>();		
 		trainSchedules = new HashMap<Integer, TrainSchedule>();
 		crewSchedules = new HashMap<Integer, CrewSchedule>();
-		authorities = new HashMap<Integer, Double>();
-		setpoints = new HashMap<Integer, Double>();
-		stopDistances = new HashMap<Integer, Double>();
+		currentVelocities = new ArrayList<Double>();
+		currentAuthorities = new ArrayList<Double>();
+		currentLocations = new ArrayList<Block>();
+		movingBlockAuthorities = new ArrayList<Double>();
+		safeVelocities = new ArrayList<Double>();
 		
+		this.ui = new MBOUI();
 		ui.setItems(this);
 	}
 	
 	public MBO(Simulator simulator) {
 		this();
 		this.simulator = simulator;
+		this.ctc = simulator.ctc;
 	}
 	
-	public void setTrainModel(TrainModelWrapper trainModelWrapper) {
-		this.trainModelWrapper = trainModelWrapper;
+	public void setModules() {
+		this.trainModelWrapper = simulator.trainModelWrapper;
+		this.trackModel = simulator.trackModel;
 	}
 	
 	public void showUI() {
 		ui.setVisible(true);
 	}
 	
+	public void trainAdded() {
+		this.reggies = trainModelWrapper.getAllAntennas();
+		ui.setTrainSelectBox();
+	}
+	
 	/// Set the throughput for the system
 	/// Returns: none
 	public void setThroughput(int throughput, int hour) {
 		this.throughput = throughput;
-	}
-	
-	public int getThroughput() {
-		return throughput;
 	}
 		
 	/// In moving block mode, set the authorities for all trains
@@ -166,7 +172,7 @@ public class MBO
 	/// If either of the above are not set, fails to create schedule
 	/// Typically called at the beginning of the day (when system is started)
 	public void createTrainSchedule(int throughput)	{
-		TrainSchedule trainSchedule = new TrainSchedule();
+		/*TrainSchedule trainSchedule = new TrainSchedule();
 		if(throughput == 0 || trackModel == null ) {
 			System.out.println("Throughput and track model required.");
 			return;
@@ -189,8 +195,7 @@ public class MBO
 				lengthBtwStations += trackModel[i].getBlockSize();
 				if(i < 39) {
 					i++;
-				}
-				else {
+				} else {
 					i = 0;
 				}
 				if(!trackModel[i].getStation().equals("")) {
@@ -202,8 +207,7 @@ public class MBO
 					if(roundedMinute >= 60) {
 						createTrainSchedule(throughput - iThroughput);
 						throughput = iThroughput;
-					}
-					else {
+					} else {
 						trainSchedule.addStop(roundedMinute, trackModel[i].getStation());
 					}
 					//secsElapsed += trackModel[i].dwellTime;
@@ -221,22 +225,18 @@ public class MBO
 						System.out.println("There have been " + trainSchedule.stops.size() + " stops.");
 						trainSchedule.removeRange(j, trainSchedule.stops.size() - 1);
 						createTrainSchedule(throughput - j);
-					}
-					else {
+					} else {
 						j++;
 					}
 				}
-			}*/
+			}
 			if(scheduleEnd < 49) {
 				suggestedVelocity -= 2;
-			}
-			else if(scheduleEnd < 54){
+			} else if(scheduleEnd < 54){
 				suggestedVelocity -= 1;
-			}
-			else if(scheduleEnd < 58) {
+			} else if(scheduleEnd < 58) {
 				suggestedVelocity -= 0.6;
-			}
-			else if(scheduleEnd < 59){
+			} else if(scheduleEnd < 59){
 				suggestedVelocity -= 0.1;
 			}
 		}
@@ -269,7 +269,8 @@ public class MBO
 		this.systemTime = systemTime;
 		ArrayList<Double> currentVelocities = new ArrayList<Double>();
 		ArrayList<Block> currentLocations = new ArrayList<Block>();
-		for(Antenna reggie : reggies) {
+		for(int i  = 0; i < reggies.size(); i++) {
+			Antenna reggie = reggies.get(i);
 			Block location = reggie.getBlock();
 			double currentVelocity = reggie.getVelocity();
 			
@@ -280,14 +281,6 @@ public class MBO
 		calculateAuthorities();
 		calculateSetpoints();
 		ui.setItems(this);
-	}
-	
-	public void trainAdded() {
-		this.reggies = trainModelWrapper.getAllAntennas();
-	}
-	
-	public long getTime() {
-		return this.systemTime;
 	}
 	
 	public static void main(String args[]) throws InterruptedException {

@@ -19,6 +19,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.awt.SystemColor;
 
 
 public class MBOUI {
@@ -26,8 +27,8 @@ public class MBOUI {
 	private JFrame frame;
 	private JTextField txtTime;
 	private JTextField txtTrainLocation;
-	private JTextField txtAuthority;
-	private JTextField txtSpeed;
+	private JTextField txtSafeAuthority;
+	private JTextField txtVelocity;
 	private JTextField txtRequiredThroughput;
 	private JTextField txtStopsThisHour;
 	private JTextField txtStopsLastHour;
@@ -44,6 +45,9 @@ public class MBOUI {
 	private MBO mbo;
 	
     private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+    private int selectedTrain;
+    private JTextField txtSafeVelocity;
+    private JTextField txtAuthority;
 
 	/**
 	 * Launch the application.
@@ -69,21 +73,43 @@ public class MBOUI {
 		//frame.setVisible(true);
 	}
 	
-	public void setComboBox(MBO mbo) {
-		//trainComboBox.set
+	/// Called when the user selects the train whose info they'd like to see displayed
+	public void selectTrain() {
+		String value = trainSelectBox.getSelectedItem().toString();
+		this.selectedTrain = Integer.parseInt(value.substring(value.length() - 1)) - 1;
+	}
+	
+	/// Called after a train has been added to the system
+	public void setTrainSelectBox() {
+		for(int i = 0; i < mbo.reggies.size(); i++) {
+			trainSelectBox.addItem("Train " + (i+1));
+		}
 	}
 	
 	public void setItems(MBO mbo) {
 		this.mbo = mbo;
-		this.txtRequiredThroughput.setText("" + mbo.getThroughput());
-		//this.txtStopsThisHour.setText("" + mbo.getStopsThisHour());
-		//this.txtAuthority.setText("" + mbo.get)
+		this.txtRequiredThroughput.setText("" + mbo.throughput);
+		
 		displayTime();
+		int actualThroughput = mbo.actualThroughput;
+		if(actualThroughput > 0) {
+			this.txtStopsLastHour.setText("" + actualThroughput);
+		}
+		else {
+			this.txtStopsLastHour.setText("N/A");
+		}
+		
+		if(mbo.reggies.size() > 0) {
+			this.txtAuthority.setText("" + mbo.currentAuthorities.get(selectedTrain));
+			this.txtVelocity.setText("" + mbo.currentVelocities.get(selectedTrain));
+			this.txtMoving.setText("" + mbo.movingBlockAuthorities.get(selectedTrain));
+			this.txtSafeVelocity.setText("" + mbo.safeVelocities.get(selectedTrain));
+		}
 		//this.txtrStops.setText(mbo.trainSchedules.get(1).toString());
 	}
 	
 	public void displayTime() {
-        Date date = new Date(mbo.getTime());
+        Date date = new Date(mbo.systemTime);
         txtTime.setText(timeFormat.format(date));
 	}
 	
@@ -108,12 +134,17 @@ public class MBOUI {
 	private void initialize() {
 		frame = new JFrame("MBO");
 		frame.setResizable(false);
-		frame.setBounds(100, 100, 599, 410);
+		frame.setBounds(100, 100, 585, 465);
 		frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
 		trainSelectBox = new JComboBox();
 		trainSelectBox.setBounds(12, 12, 125, 24);
+		trainSelectBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				selectTrain();
+			}
+		});
 		frame.getContentPane().add(trainSelectBox);
 		
 		txtTime = new JTextField();
@@ -134,59 +165,59 @@ public class MBOUI {
 		frame.getContentPane().add(txtTrainLocation);
 		
 		JLabel lblMovingBlockAuthority = new JLabel("Moving Block Authority");
-		lblMovingBlockAuthority.setBounds(12, 89, 161, 24);
+		lblMovingBlockAuthority.setBounds(12, 120, 161, 24);
 		frame.getContentPane().add(lblMovingBlockAuthority);
 		
-		txtAuthority = new JTextField();
-		txtAuthority.setEditable(false);
-		txtAuthority.setColumns(10);
-		txtAuthority.setBounds(180, 89, 85, 24);
-		frame.getContentPane().add(txtAuthority);
+		txtSafeAuthority = new JTextField();
+		txtSafeAuthority.setEditable(false);
+		txtSafeAuthority.setColumns(10);
+		txtSafeAuthority.setBounds(180, 120, 85, 24);
+		frame.getContentPane().add(txtSafeAuthority);
 		
-		JLabel lblSuggestedSpeed = new JLabel("Suggested Speed");
-		lblSuggestedSpeed.setBounds(12, 125, 161, 24);
+		JLabel lblSuggestedSpeed = new JLabel("Current Velocity");
+		lblSuggestedSpeed.setBounds(12, 156, 161, 24);
 		frame.getContentPane().add(lblSuggestedSpeed);
 		
-		txtSpeed = new JTextField();
-		txtSpeed.setEditable(false);
-		txtSpeed.setColumns(10);
-		txtSpeed.setBounds(180, 128, 85, 24);
-		frame.getContentPane().add(txtSpeed);
+		txtVelocity = new JTextField();
+		txtVelocity.setEditable(false);
+		txtVelocity.setColumns(10);
+		txtVelocity.setBounds(180, 156, 85, 24);
+		frame.getContentPane().add(txtVelocity);
 		
 		JLabel lblRequiredThroughput = new JLabel("Required Throughput");
-		lblRequiredThroughput.setBounds(12, 226, 161, 24);
+		lblRequiredThroughput.setBounds(12, 288, 161, 24);
 		frame.getContentPane().add(lblRequiredThroughput);
 		
 		txtRequiredThroughput = new JTextField();
 		txtRequiredThroughput.setEditable(false);
 		txtRequiredThroughput.setColumns(10);
-		txtRequiredThroughput.setBounds(180, 229, 85, 24);
+		txtRequiredThroughput.setBounds(180, 291, 85, 24);
 		frame.getContentPane().add(txtRequiredThroughput);
 		
 		JLabel lblStopsThisHour = new JLabel("Stops This Hour");
-		lblStopsThisHour.setBounds(12, 262, 161, 24);
+		lblStopsThisHour.setBounds(12, 324, 161, 24);
 		frame.getContentPane().add(lblStopsThisHour);
 		
 		txtStopsThisHour = new JTextField();
 		txtStopsThisHour.setEditable(false);
 		txtStopsThisHour.setColumns(10);
-		txtStopsThisHour.setBounds(180, 265, 85, 24);
+		txtStopsThisHour.setBounds(180, 327, 85, 24);
 		frame.getContentPane().add(txtStopsThisHour);
 		
 		JLabel lblStopsLastHour = new JLabel("Stops Last Hour");
-		lblStopsLastHour.setBounds(12, 298, 161, 24);
+		lblStopsLastHour.setBounds(12, 360, 161, 24);
 		frame.getContentPane().add(lblStopsLastHour);
 		
 		txtStopsLastHour = new JTextField();
 		txtStopsLastHour.setEditable(false);
 		txtStopsLastHour.setColumns(10);
-		txtStopsLastHour.setBounds(180, 301, 85, 24);
+		txtStopsLastHour.setBounds(180, 363, 85, 24);
 		frame.getContentPane().add(txtStopsLastHour);
 		
 		JSeparator separator = new JSeparator();
 		separator.setBackground(Color.GRAY);
 		separator.setForeground(Color.GRAY);
-		separator.setBounds(12, 210, 250, 1);
+		separator.setBounds(12, 272, 250, 1);
 		frame.getContentPane().add(separator);
 		
 		JLabel lblShiftTime = new JLabel("Shift Time");
@@ -247,6 +278,7 @@ public class MBOUI {
 		frame.getContentPane().add(scroll);
 		
 		txtFixed = new JTextField();
+		txtFixed.setBackground(Color.CYAN);
 		txtFixed.setEditable(false);
 		txtFixed.setText("FIXED");
 		txtFixed.setBounds(430, 8, 67, 34);
@@ -255,7 +287,7 @@ public class MBOUI {
 		
 		txtMoving = new JTextField();
 		txtMoving.setEditable(false);
-		txtMoving.setBackground(Color.CYAN);
+		txtMoving.setBackground(SystemColor.menu);
 		txtMoving.setText("MOVING");
 		txtMoving.setColumns(10);
 		txtMoving.setBounds(498, 8, 67, 34);
@@ -280,13 +312,13 @@ public class MBOUI {
 		frame.getContentPane().add(separator_1);
 		
 		JLabel lblStopDistance = new JLabel("Stop Distance");
-		lblStopDistance.setBounds(12, 161, 161, 24);
+		lblStopDistance.setBounds(12, 224, 161, 24);
 		frame.getContentPane().add(lblStopDistance);
 		
 		txtStopDistance = new JTextField();
 		txtStopDistance.setEditable(false);
 		txtStopDistance.setColumns(10);
-		txtStopDistance.setBounds(180, 164, 85, 24);
+		txtStopDistance.setBounds(180, 227, 85, 24);
 		frame.getContentPane().add(txtStopDistance);
 		
 		JButton btnLoadSchedule = new JButton("Load Schedule");
@@ -295,8 +327,28 @@ public class MBOUI {
 				showFileDialog();
 			}
 		});
-		btnLoadSchedule.setBounds(67, 341, 125, 30);
+		btnLoadSchedule.setBounds(70, 396, 125, 30);
 		frame.getContentPane().add(btnLoadSchedule);
+		
+		JLabel lblSafeVelocity = new JLabel("Safe Velocity");
+		lblSafeVelocity.setBounds(12, 191, 161, 24);
+		frame.getContentPane().add(lblSafeVelocity);
+		
+		txtSafeVelocity = new JTextField();
+		txtSafeVelocity.setEditable(false);
+		txtSafeVelocity.setColumns(10);
+		txtSafeVelocity.setBounds(180, 194, 85, 24);
+		frame.getContentPane().add(txtSafeVelocity);
+		
+		JLabel lblAuthority = new JLabel("Destination Authority");
+		lblAuthority.setBounds(12, 85, 161, 24);
+		frame.getContentPane().add(lblAuthority);
+		
+		txtAuthority = new JTextField();
+		txtAuthority.setEditable(false);
+		txtAuthority.setColumns(10);
+		txtAuthority.setBounds(180, 85, 85, 24);
+		frame.getContentPane().add(txtAuthority);
 		frame.setLocationRelativeTo(null);
 	}
 }

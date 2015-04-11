@@ -18,6 +18,9 @@ public class Simulator {
     public TrackModel trackModel;
     public TrainControllerWrapper trainControllerWrapper;
     public TrainModelWrapper trainModelWrapper;
+    
+    private String blockMode;
+    private String operationMode;
 
     private boolean isRunning;
     private int speedMultiplier;
@@ -29,20 +32,24 @@ public class Simulator {
         this.speedMultiplier = 1;
         this.systemTime = System.currentTimeMillis();
         
+        this.blockMode = "fixed";
+        this.blockMode = "manual";
+        
         ctc = new CTC(this);
         mbo = new MBO(this);
         trainControllerWrapper = new TrainControllerWrapper(this);
         trainModelWrapper = new TrainModelWrapper(this);
         trackModel = new TrackModel(this);
-        mbo.setTrainModel(trainModelWrapper);
         trackControllerWrapper = new TrackCtrlWrapper(this);
         ctc.setBen(trackControllerWrapper);
+        mbo.setModules();
     }
     
 //=====================
 // SYSTEM
 //=====================    
     
+    /// Called from tick(), signifies one second has passed
     private void updateModules() {
         ctc.tick();
         mbo.tick(systemTime);
@@ -52,6 +59,7 @@ public class Simulator {
         trainControllerWrapper.tick();
     }
     
+    /// Creates a new train in the train model wrapper, then tells other modules
     public void makeTrainPuppy() {
     	int trainID = trainModelWrapper.birthTrain();
     	mbo.trainAdded();
@@ -59,10 +67,27 @@ public class Simulator {
     	trackModel.addTrain(trainModelWrapper.getTrain(trainID));
     }
     
+    public String getBlockMode() {
+    	return blockMode;
+    }
+    
+    public String getOperationMode() {
+    	return operationMode;
+    }
+    
+    public void setBlockMode(String blockMode) {
+    	this.blockMode = blockMode;
+    }
+    
+    public void setOperationMode(String operationMode) {
+    	this.operationMode = operationMode;
+    }
+    
 //=====================
 // CLOCK
 //=====================
 
+    /// The simulator ticks every (1000 / speedMultiplier) milliseconds
     public void setSpeedMultiplier(int speedMultiplier) {
         this.speedMultiplier = speedMultiplier;
     }
@@ -79,6 +104,8 @@ public class Simulator {
     	return systemTime;
     }
 
+    /// Main program loop
+    /// Simulates the passing of 1 second in the system
     public void tick() throws InterruptedException {
         while(true) {
             if ((isRunning)) {
@@ -117,6 +144,10 @@ public class Simulator {
 	public void showTrainModelUI() {
 		trainModelWrapper.showUI();
 	}
+	
+//=====================
+// MAIN
+//=====================
 	
     public static void main(String[] args ) throws InterruptedException {
         Simulator simulator = new Simulator();
