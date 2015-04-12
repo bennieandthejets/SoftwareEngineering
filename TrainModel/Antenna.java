@@ -21,6 +21,10 @@ public class Antenna{
 		
 	}
 	
+	public int getTrainID() {
+		return train.getID();
+	}
+	
 	//MBO Communication
 	public Block getBlock(){
 		return train.getBlock();
@@ -28,6 +32,10 @@ public class Antenna{
 	
 	public double getVelocity(){
 		return train.getVelocity();
+	}
+	
+	public double getAuthority() {
+		return train.getAuthority();
 	}
 	
 	public void setSafeVelocity(double safeVel){

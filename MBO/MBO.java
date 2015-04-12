@@ -27,15 +27,15 @@ public class MBO
 	private CTC ctc;
 	private TrackModel trackModel;
 	
+	// Map Train ID to train attributes
+	protected ArrayList<Antenna> reggies;
 	private HashMap<Integer, TrainSchedule> trainSchedules;
 	private HashMap<Integer, CrewSchedule> crewSchedules;	
-	
-	protected ArrayList<Antenna> reggies;
-	protected ArrayList<Double> currentVelocities;
-	protected ArrayList<Double> currentAuthorities;
-	protected ArrayList<Block> currentLocations;
-	protected ArrayList<Double> movingBlockAuthorities;
-	protected ArrayList<Double> safeVelocities;
+	protected HashMap<Integer, Double> currentVelocities;
+	protected HashMap<Integer, Double> currentAuthorities;
+	protected HashMap<Integer, Block> currentLocations;
+	protected HashMap<Integer, Double> movingBlockAuthorities;
+	protected HashMap<Integer, Double> safeVelocities;
 	
 	protected long systemTime;
 
@@ -46,11 +46,11 @@ public class MBO
 		reggies = new ArrayList<Antenna>();		
 		trainSchedules = new HashMap<Integer, TrainSchedule>();
 		crewSchedules = new HashMap<Integer, CrewSchedule>();
-		currentVelocities = new ArrayList<Double>();
-		currentAuthorities = new ArrayList<Double>();
-		currentLocations = new ArrayList<Block>();
-		movingBlockAuthorities = new ArrayList<Double>();
-		safeVelocities = new ArrayList<Double>();
+		currentVelocities = new HashMap<Integer, Double>();
+		currentAuthorities = new HashMap<Integer, Double>();
+		currentLocations = new HashMap<Integer, Block>();
+		movingBlockAuthorities = new HashMap<Integer, Double>();
+		safeVelocities = new HashMap<Integer, Double>();
 		
 		this.ui = new MBOUI();
 		ui.setItems(this);
@@ -73,6 +73,14 @@ public class MBO
 	
 	public void trainAdded() {
 		this.reggies = trainModelWrapper.getAllAntennas();
+		for(Antenna reggie : reggies) {
+			int trainID = reggie.getTrainID();
+			currentVelocities.put(trainID, reggie.getVelocity());
+			currentAuthorities.put(trainID, reggie.getAuthority());
+			currentLocations.put(trainID, reggie.getBlock());
+			calculateSafeAuthority(trainID);
+			calculateSafeSetpoint(trainID);
+		}
 		ui.setTrainSelectBox();
 	}
 	
@@ -84,16 +92,14 @@ public class MBO
 		
 	/// In moving block mode, set the authorities for all trains
 	/// Called on every tick (second)
-	public void calculateAuthorities() {
-		// iterate through all trains
-		// do put methods after the calculations
+	public void calculateSafeAuthority(int trainID) {
+		movingBlockAuthorities.put(trainID, 0.0);		
 	}
 	
 	/// In moving block mode, set the velocity setpoints for all trains
 	/// Called on every tick (second)
-	public void calculateSetpoints() {
-		// iterate through all trains
-		// do put methods after the calculations
+	public void calculateSafeSetpoint(int trainID) {
+		safeVelocities.put(trainID, 0.0);
 	}
 	
 	/// In moving block mode, calculate the stop distances for all trains
@@ -267,19 +273,16 @@ public class MBO
 	
 	public void tick(long systemTime) {
 		this.systemTime = systemTime;
-		ArrayList<Double> currentVelocities = new ArrayList<Double>();
-		ArrayList<Block> currentLocations = new ArrayList<Block>();
-		for(int i  = 0; i < reggies.size(); i++) {
-			Antenna reggie = reggies.get(i);
-			Block location = reggie.getBlock();
-			double currentVelocity = reggie.getVelocity();
+		for(Antenna reggie : reggies) {
+			int trainID = reggie.getTrainID();
+			currentLocations.put(trainID, reggie.getBlock());
+			currentVelocities.put(trainID, reggie.getVelocity());	
+			currentAuthorities.put(trainID, reggie.getAuthority());
 			
-			currentLocations.add(location);
-			currentVelocities.add(currentVelocity);
+			calculateSafeAuthority(trainID);
+			calculateSafeSetpoint(trainID);
 		}
 		
-		calculateAuthorities();
-		calculateSetpoints();
 		ui.setItems(this);
 	}
 	

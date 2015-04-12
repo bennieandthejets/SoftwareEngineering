@@ -104,6 +104,8 @@ public class MBOUI {
 			this.txtVelocity.setText("" + mbo.currentVelocities.get(selectedTrain));
 			this.txtMoving.setText("" + mbo.movingBlockAuthorities.get(selectedTrain));
 			this.txtSafeVelocity.setText("" + mbo.safeVelocities.get(selectedTrain));
+			this.txtSafeAuthority.setText("" + mbo.movingBlockAuthorities.get(selectedTrain));
+			//this.txtStopDistance.setText("" + mbo.calculateStopDistance(mbo.currentVelocities.get(selectedTrain)));
 		}
 		//this.txtrStops.setText(mbo.trainSchedules.get(1).toString());
 	}
