@@ -93,7 +93,7 @@ public class CTC {
 				//make sure a train isn't already there
 				boolean cockBlocked = false; 
 				for(int j = 0; j < activeTrains; j++){
-					if(locations[j] == routes[i].block){
+					if(locations[j] == routes[i].block && i != j){
 						cockBlocked = true;
 						break;
 					}
