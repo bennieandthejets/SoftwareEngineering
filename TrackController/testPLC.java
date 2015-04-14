@@ -47,11 +47,15 @@ public class testPLC implements PLC{
 			return null;
 		}
 		for (int routeStep = 0; routeStep < route.length; routeStep++) {
-			//if the train is on block 77 (from yard) and 
+			//if the train is on block 77 (from yard) and is newly created, make sure the switch is correct 
 			if (routeStep == 0 && train.position == 77) {
 				HashMap<String,Integer> switchInfo = new HashMap<String,Integer>();
 				switchInfo.put("switchOn",77);
+				//comment out if 77 is not part of the route
 				switchInfo.put("switchBlock",route[routeStep]);
+				//comment out if 77 is part of the route
+				//switchInfo.put("switchBlock",77);
+
 				switchInfo.put("afterSwitch",route[routeStep+1]);
 			}
 			
