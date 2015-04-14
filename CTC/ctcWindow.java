@@ -292,7 +292,7 @@ public class ctcWindow {
 		frmCtc.getContentPane().add(lblControlMode);
 		
 		JScrollPane scrollPane_Announce = new JScrollPane();
-		scrollPane_Announce.setBounds(582, 551, 357, 100);
+		scrollPane_Announce.setBounds(10, 601, 929, 86);
 		frmCtc.getContentPane().add(scrollPane_Announce);
 		
 		tblAnnouncements = new JTable();
@@ -408,7 +408,7 @@ public class ctcWindow {
 		));
 		
 		JScrollPane scrollPane_Locations = new JScrollPane();
-		scrollPane_Locations.setBounds(582, 260, 357, 139);
+		scrollPane_Locations.setBounds(582, 230, 357, 139);
 		frmCtc.getContentPane().add(scrollPane_Locations);
 		
 		tblLocations = new JTable();
@@ -474,7 +474,7 @@ public class ctcWindow {
 		));
 		
 		JScrollPane scrollPane_Routes = new JScrollPane();
-		scrollPane_Routes.setBounds(582, 414, 357, 126);
+		scrollPane_Routes.setBounds(582, 398, 357, 126);
 		frmCtc.getContentPane().add(scrollPane_Routes);
 		
 		tblRoutes = new JTable();
@@ -561,7 +561,7 @@ public class ctcWindow {
 		JPanel pnlMaintenance = new JPanel();
 		pnlMaintenance.setBackground(new Color(75, 0, 130));
 		pnlMaintenance.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Maintenance", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(255, 0, 0)));
-		pnlMaintenance.setBounds(582, 11, 357, 102);
+		pnlMaintenance.setBounds(582, 9, 357, 102);
 		frmCtc.getContentPane().add(pnlMaintenance);
 		pnlMaintenance.setLayout(null);
 		
@@ -668,7 +668,7 @@ public class ctcWindow {
 		panel.setBackground(new Color(0, 128, 0));
 		panel.setLayout(null);
 		panel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Route Trains", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(128, 0, 0)));
-		panel.setBounds(582, 121, 357, 102);
+		panel.setBounds(582, 115, 357, 102);
 		frmCtc.getContentPane().add(panel);
 		
 		JLabel lblTrain = new JLabel("Train#:");
@@ -742,7 +742,7 @@ public class ctcWindow {
 		pnlThru.setBackground(new Color(0, 128, 128));
 		pnlThru.setLayout(null);
 		pnlThru.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Throughput", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(255, 255, 0)));
-		pnlThru.setBounds(208, 620, 364, 61);
+		pnlThru.setBounds(582, 532, 357, 61);
 		frmCtc.getContentPane().add(pnlThru);
 		
 		JLabel lblThisHr = new JLabel("This Hr:");
@@ -792,12 +792,12 @@ public class ctcWindow {
 		
 		JLabel lblKnownLocations = new JLabel("Known Locations");
 		lblKnownLocations.setForeground(new Color(0, 0, 255));
-		lblKnownLocations.setBounds(582, 246, 98, 14);
+		lblKnownLocations.setBounds(582, 216, 98, 14);
 		frmCtc.getContentPane().add(lblKnownLocations);
 		
-		JLabel lblRecentCommands = new JLabel("Recent Commands");
+		JLabel lblRecentCommands = new JLabel("Recent");
 		lblRecentCommands.setForeground(new Color(255, 0, 0));
-		lblRecentCommands.setBounds(582, 402, 110, 14);
+		lblRecentCommands.setBounds(582, 386, 110, 14);
 		frmCtc.getContentPane().add(lblRecentCommands);
 		
 		JButton btnSpawn = new JButton("Make Train Puppy From Train Embryo");
@@ -808,7 +808,7 @@ public class ctcWindow {
 			}
 		});
 		btnSpawn.setForeground(new Color(0, 0, 205));
-		btnSpawn.setBounds(690, 229, 241, 23);
+		btnSpawn.setBounds(664, 370, 273, 23);
 		frmCtc.getContentPane().add(btnSpawn);
 		
 		JButton btnStartWithMap = new JButton("Click this when map loads");
@@ -841,48 +841,5 @@ public class ctcWindow {
 			top+=15; //15x15 blocks
 			left=mapLeft;
 		}
-		
-		
-		JButton btnMapTests = new JButton("map tests");
-		btnMapTests.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				JPanel pnlTestMap = new JPanel();
-				pnlTestMap.setBounds(349, 260, 15, 15);
-				frmCtc.getContentPane().add(pnlTestMap);
-				
-				pnlTestMap.setLayout(null);
-				pnlTestMap.setBackground(new Color(0,200,200));
-				
-				//add as many labels as you want
-				JLabel lb = new JLabel("");
-				lb.setBounds(0,0,15,15);
-				//   C:\source\track\15px
-				ImageIcon im = new ImageIcon("c:\\source\\track\\15px\\n.png");
-				lb.setIcon(im);
-				pnlTestMap.add(lb);
-				
-				JLabel l2 = new JLabel("");
-				l2.setBounds(0,0,15,15);
-				ImageIcon i2 = new ImageIcon("c:\\source\\track\\15px\\ne.png");
-				l2.setIcon(i2);
-				pnlTestMap.add(l2);
-				
-
-				JLabel l3 = new JLabel("");
-				l3.setBounds(0,0,15,15);
-				ImageIcon i3 = new ImageIcon("c:\\source\\track\\15px\\s.png");
-				l3.setIcon(i3);
-				pnlTestMap.add(l3);
-				
-				JLabel l4 = new JLabel("");
-				l4.setBounds(0,0,15,15);
-				ImageIcon i4 = new ImageIcon("c:\\source\\track\\15px\\se.png");
-				l4.setIcon(i4);
-				pnlTestMap.add(l4);
-				
-			}
-		});
-		btnMapTests.setBounds(35, 638, 130, 23);
-		frmCtc.getContentPane().add(btnMapTests);
 	}
 }
