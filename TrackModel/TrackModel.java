@@ -114,7 +114,7 @@ public class TrackModel {
 			totalBlockDist += blocks[Integer.parseInt(travelRoute.get(i))].blockSize;
 		}
 		
-		if(totalTrainDist > totalBlockDist)
+		if(totalTrainDist > totalBlockDist && travelRoute.size() > 0)
 		{
 			blocks[trainOnBlock].trainPresent = false;
 			travelRoute.add(String.valueOf(trainOnBlock));
@@ -182,6 +182,18 @@ public class TrackModel {
 				trainOnBlock--;
 			}
 			*/
+			blocks[trainOnBlock].trainPresent = true;
+			t.trainOnBlock(blocks[trainOnBlock].mapRow, blocks[trainOnBlock].mapCol);
+		}
+		else //TRAIN IS IN YARD
+		{
+			blocks[trainOnBlock].trainPresent = false;
+			travelRoute.add(String.valueOf(trainOnBlock));
+			
+			t.trainOffBlock(blocks[trainOnBlock].mapRow, blocks[trainOnBlock].mapCol);
+			
+			trainOnBlock = blocks[trainOnBlock].getSwitchRoot();
+			
 			blocks[trainOnBlock].trainPresent = true;
 			t.trainOnBlock(blocks[trainOnBlock].mapRow, blocks[trainOnBlock].mapCol);
 		}
