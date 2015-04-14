@@ -267,6 +267,10 @@ public class TrainModel{
 		return passengers;
 	}
 	
+	public double getTickDistance(){
+		return tickDistance;
+	}
+	
 	public double getDistanceTraveled(){
 		return distanceTraveled;
 	}
