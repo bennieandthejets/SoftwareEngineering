@@ -27,7 +27,7 @@ public class TrainModelUI{ //implements ActionListener{
 	private JTextField txtPassengers;
 	private JTextField txtAccel;
 	private JTextField txtVelocity;
-	private JTextField txtSlope;
+	private JTextField txtPower;
 	private JTextField txtBrakes;
 	private JTextField txtLights;
 	private JTextField txtDoors;
@@ -195,7 +195,7 @@ public class TrainModelUI{ //implements ActionListener{
 		lblBrakes.setBounds(189, 114, 46, 14);
 		frame.getContentPane().add(lblBrakes);
 		
-		JLabel lblSlopeOfTrack = new JLabel("Slope of Track");
+		JLabel lblSlopeOfTrack = new JLabel("Power (W)");
 		lblSlopeOfTrack.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		lblSlopeOfTrack.setBounds(189, 87, 87, 14);
 		frame.getContentPane().add(lblSlopeOfTrack);
@@ -234,12 +234,12 @@ public class TrainModelUI{ //implements ActionListener{
 		txtVelocity.setBounds(293, 59, 100, 20);
 		frame.getContentPane().add(txtVelocity);
 		
-		txtSlope = new JTextField();
-		txtSlope.setHorizontalAlignment(SwingConstants.CENTER);
-		txtSlope.setEditable(false);
-		txtSlope.setColumns(10);
-		txtSlope.setBounds(293, 84, 100, 20);
-		frame.getContentPane().add(txtSlope);
+		txtPower = new JTextField();
+		txtPower.setHorizontalAlignment(SwingConstants.CENTER);
+		txtPower.setEditable(false);
+		txtPower.setColumns(10);
+		txtPower.setBounds(293, 84, 100, 20);
+		frame.getContentPane().add(txtPower);
 		
 		txtBrakes = new JTextField();
 		txtBrakes.setHorizontalAlignment(SwingConstants.CENTER);
@@ -390,8 +390,8 @@ public class TrainModelUI{ //implements ActionListener{
 		txtVelocity.setText(velocity);
 	}
 	
-	public void setSlope(double slope){
-		txtSlope.setText(new Double(slope).toString()+"%");
+	public void setPower(String power){
+		txtPower.setText(power);
 	}
 	
 	public void setBrakes(String brakes){
