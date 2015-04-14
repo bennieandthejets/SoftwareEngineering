@@ -187,14 +187,8 @@ public class TrackModel {
 		}
 		else //TRAIN IS IN YARD
 		{
-			blocks[trainOnBlock].trainPresent = false;
-			travelRoute.add(String.valueOf(trainOnBlock));
-			
-			t.trainOffBlock(blocks[trainOnBlock].mapRow, blocks[trainOnBlock].mapCol);
-			
-			trainOnBlock = blocks[trainOnBlock].getSwitchRoot();
-			
 			blocks[trainOnBlock].trainPresent = true;
+			travelRoute.add(String.valueOf(trainOnBlock));
 			t.trainOnBlock(blocks[trainOnBlock].mapRow, blocks[trainOnBlock].mapCol);
 		}
 		
