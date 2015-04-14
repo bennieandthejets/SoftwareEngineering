@@ -114,7 +114,7 @@ public class TrackModel {
 			totalBlockDist += blocks[Integer.parseInt(travelRoute.get(i))].blockSize;
 		}
 		
-		if(totalTrainDist > totalBlockDist && travelRoute.size() > 0)
+		if(totalTrainDist > totalBlockDist && travelRoute.size() > 1)
 		{
 			blocks[trainOnBlock].trainPresent = false;
 			travelRoute.add(String.valueOf(trainOnBlock));
