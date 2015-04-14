@@ -392,7 +392,7 @@ public class TrainModel{
 		ui.setAcceleration(SigFig.format(trainAcceleration*METER_TO_FEET));
 		ui.setVelocity(SigFig.format(trainVelocity*METRIC_VEL_CONV*KM_TO_MI));
 		ui.setDistTrav(SigFig.format(distanceTraveled*KM_TO_MI/1000)+" mi");
-		//ui.setSlope(Slope);
+		ui.setPower(SigFig.format(trainPower));
 		//ui.setBrakes(brake);
 		//ui.setLights(lightStatus);
 		//ui.setDoors(doorStatus);
