@@ -52,7 +52,7 @@ public class ctcWindow {
 	private JPanel[][] blockPanels; //fake gridview will hold the map
 	//save location of map since all blocks will be created at runTime
 	private int mapLeft = 10;
-	private int mapTop = 58;
+	private int mapTop = 52;
 	//filepaths for lines; change to "src\\n.png" relative path eventually
 	private String nPath = "src\\n.png"; //"c:\\source\\track\\15px\\n.png";
 	private String sPath = "src\\s.png";
@@ -275,7 +275,7 @@ public class ctcWindow {
 		frmCtc.setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\source\\sex.png"));
 		frmCtc.getContentPane().setBackground(new Color(128, 128, 128));
 		frmCtc.setTitle("CTC Office");
-		frmCtc.setBounds(100, 100, 965, 728);
+		frmCtc.setBounds(100, 100, 965, 747);
 		frmCtc.getContentPane().setLayout(null);
 		
 		JComboBox cboMode = new JComboBox();
@@ -292,7 +292,7 @@ public class ctcWindow {
 		frmCtc.getContentPane().add(lblControlMode);
 		
 		JScrollPane scrollPane_Announce = new JScrollPane();
-		scrollPane_Announce.setBounds(10, 601, 929, 86);
+		scrollPane_Announce.setBounds(10, 616, 929, 86);
 		frmCtc.getContentPane().add(scrollPane_Announce);
 		
 		tblAnnouncements = new JTable();
@@ -543,7 +543,7 @@ public class ctcWindow {
 		panel_time.setBackground(new Color(0, 0, 0));
 		panel_time.setForeground(new Color(127, 255, 0));
 		panel_time.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Time", TitledBorder.LEFT, TitledBorder.TOP, null, new Color(255, 255, 255)));
-		panel_time.setBounds(22, 11, 86, 44);
+		panel_time.setBounds(9, 5, 86, 44);
 		frmCtc.getContentPane().add(panel_time);
 		panel_time.setLayout(null);
 		
@@ -811,13 +811,13 @@ public class ctcWindow {
 		btnSpawn.setBounds(664, 370, 273, 23);
 		frmCtc.getContentPane().add(btnSpawn);
 		
-		JButton btnStartWithMap = new JButton("Click this when map loads");
+		JButton btnStartWithMap = new JButton("Debug: load map");
 		btnStartWithMap.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				owner.start();
 			}
 		});
-		btnStartWithMap.setBounds(359, 22, 213, 23);
+		btnStartWithMap.setBounds(446, 10, 126, 23);
 		frmCtc.getContentPane().add(btnStartWithMap);
 		
 		
