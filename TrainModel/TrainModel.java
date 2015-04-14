@@ -82,8 +82,7 @@ public class TrainModel{
 	private double departTime;
 	private double slope;
 	private double tickDistance;
-	private double dispVel;
-	
+
 	Random randomPass = new Random(System.currentTimeMillis());
 	
 	//###############
