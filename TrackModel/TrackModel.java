@@ -15,9 +15,6 @@ public class TrackModel {
 
 	Block[] blocks;	
 	int trainOnBlock;
-	double trainMovedDist = 0.0;
-	double lastDist = 0.0;
-	double totalDist;
 	int prevBlock;
 	Simulator s;
 	TrackModelUI t;
@@ -26,6 +23,9 @@ public class TrackModel {
 	int trainID;
 	int trainCounter;
 	ArrayList<TrainModel> trains;
+	double totalBlockDist = 0.0;
+	double totalTrainDist = 0.0;
+	ArrayList<String> travelRoute = new ArrayList<String>();
 	
 	public TrackModel(Simulator s)
 	{
@@ -97,24 +97,30 @@ public class TrackModel {
 	
 	public void trainMoved()
 	{
-		totalDist = train.getDistanceTraveled();
-		trainMovedDist += totalDist - lastDist;
+		totalTrainDist = train.getDistanceTraveled();
 	}
 	
 	public void findTrain()
 	{
-		System.out.println("TOTAL DIST = " + totalDist);
-		System.out.println("TRAIN MOVED DIST = " + trainMovedDist);
+		System.out.println("TOTAL DIST = " + totalTrainDist);
+		System.out.println("TRAIN MOVED DIST = " + totalBlockDist);
 		System.out.println("BLOCK SIZE = " + blocks[trainOnBlock].blockSize);
 		System.out.println("ON BLOCK " + trainOnBlock);
 		System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-		if(trainMovedDist/blocks[trainOnBlock].blockSize >= 1)
+		
+		totalBlockDist = 0.0;
+		
+		for(int i=0; i<travelRoute.size(); i++)
 		{
-			prevBlock = trainOnBlock;
-			lastDist = totalDist;
+			totalBlockDist += blocks[Integer.parseInt(travelRoute.get(i))].blockSize;
+		}
+		
+		if(totalTrainDist > totalBlockDist)
+		{
 			blocks[trainOnBlock].trainPresent = false;
+			travelRoute.add(String.valueOf(trainOnBlock));
+			
 			t.trainOffBlock(blocks[trainOnBlock].mapRow, blocks[trainOnBlock].mapCol);
-			trainMovedDist = 0.0;
 			
 			Switch sw = blocks[trainOnBlock].getSwitch();
 			if(sw != null && sw.getSwitchBlocks()[0] != blocks[trainOnBlock].cameFrom &&
@@ -137,41 +143,11 @@ public class TrackModel {
 			else {
 				trainOnBlock--;
 			}
-			/*if(blocks[trainOnBlock].getSwitch() != null)
-			{
-				
-				/*if(blocks[trainOnBlock].getSwitch().blockOne == blocks[trainOnBlock].cameFrom || blocks[trainOnBlock].getSwitch().blockTwo == blocks[trainOnBlock].cameFrom)
-				{
-					t.trainOffSwitch(blocks[trainOnBlock].mapRow, blocks[trainOnBlock].mapCol);
-					trainOnBlock++;
-				}
-				else
-				{
-					t.trainOffSwitch(blocks[trainOnBlock].mapRow, blocks[trainOnBlock].mapCol);
-					trainOnBlock = blocks[trainOnBlock].getSwitch().getSwitchTaken();
-				}
-			}
-			else if(blocks[trainOnBlock].switchRoot != -1 && blocks[blocks[trainOnBlock].switchRoot].sw.blockOne == trainOnBlock)
-			{
-				t.trainOffSwitch(blocks[trainOnBlock].mapRow, blocks[trainOnBlock].mapCol);
-				
-				trainOnBlock++;
-			}
-			else
-			{
-				trainOnBlock++;
-			}
-			if(trainOnBlock == 78) {
-				
-			} 
-			else {
-				
-			}*/
-			blocks[prevBlock].trainPresent = false;
-			blocks[trainOnBlock].cameFrom = prevBlock;
+			
 			blocks[trainOnBlock].trainPresent = true;
 			t.trainOnBlock(blocks[trainOnBlock].mapRow, blocks[trainOnBlock].mapCol);
 		}
+		
 	}
 	
 	public Block[] importTrack(String inputFile) throws IOException
