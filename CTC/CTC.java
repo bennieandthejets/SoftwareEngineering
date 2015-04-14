@@ -346,6 +346,8 @@ public class CTC {
 				ann = ann + p[i] + "-";
 			}
 			myWindow.setAnnouncement(ann);
+			myWindow.setAnnouncement("Train: " + (train + 1) + " Distance: " + lengths[0] + "m Dest: " + dest);
+			
 			System.out.println(ann);
 				//this.faaake.routeTrain( block, speed, dest, path);			
 				//myWindow.setAnnouncement("route set");			
