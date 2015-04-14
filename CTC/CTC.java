@@ -336,13 +336,19 @@ public class CTC {
 			//route it
 			//calculate full path
 			TrainRoute path = calcRoute(block, dest);
-			int[] lengths = routeLength(path);
+						
+			int[] lengths = routeLength(path);			
+			//chop start point off of route after it is used to calculate authority
+			path = path.next;
+			
 			routes[train] = path;
 			
-			int[] p = pathFromRoute(path, lengths[1]);
+			
+			
+			int[] p = pathFromRoute(path, lengths[1] - 1);
 			
 			String ann = "Route: ";
-			for(int i = 0; i < lengths[1];i++){
+			for(int i = 0; i < lengths[1] - 1;i++){
 				ann = ann + p[i] + "-";
 			}
 			myWindow.setAnnouncement(ann);
@@ -384,6 +390,7 @@ public class CTC {
 	//choose a train to spawn and set it's destination to the spawn block
 	public void spawnTrainCTC(){
 		//!!! for demo don't optimize train selection. new trains will always be at the end of the array
+		
 		
 		//use old max for index of new train
 		routes[activeTrains] = new TrainRoute(fromYard, null); 
@@ -535,7 +542,7 @@ public class CTC {
 		}
 		
 		while (blocks[block].getSwitch() == null && blocks[block].getSwitchRoot() == -1 ){	
-			myWindow.setAnnouncement("looking for dest on Block " + block);
+			//myWindow.setAnnouncement("looking for dest on Block " + block);
 			if (block == dest){
 				return true;				
 			}

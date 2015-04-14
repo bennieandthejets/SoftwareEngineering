@@ -817,7 +817,7 @@ public class ctcWindow {
 				owner.start();
 			}
 		});
-		btnStartWithMap.setBounds(446, 10, 126, 23);
+		btnStartWithMap.setBounds(424, 10, 148, 23);
 		frmCtc.getContentPane().add(btnStartWithMap);
 		
 		

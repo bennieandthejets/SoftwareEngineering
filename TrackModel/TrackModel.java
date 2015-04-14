@@ -124,6 +124,43 @@ public class TrackModel {
 			int prevBlock = Integer.parseInt(travelRoute.get(travelRoute.size() - 2));
 			
 			Switch sw = blocks[trainOnBlock].getSwitch();
+			
+			if(sw != null)
+			{
+				if(sw.getSwitchBlocks()[0] != prevBlock && sw.getSwitchBlocks()[1] != prevBlock)
+				{
+					trainOnBlock = sw.getSwitchTaken();
+				}
+				else
+				{
+					if(sw.getSwitchBlocks()[0] == (trainOnBlock + 1) || sw.getSwitchBlocks()[1] == (trainOnBlock + 1))
+					{
+						trainOnBlock--;
+					}
+					else
+					{
+						trainOnBlock++;
+					}
+				}
+			}
+			else if(blocks[trainOnBlock].getSwitchRoot() > -1)
+			{
+				if(prevBlock != blocks[trainOnBlock].getSwitchRoot())
+					trainOnBlock = blocks[trainOnBlock].getSwitchRoot();
+				else if(prevBlock > trainOnBlock)
+					trainOnBlock--;
+				else
+					trainOnBlock++;
+			}
+			else
+			{
+				if(prevBlock > trainOnBlock)
+					trainOnBlock--;
+				else
+					trainOnBlock++;
+			}
+			
+			/*
 			if(sw != null && sw.getSwitchBlocks()[0] != prevBlock &&
 					sw.getSwitchBlocks()[1] != prevBlock) {
 				trainOnBlock = sw.getSwitchTaken();
@@ -144,7 +181,7 @@ public class TrackModel {
 			else {
 				trainOnBlock--;
 			}
-			
+			*/
 			blocks[trainOnBlock].trainPresent = true;
 			t.trainOnBlock(blocks[trainOnBlock].mapRow, blocks[trainOnBlock].mapCol);
 		}
