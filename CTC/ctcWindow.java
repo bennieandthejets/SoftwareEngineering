@@ -408,7 +408,7 @@ public class ctcWindow {
 		));
 		
 		JScrollPane scrollPane_Locations = new JScrollPane();
-		scrollPane_Locations.setBounds(582, 260, 357, 139);
+		scrollPane_Locations.setBounds(582, 238, 357, 139);
 		frmCtc.getContentPane().add(scrollPane_Locations);
 		
 		tblLocations = new JTable();
@@ -792,7 +792,7 @@ public class ctcWindow {
 		
 		JLabel lblKnownLocations = new JLabel("Known Locations");
 		lblKnownLocations.setForeground(new Color(0, 0, 255));
-		lblKnownLocations.setBounds(582, 246, 98, 14);
+		lblKnownLocations.setBounds(582, 224, 98, 14);
 		frmCtc.getContentPane().add(lblKnownLocations);
 		
 		JLabel lblRecentCommands = new JLabel("Recent Commands");
@@ -808,7 +808,7 @@ public class ctcWindow {
 			}
 		});
 		btnSpawn.setForeground(new Color(0, 0, 205));
-		btnSpawn.setBounds(690, 229, 241, 23);
+		btnSpawn.setBounds(664, 380, 273, 23);
 		frmCtc.getContentPane().add(btnSpawn);
 		
 		JButton btnStartWithMap = new JButton("Click this when map loads");
