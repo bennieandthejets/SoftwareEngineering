@@ -90,6 +90,7 @@ public class CTC {
 		//check destinations to see if the trains made it 
 		for(int i = 0; i <activeTrains; i++){			
 			if(!known[i]){
+				if(routes[i] == null){continue;}
 				//make sure a train isn't already there
 				boolean cockBlocked = false; 
 				for(int j = 0; j < activeTrains; j++){
