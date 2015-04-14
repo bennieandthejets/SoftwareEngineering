@@ -89,7 +89,7 @@ public class TrainController {
 			remainingAuthority = auth;
 		}
 		
-		remainingAuthority = remainingAuthority - model.getDistanceTraveled();
+		remainingAuthority = remainingAuthority - model.getTickDistance();
 		if(remainingAuthority < 0) {
 			remainingAuthority = 0;
 		}
