@@ -28,7 +28,6 @@ public class Block {
 	int switchRoot;
 	public int mapRow;
 	public int mapCol;
-	int cameFrom;
 	int toYardBlock;
 	int fromYardBlock;
 	

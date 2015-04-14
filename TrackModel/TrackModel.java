@@ -15,7 +15,6 @@ public class TrackModel {
 
 	Block[] blocks;	
 	int trainOnBlock;
-	int prevBlock;
 	Simulator s;
 	TrackModelUI t;
 	TrainModelWrapper trainWrap;
@@ -122,15 +121,17 @@ public class TrackModel {
 			
 			t.trainOffBlock(blocks[trainOnBlock].mapRow, blocks[trainOnBlock].mapCol);
 			
+			int prevBlock = Integer.parseInt(travelRoute.get(travelRoute.size() - 2));
+			
 			Switch sw = blocks[trainOnBlock].getSwitch();
-			if(sw != null && sw.getSwitchBlocks()[0] != blocks[trainOnBlock].cameFrom &&
-					sw.getSwitchBlocks()[1] != blocks[trainOnBlock].cameFrom) {
+			if(sw != null && sw.getSwitchBlocks()[0] != prevBlock &&
+					sw.getSwitchBlocks()[1] != prevBlock) {
 				trainOnBlock = sw.getSwitchTaken();
 			}
-			else if(blocks[trainOnBlock].getSwitchRoot() != -1 && blocks[trainOnBlock].getSwitchRoot() != blocks[trainOnBlock].cameFrom) {
+			else if(blocks[trainOnBlock].getSwitchRoot() != -1 && blocks[trainOnBlock].getSwitchRoot() != prevBlock) {
 				trainOnBlock = blocks[trainOnBlock].getSwitchRoot();
 			}
-			else if(blocks[trainOnBlock].cameFrom != trainOnBlock + 1) {
+			else if(prevBlock != trainOnBlock + 1) {
 				if(sw != null) {
 					if(sw.getSwitchBlocks()[0] == trainOnBlock+1 || sw.getSwitchBlocks()[1] == trainOnBlock+1) {
 						trainOnBlock--;
