@@ -36,6 +36,7 @@ public class TrainController {
 	public TrainController(int newID, TrainModel newTrainModel, TrainControllerUI newUI) {
 		ID = newID;
 		model = newTrainModel;
+		model.setTrainController(this);
 		ui = newUI;
 		//vc = new VitalControl();
 		mode = 1;
@@ -83,13 +84,8 @@ public class TrainController {
 	}
 	
 	private void checkRemainingAuthority() {
+		remainingAuthority = remainingAuthority - model.getDistanceTraveled();
 		
-		double auth = model.getAuthority();
-		if(auth > -1) {
-			remainingAuthority = auth;
-		}
-		
-		remainingAuthority = remainingAuthority - model.getTickDistance();
 		if(remainingAuthority < 0) {
 			remainingAuthority = 0;
 		}
@@ -174,7 +170,7 @@ public class TrainController {
 		if(mode == 1) {
 			setTargetVelocity(setpointVelocity);
 		}
-		if(!brakeStatus && !eBrakeStatus) {
+		if(!brakeStatus && !eBrakeStatus && remainingAuthority != 0) {
 			//CHANGE WHEN VITAL
 			calculatePower();
 			//model.setPower(vc.vitalPower(model.getVelocity(), model.getVelocity(), model.getVelocity()));

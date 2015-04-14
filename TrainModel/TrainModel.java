@@ -7,6 +7,7 @@ import java.util.*;
 import TrackModel.*;
 import MBO.*;
 import Simulator.*;
+import TrainController.*;
 
 public class TrainModel{
 	/* All units for calculation will be kept in metric
@@ -23,6 +24,7 @@ public class TrainModel{
 	public Antenna antenna;
 	private Simulator sim;
 	private MBO mbo;
+	private TrainController trainController;
 	
 	//Constants
 	private static final double METRIC_VEL_CONV = 3.6;	// Used to convert from km/h --> m/s 
@@ -337,10 +339,12 @@ public class TrainModel{
 	
 	public void setSafeAuthority(double auth){
 		authority = auth;
+		trainController.setAuthority(auth);
 	}
 	
 	public void setAuthority(double auth){
 		authority = auth;
+		trainController.setAuthority(auth);
 	}
 	
 	public void setSafeVelocity(double safeVel){
@@ -399,5 +403,9 @@ public class TrainModel{
 		//ui.setArrival(Arrival);
 		//ui.setCurrBlock(CurrentBlock);
 		ui.setCurrTrain(trainID);
+	}
+	
+	public void setTrainController(TrainController newTrainController) {
+		trainController = newTrainController;
 	}
 }
