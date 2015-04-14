@@ -37,13 +37,38 @@ import java.awt.Toolkit;
 import java.awt.Window.Type;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
 import javax.swing.ImageIcon;
+
+import TrackModel.Block;
+import TrackModel.Switch;
 
 
 public class ctcWindow {
 
 	public CTC owner;
 	
+	public int mapSize = 37; //37 by 37 map fits both lines
+	private JPanel[][] blockPanels; //fake gridview will hold the map
+	//save location of map since all blocks will be created at runTime
+	private int mapLeft = 10;
+	private int mapTop = 58;
+	//filepaths for lines; change to "src\\n.png" relative path eventually
+	private String nPath = "src\\n.png"; //"c:\\source\\track\\15px\\n.png";
+	private String sPath = "src\\s.png";
+	private String ePath = "src\\e.png";
+	private String wPath = "src\\w.png";
+	private String swPath = "src\\sw.png";
+	private String sePath = "src\\se.png";
+	private String nwPath = "src\\nw.png";
+	private String nePath = "src\\ne.png";
+	//colors for various track states
+	private Color yard = Color.BLACK;
+	private Color station = Color.pink;
+	private Color empty = Color.lightGray;
+	private Color train = Color.green;
+	private Color broken = Color.red;
+	private Color switchh = Color.cyan;
 	
 	public JFrame frmCtc;
 	public JTable tblAnnouncements;
@@ -58,7 +83,6 @@ public class ctcWindow {
 	public JTextField txtSpeedSet;
 	public JTextField txtDestBlockNum;
 	public JTextField txtCloseBlockNum;
-	public JTable tblFakeMap;
 	private JTextField txtTime;
 	
 	private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
@@ -119,20 +143,17 @@ public class ctcWindow {
 	//edit a map row with new data
 	public void setMapBlock(int block, boolean train, boolean broke){
 		if(block >= 0){
-			DefaultTableModel model = (DefaultTableModel) tblFakeMap.getModel();
 			
-			model.setValueAt(new String("         |--"), block, 1);
-			model.setValueAt(new String("--|"), block, 3);
 			
 			if(broke){ //can't really know about train presence, just print broke
-				model.setValueAt(new String("BROKE"), block, 4);
+				
 			} else {
-				model.setValueAt(new String(""), block, 4);
+				
 			}
-			if(train){ //can't really know about train presence, just print broke
-				model.setValueAt(new String("TRAIN!"), block, 2);
+			if(train){ 
+				
 			} else {
-				model.setValueAt(new String("----------"), block, 2);
+				
 			}
 		}
 	}
@@ -152,6 +173,91 @@ public class ctcWindow {
 		
 	}
 	
+	/*add a track direction mapPanels[x][y], pointing in direction type
+	 * 	0 = north, 1 = northeast, 2 = east, 3 = southeast,
+	 * 	4 = south, 5 = southwest, 6 = west, 7 = northwest
+	 * 
+	 * this function will be called at least twice for each track block, to connect it to both neighbors
+	 */	
+	public void addTrack(int x, int y, int type){
+		String path = "";
+		switch(type){
+			case 0: path = nPath;
+					break;
+			case 1: path = nePath;
+					break;
+			case 2: path = ePath;
+					break;
+			case 3: path = sePath;
+					break;
+			case 4: path = sPath;			
+					break;
+			case 5: path = swPath;
+					break;
+			case 6: path = wPath;
+					break;
+			case 7: path = nwPath;
+					break;		
+		}
+		
+		if(path.equals("")){			
+			//bad input: fuck off
+		} else {
+			// add a label with just the image to the chosen panel
+			JLabel lbl = new JLabel("");
+			lbl.setBounds(0,0,15,15);
+			ImageIcon im = new ImageIcon(path);
+			lbl.setIcon(im);
+			blockPanels[x][y].add(lbl);
+			
+		}
+		
+		blockPanels[x][y].repaint();
+		
+	}
+	
+	/*set a map block to the appropriate color 
+	 * options for: empty, train, switch, broken
+	 */
+	public void setTrackStatus(Block bl){
+		JPanel p = blockPanels[bl.mapRow][bl.mapCol];
+		Switch sw = bl.getSwitch();
+		Color desired = new Color(0,0,0);
+		
+		if(bl.isBroken()){
+			desired = broken;
+		} else if(bl.isTrainPresent()){
+			desired = train;
+		} else if(sw != null){
+			desired = switchh;			
+		} else if(bl.getSwitchRoot() > 0){
+			//check if the switch is pointed here
+			if(owner.blocks[bl.getSwitchRoot()].getSwitch().getSwitchTaken() == bl.getBlockID()){
+				desired = switchh;
+			} else {
+				desired = empty;
+			}
+		} else {
+			desired = empty;
+		}
+		
+		//set and repaint if the color needs changed
+		if(!p.getBackground().equals(desired)){
+			p.setBackground(desired);
+			p.repaint();
+		}
+		
+	}
+	
+	//seperate functions to paint panels with no block
+	public void setStation(int x, int y){
+		
+	}
+	public void setYard(int x, int y){
+		
+	}
+	
+	
 	public void setStops(int thisHour, double expect, int lastHour){
 		
 		valThisHour.setText("" + thisHour);
@@ -169,7 +275,7 @@ public class ctcWindow {
 		frmCtc.setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\source\\sex.png"));
 		frmCtc.getContentPane().setBackground(new Color(128, 128, 128));
 		frmCtc.setTitle("CTC Office");
-		frmCtc.setBounds(100, 100, 965, 590);
+		frmCtc.setBounds(100, 100, 965, 728);
 		frmCtc.getContentPane().setLayout(null);
 		
 		JComboBox cboMode = new JComboBox();
@@ -177,16 +283,16 @@ public class ctcWindow {
 		cboMode.setBackground(Color.LIGHT_GRAY);
 		cboMode.setModel(new DefaultComboBoxModel(new String[] {"Manual", "MBO", "Fixed Block"}));
 		cboMode.setMaximumRowCount(3);
-		cboMode.setBounds(250, 11, 110, 20);
+		cboMode.setBounds(226, 11, 110, 20);
 		frmCtc.getContentPane().add(cboMode);
 		
 		JLabel lblControlMode = new JLabel("Control Mode:");
 		lblControlMode.setForeground(new Color(0, 255, 0));
-		lblControlMode.setBounds(163, 14, 78, 14);
+		lblControlMode.setBounds(139, 14, 78, 14);
 		frmCtc.getContentPane().add(lblControlMode);
 		
 		JScrollPane scrollPane_Announce = new JScrollPane();
-		scrollPane_Announce.setBounds(10, 402, 329, 138);
+		scrollPane_Announce.setBounds(582, 551, 357, 100);
 		frmCtc.getContentPane().add(scrollPane_Announce);
 		
 		tblAnnouncements = new JTable();
@@ -636,22 +742,22 @@ public class ctcWindow {
 		pnlThru.setBackground(new Color(0, 128, 128));
 		pnlThru.setLayout(null);
 		pnlThru.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Throughput", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(255, 255, 0)));
-		pnlThru.setBounds(349, 450, 212, 90);
+		pnlThru.setBounds(208, 620, 364, 61);
 		frmCtc.getContentPane().add(pnlThru);
 		
-		JLabel lblThisHr = new JLabel("This Hr");
+		JLabel lblThisHr = new JLabel("This Hr:");
 		lblThisHr.setHorizontalAlignment(SwingConstants.CENTER);
-		lblThisHr.setBounds(16, 23, 40, 14);
+		lblThisHr.setBounds(10, 28, 57, 14);
 		pnlThru.add(lblThisHr);
 		
-		JLabel lblExpected = new JLabel("Expected");
+		JLabel lblExpected = new JLabel("Expected:");
 		lblExpected.setHorizontalAlignment(SwingConstants.CENTER);
-		lblExpected.setBounds(70, 23, 61, 14);
+		lblExpected.setBounds(127, 28, 61, 14);
 		pnlThru.add(lblExpected);
 		
-		JLabel lblLastHr = new JLabel("Last Hr");
+		JLabel lblLastHr = new JLabel("Last Hr:");
 		lblLastHr.setHorizontalAlignment(SwingConstants.CENTER);
-		lblLastHr.setBounds(144, 23, 48, 14);
+		lblLastHr.setBounds(247, 28, 48, 14);
 		pnlThru.add(lblLastHr);
 		
 		valThisHour = new JTextField();
@@ -661,7 +767,7 @@ public class ctcWindow {
 		valThisHour.setHorizontalAlignment(SwingConstants.CENTER);
 		valThisHour.setEditable(false);
 		valThisHour.setColumns(10);
-		valThisHour.setBounds(12, 41, 51, 36);
+		valThisHour.setBounds(71, 17, 51, 36);
 		pnlThru.add(valThisHour);
 		
 		valExpected = new JTextField();
@@ -671,7 +777,7 @@ public class ctcWindow {
 		valExpected.setEditable(false);
 		valExpected.setColumns(10);
 		valExpected.setBackground(new Color(186, 85, 211));
-		valExpected.setBounds(76, 40, 51, 36);
+		valExpected.setBounds(186, 17, 51, 36);
 		pnlThru.add(valExpected);
 		
 		valLastHour = new JTextField();
@@ -681,7 +787,7 @@ public class ctcWindow {
 		valLastHour.setEditable(false);
 		valLastHour.setColumns(10);
 		valLastHour.setBackground(new Color(186, 85, 211));
-		valLastHour.setBounds(141, 41, 51, 36);
+		valLastHour.setBounds(298, 17, 51, 36);
 		pnlThru.add(valLastHour);
 		
 		JLabel lblKnownLocations = new JLabel("Known Locations");
@@ -705,45 +811,78 @@ public class ctcWindow {
 		btnSpawn.setBounds(690, 229, 241, 23);
 		frmCtc.getContentPane().add(btnSpawn);
 		
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(23, 95, 234, 287);
-		frmCtc.getContentPane().add(scrollPane);
-		
-		tblFakeMap = new JTable();
-		tblFakeMap.setShowGrid(false);
-		tblFakeMap.setCellSelectionEnabled(true);
-		scrollPane.setViewportView(tblFakeMap);
-		tblFakeMap.setModel(new DefaultTableModel(
-			new Object[][] {
-				{null, null, null, null, null},
-				{null, null, null, null, null},
-				{null, null, null, null, null},
-				{null, null, null, null, null},
-				{null, null, null, null, null},
-				{null, null, null, null, null},
-				{null, null, null, null, null},
-				{null, null, null, null, null},
-				{null, null, null, null, null},
-				{null, null, null, null, null},
-				{null, null, null, null, null},
-				{null, null, null, null, null},
-				{null, null, null, null, null},
-				{null, null, null, null, null},
-				{null, null, null, null, null},
-				{null, null, null, null, null},
-			},
-			new String[] {
-				"map", "", "", "", ""
-			}
-		));
-		
 		JButton btnStartWithMap = new JButton("Click this when map loads");
 		btnStartWithMap.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				owner.start();
 			}
 		});
-		btnStartWithMap.setBounds(333, 117, 183, 23);
+		btnStartWithMap.setBounds(359, 22, 213, 23);
 		frmCtc.getContentPane().add(btnStartWithMap);
+		
+		
+		//all kinds of crazy jpanels for blocks
+		blockPanels = new JPanel [mapSize][mapSize];
+		int left = mapLeft;
+		int top = mapTop;
+		for(int i = 0; i < mapSize; i++){
+			for (int j = 0; j < mapSize; j++){
+				JPanel pnl = new JPanel();
+				pnl.setBounds(left, top, 15, 15);
+				pnl.setLayout(null);
+				pnl.setBackground(Color.LIGHT_GRAY);
+				frmCtc.getContentPane().add(pnl);
+				
+				//save reference in array
+				blockPanels[i][j] = pnl;
+				
+				left+=15;
+			}
+			top+=15; //15x15 blocks
+			left=mapLeft;
+		}
+		
+		
+		JButton btnMapTests = new JButton("map tests");
+		btnMapTests.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				JPanel pnlTestMap = new JPanel();
+				pnlTestMap.setBounds(349, 260, 15, 15);
+				frmCtc.getContentPane().add(pnlTestMap);
+				
+				pnlTestMap.setLayout(null);
+				pnlTestMap.setBackground(new Color(0,200,200));
+				
+				//add as many labels as you want
+				JLabel lb = new JLabel("");
+				lb.setBounds(0,0,15,15);
+				//   C:\source\track\15px
+				ImageIcon im = new ImageIcon("c:\\source\\track\\15px\\n.png");
+				lb.setIcon(im);
+				pnlTestMap.add(lb);
+				
+				JLabel l2 = new JLabel("");
+				l2.setBounds(0,0,15,15);
+				ImageIcon i2 = new ImageIcon("c:\\source\\track\\15px\\ne.png");
+				l2.setIcon(i2);
+				pnlTestMap.add(l2);
+				
+
+				JLabel l3 = new JLabel("");
+				l3.setBounds(0,0,15,15);
+				ImageIcon i3 = new ImageIcon("c:\\source\\track\\15px\\s.png");
+				l3.setIcon(i3);
+				pnlTestMap.add(l3);
+				
+				JLabel l4 = new JLabel("");
+				l4.setBounds(0,0,15,15);
+				ImageIcon i4 = new ImageIcon("c:\\source\\track\\15px\\se.png");
+				l4.setIcon(i4);
+				pnlTestMap.add(l4);
+				
+			}
+		});
+		btnMapTests.setBounds(35, 638, 130, 23);
+		frmCtc.getContentPane().add(btnMapTests);
 	}
 }

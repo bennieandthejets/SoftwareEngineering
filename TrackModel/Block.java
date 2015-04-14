@@ -26,8 +26,8 @@ public class Block {
 	boolean fromYard;
 	String stationSide;
 	int switchRoot;
-	int mapRow;
-	int mapCol;
+	public int mapRow;
+	public int mapCol;
 	int cameFrom;
 	int toYardBlock;
 	int fromYardBlock;

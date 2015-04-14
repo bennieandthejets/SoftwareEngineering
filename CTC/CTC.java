@@ -22,7 +22,7 @@ public class CTC {
 	private TrainRoute[] routes;
 	private ctcWindow myWindow;
 	private fakeWindow faaake;
-	private Block[] blocks;
+	public Block[] blocks;
 	private long time;
 	//defautl red line yard block until jackie gives me a better option
 	private int fromYard = 77; //tell where new trains will come from
@@ -124,10 +124,9 @@ public class CTC {
 				known[i] = true;
 				routes[i] = routes[i].next;
 			
+				}
 			}
 		}
-		}
-			
 		
 		//verify that all train locations actually have a train on them
 		for(int i = 0;i<activeTrains;i++){
@@ -140,6 +139,11 @@ public class CTC {
 				myWindow.setStops(stops, 0, 0); //!!!not calculating expected yet
 			}
 			
+		}
+		
+		//update pretty colors
+		for(int i = 1; i < blockCount; i++){
+			myWindow.setTrackStatus(blocks[i]);			
 		}
 		
 	}
@@ -229,6 +233,69 @@ public class CTC {
 		Arrays.fill(routes,  null);//new TrainRoute(-1, null));
 		
 		myWindow.setAnnouncement("loaded a map with " + blockCount + " blocks");
+		
+		//draw awesome sexy map
+		for(int i = 1; i < blockCount; i++){
+			
+			
+			//check i+-1; will only paint if getTouch returns a good value
+			myWindow.addTrack(blocks[i].mapRow, blocks[i].mapCol, getTouch(i,i+1));
+			myWindow.addTrack(blocks[i].mapRow, blocks[i].mapCol, getTouch(i,i-1));
+			//myWindow.addTrack(1,3,0);
+			//check switch stuff
+			Switch sw = blocks[i].getSwitch();
+			if(sw!=null){
+				//you are root, connect to both branches
+				myWindow.addTrack(blocks[i].mapRow, blocks[i].mapCol, getTouch(i,sw.getSwitchBlocks()[0]));
+				myWindow.addTrack(blocks[i].mapRow, blocks[i].mapCol, getTouch(i,sw.getSwitchBlocks()[1]));
+			} else if (blocks[i].getSwitchRoot() > 0){
+				myWindow.addTrack(blocks[i].mapRow, blocks[i].mapCol, getTouch(i,blocks[i].getSwitchRoot()));
+			}
+			
+			//set dat color
+			myWindow.setTrackStatus(blocks[i]);
+		}
+		
+	}
+	
+	//helper function to see if blocks touch
+	private int getTouch(int n, int m){
+		//assume n is a valid index, but check m
+		if (m<1||m>=blockCount){
+			return -1;
+		}
+		
+		//check coordinates
+		int ny = blocks[n].mapRow;
+		int nx = blocks[n].mapCol;
+		int my = blocks[m].mapRow;
+		int mx = blocks[m].mapCol;
+		
+		if(my==ny-1){
+			if(mx==nx-1){
+				return 7;
+			} else if (mx==nx){
+				return 0;
+			} else if (mx==nx+1){
+				return 1;
+			}
+		} else if (my==ny+1){
+			if(mx==nx-1){
+				return 5;
+			} else if (mx==nx){
+				return 4;
+			} else if (mx==nx+1){
+				return 3;
+			}
+		} else if (my==ny){
+			if(mx==nx-1){
+				return 6;
+			} else if (mx==nx+1){
+				return 2;
+			}
+		}
+		
+		return -1;
 	}
 	
 	//method to display the ctcWindow associated with this CTC
