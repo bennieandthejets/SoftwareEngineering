@@ -91,9 +91,10 @@ public class TrackCtrlWrapper {
 				downish.ui.addTrain(trainID, trainlocs[trainID]);
 			}
 		}
-		
-		upish.tick(trains, map);
-		downish.tick(trains, map);
+		if (trains.size() != 0) {
+			upish.tick(trains, map);
+			downish.tick(trains, map);
+		}
 	}
 	
 	public void setRoute(int trainBlock, int destination, double suggestedSpeed, int suggestedAuthority, int[] route) {

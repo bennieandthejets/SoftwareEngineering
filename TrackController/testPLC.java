@@ -26,6 +26,7 @@ public class testPLC implements PLC{
 		Iterator it = trains.entrySet().iterator();
 		while (it.hasNext()) {
 			Map.Entry pair = (Map.Entry) it.next();
+			int key = (Integer) pair.getKey();
 			Train train = (Train) pair.getValue();
 			
 			
@@ -37,6 +38,8 @@ public class testPLC implements PLC{
 			train.blockBefore = nextSwitchInfo.get("switchOn");
 			train.blockAfter = nextSwitchInfo.get("afterSwitch");
 			
+			trainsWaiting.add(key);
+			
 		}
 		return true;
 	}
@@ -46,6 +49,11 @@ public class testPLC implements PLC{
 		if (route == null) {
 			return null;
 		}
+		
+		boolean posFound = false;
+		int firstSwitch = -1;
+		int switchIndex = -1;
+		
 		for (int routeStep = 0; routeStep < route.length; routeStep++) {
 			//if the train is on block 77 (from yard) and is newly created, make sure the switch is correct 
 			if (routeStep == 0 && train.position == 77) {
@@ -57,12 +65,19 @@ public class testPLC implements PLC{
 				//switchInfo.put("switchBlock",77);
 
 				switchInfo.put("afterSwitch",route[routeStep+1]);
+				
+				return switchInfo;
 			}
 			
 			//step through the route until the current train position is found
-			boolean posFound = false;
+			//If the position is not found, either there are no switches on the route, or the trains position is not in the route, which means the route is newly received
+			//In that case, keep track of the first switch found
 			if (route[routeStep] == train.position) {
 				posFound = true;
+			}
+			if (firstSwitch == -1 && switches.contains(route[routeStep])) {
+				firstSwitch = route[routeStep];
+				switchIndex = routeStep;
 			}
 			
 			
@@ -80,20 +95,38 @@ public class testPLC implements PLC{
 			}*/
 		}
 		
+		//If above loop did not return, either there are no switches, or the train's position is not in the route
+		//If the latter, there will be a firstSwitch and its index stored
+		if (firstSwitch != -1) {
+			HashMap<String,Integer> switchInfo = new HashMap<String,Integer>();
+			if (switchIndex == 0) {
+				switchInfo.put("switchOn", train.position);
+				switchInfo.put("switchBlock", firstSwitch);
+				switchInfo.put("afterSwitch", route[1]);
+			}
+			else {
+				switchInfo.put("switchOn", route[switchIndex-1]);
+				switchInfo.put("switchBlock", route[switchIndex]);
+				switchInfo.put("afterSwitch", route[switchIndex+1]);
+			}
+			return switchInfo;
+		}
+		
 		return null;
 	}
 	
-	public boolean checkSwitches(Block[] map) {
+	public boolean checkSwitches(Block[] map, HashMap<Integer, Train> trains) {
 		Iterator tw = trainsWaiting.iterator();
 		
 		while(tw.hasNext()) {
-				Train train = (Train) tw.next();
+				Integer trainNum = (Integer) tw.next();
+				Train train = trains.get(trainNum);
 				
 				if (train.position == train.blockBefore) {
 					int switchblock = train.nextSwitch;
 					int switchDestId = map[switchblock].getSwitch().getSwitchTaken();
 					//if the train is at one of the heads of a switch and is attempting to cross the switch, ensure the switch points at that head
-					if (map[switchblock].getSwitchRoot() != -1) {
+					if (map[train.position].getSwitchRoot() != -1) {
 						//If the switch is pointing to the block the train is on, don't change the switch
 						if (switchDestId == train.position) {
 							continue;
