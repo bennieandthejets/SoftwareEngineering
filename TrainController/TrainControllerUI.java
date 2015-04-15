@@ -382,22 +382,22 @@ public class TrainControllerUI {
 	
 	public void switchServiceBrakeStatus() {
 		if(brakeStatusField.getText().equals("OFF")) {
-			controller.stopTrain();
+			controller.stopTrain(true);
 			brakeStatusField.setText("ON");
 		}
 		else {
-			controller.releaseServiceBrakes();
+			controller.releaseServiceBrakes(true);
 			brakeStatusField.setText("OFF");
 		}
 	}
 	
 	public void switchEmergencyBrakeStatus() {
 		if(eBrakeStatusField.getText().equals("OFF")) {
-			controller.emergencyStop();
+			controller.emergencyStop(true);
 			eBrakeStatusField.setText("ON");
 		}
 		else {
-			controller.releaseEmergencyBrakes();
+			controller.releaseEmergencyBrakes(true);
 			eBrakeStatusField.setText("OFF");
 		}
 	}
