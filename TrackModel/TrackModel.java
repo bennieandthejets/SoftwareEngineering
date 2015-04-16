@@ -90,7 +90,7 @@ public class TrackModel {
 			{
 				trainOnBlock = i;
 				blocks[i].trainPresent = true;
-				travelRoute.add(String.valueOf(trainOnBlock));
+				t.trainOnBlock(blocks[trainOnBlock].mapRow, blocks[trainOnBlock].mapCol);
 			}
 		}
 	}
@@ -115,14 +115,22 @@ public class TrackModel {
 			totalBlockDist += blocks[Integer.parseInt(travelRoute.get(i))].blockSize;
 		}
 		
-		if(totalTrainDist > totalBlockDist && travelRoute.size() > 1)
+		if(travelRoute.size() == 0 && totalTrainDist > blocks[trainOnBlock].blockSize)
+		{
+			travelRoute.add(String.valueOf(trainOnBlock));
+		}
+		else if(totalTrainDist > totalBlockDist && travelRoute.size() > 0)
 		{
 			blocks[trainOnBlock].trainPresent = false;
 			travelRoute.add(String.valueOf(trainOnBlock));
 			
 			t.trainOffBlock(blocks[trainOnBlock].mapRow, blocks[trainOnBlock].mapCol);
 			
-			int prevBlock = Integer.parseInt(travelRoute.get(travelRoute.size() - 2));
+			int prevBlock;
+			if(travelRoute.size() == 1)
+				prevBlock = -9; //arbitrarily chose this number, i just really like the #9
+			else
+				prevBlock = Integer.parseInt(travelRoute.get(travelRoute.size() - 2));
 			
 			Switch sw = blocks[trainOnBlock].getSwitch();
 			
@@ -161,35 +169,7 @@ public class TrackModel {
 					trainOnBlock++;
 			}
 			
-			/*
-			if(sw != null && sw.getSwitchBlocks()[0] != prevBlock &&
-					sw.getSwitchBlocks()[1] != prevBlock) {
-				trainOnBlock = sw.getSwitchTaken();
-			}
-			else if(blocks[trainOnBlock].getSwitchRoot() != -1 && blocks[trainOnBlock].getSwitchRoot() != prevBlock) {
-				trainOnBlock = blocks[trainOnBlock].getSwitchRoot();
-			}
-			else if(prevBlock != trainOnBlock + 1) {
-				if(sw != null) {
-					if(sw.getSwitchBlocks()[0] == trainOnBlock+1 || sw.getSwitchBlocks()[1] == trainOnBlock+1) {
-						trainOnBlock--;
-					}
-				}
-				else {
-					trainOnBlock++;
-				}
-			}
-			else {
-				trainOnBlock--;
-			}
-			*/
 			blocks[trainOnBlock].trainPresent = true;
-			t.trainOnBlock(blocks[trainOnBlock].mapRow, blocks[trainOnBlock].mapCol);
-		}
-		else //TRAIN IS IN YARD
-		{
-			blocks[trainOnBlock].trainPresent = true;
-			//travelRoute.add(String.valueOf(trainOnBlock));
 			t.trainOnBlock(blocks[trainOnBlock].mapRow, blocks[trainOnBlock].mapCol);
 		}
 		
