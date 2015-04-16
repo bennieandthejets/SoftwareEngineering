@@ -78,11 +78,13 @@ public class TrackController {
 			URL[] urls = new URL[]{url};
 			
 			ClassLoader cl = new URLClassLoader(urls);*/
-			System.out.println("Loaded successfully!");
 			Class cls = cl.loadClass(filename);
 			Object o = cls.newInstance();
 			
 			myPLC = (PLC) o;
+			
+			System.out.println("Loaded successfully!");
+
 			
 			return true;
 		}

@@ -129,11 +129,21 @@ public class testPLC implements PLC{
 					if (map[train.position].getSwitchRoot() != -1) {
 						//If the switch is pointing to the block the train is on, don't change the switch
 						if (switchDestId == train.position) {
+							train.blockBefore = -1;
+							train.nextSwitch = -1;
+							train.blockAfter = -1;
+							tw.remove();
 							continue;
 						}
 						//if the switch is pointing the opposite direction, switch the switch
 						else {
 							map[switchblock].getSwitch().direction = !(map[switchblock].getSwitch().direction);
+							train.blockBefore = -1;
+							train.nextSwitch = -1;
+							train.blockAfter = -1;
+							tw.remove();
+
+
 						}
 					}
 					
@@ -141,11 +151,20 @@ public class testPLC implements PLC{
 					else {
 						//if the switch is pointing to the block the train wants to go to, don't change it
 						if (switchDestId == train.blockAfter) {
+							train.blockBefore = -1;
+							train.nextSwitch = -1;
+							train.blockAfter = -1;
+							tw.remove();
 							continue;
 						}
 						//otherwise, toggle that switch
 						else{
 							map[switchblock].getSwitch().direction = !(map[switchblock].getSwitch().direction);
+							train.blockBefore = -1;
+							train.nextSwitch = -1;
+							train.blockAfter = -1;
+							tw.remove();
+
 						}
 					}
 					//if (map[train.position] && map[switchblock].sw.getBlockOne() == train.blockAfter)
