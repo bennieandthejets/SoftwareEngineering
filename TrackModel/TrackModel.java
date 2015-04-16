@@ -90,6 +90,7 @@ public class TrackModel {
 			{
 				trainOnBlock = i;
 				blocks[i].trainPresent = true;
+				travelRoute.add(String.valueOf(trainOnBlock));
 			}
 		}
 	}
@@ -188,7 +189,7 @@ public class TrackModel {
 		else //TRAIN IS IN YARD
 		{
 			blocks[trainOnBlock].trainPresent = true;
-			travelRoute.add(String.valueOf(trainOnBlock));
+			//travelRoute.add(String.valueOf(trainOnBlock));
 			t.trainOnBlock(blocks[trainOnBlock].mapRow, blocks[trainOnBlock].mapCol);
 		}
 		
