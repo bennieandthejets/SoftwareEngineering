@@ -62,6 +62,7 @@ public class ctcWindow {
 	private String sePath = "src\\se.png";
 	private String nwPath = "src\\nw.png";
 	private String nePath = "src\\ne.png";
+	private String trainPath = "src\\tinyTrain.png";
 	//colors for various track states
 	private Color yard = Color.BLACK;
 	private Color station = Color.pink;
@@ -216,6 +217,30 @@ public class ctcWindow {
 		
 	}
 	
+	//add block # and train presence labels to a square
+	public void setTrackLabel(Block bl, int b){
+		JPanel pnl = blockPanels[bl.mapRow][bl.mapCol];
+		
+		//add train image 
+		JLabel trainlabel = new JLabel("");
+		trainlabel.setBounds(0,0,15,15);				
+		trainlabel.setIcon(new ImageIcon(trainPath));				
+		trainlabel.setIconTextGap(-15); //if we add numbers they will appear above the image
+		pnl.add(trainlabel);
+		
+		/*//add track number and leave visible for now
+		JLabel numLabel = new JLabel("" + b);
+		numLabel.setBounds(0,0,15,15);
+		numLabel.setForeground(new Color(255, 0, 0)); 
+		numLabel.setFont(new Font("Times New Roman", Font.BOLD, 9));
+		pnl.add(numLabel);
+		*/
+		
+		//hide image until train is present
+		pnl.getComponent(pnl.getComponentCount()-1).setVisible(false);
+		
+	}
+	
 	/*set a map block to the appropriate color 
 	 * options for: empty, train, switch, broken
 	 */
@@ -226,8 +251,8 @@ public class ctcWindow {
 		
 		if(bl.isBroken()){
 			desired = broken;
-		} else if(bl.isTrainPresent()){
-			desired = train;
+			/*} else if(bl.isTrainPresent()){
+			desired = train;*/
 		} else if(sw != null){
 			desired = switchh;			
 		} else if(bl.getSwitchRoot() > 0){
@@ -246,6 +271,14 @@ public class ctcWindow {
 			p.setBackground(desired);
 			p.repaint();
 		}
+		
+		//train presence is seperate from color now
+		boolean wasPresent = p.getComponent(p.getComponentCount()-1).isVisible();
+		if(wasPresent != bl.isTrainPresent()){
+			p.getComponent(p.getComponentCount()-1).setVisible(bl.isTrainPresent());
+			p.repaint();
+		}
+		
 		
 	}
 	
@@ -832,6 +865,23 @@ public class ctcWindow {
 				pnl.setLayout(null);
 				pnl.setBackground(Color.LIGHT_GRAY);
 				frmCtc.getContentPane().add(pnl);
+				
+				/*
+				//add train image (and hide it)
+				JLabel trainlabel = new JLabel("");
+				trainlabel.setBounds(0,0,15,15);				
+				trainlabel.setIcon(new ImageIcon(trainPath));				
+				trainlabel.setIconTextGap(-15); //if we add numbers they will appear above the image
+				pnl.add(trainlabel);
+				pnl.getComponent(0).setVisible(false); //hopefully this first label will always be zero
+				
+				//add track number and leave visible for now
+				JLabel numLabel = new JLabel("" + i);
+				numLabel.setBounds(0,0,15,15);
+				numLabel.setForeground(new Color(100, 20, 200)); //purple
+				numLabel.setFont(new Font("Times New Roman", Font.BOLD, 9));
+				pnl.add(numLabel);
+				*/
 				
 				//save reference in array
 				blockPanels[i][j] = pnl;

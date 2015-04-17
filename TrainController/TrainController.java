@@ -16,6 +16,8 @@ public class TrainController {
 	private double		stopDistance;
 	public boolean		brakeStatus;
 	public boolean		eBrakeStatus;
+	private boolean		manualBrake;
+	private boolean		manualEBrake;
 	
 	private TrainModel			model;
 	private TrainControllerUI	ui;
@@ -84,18 +86,18 @@ public class TrainController {
 	}
 	
 	private void checkRemainingAuthority() {
-		remainingAuthority = remainingAuthority - model.getDistanceTraveled();
+		remainingAuthority = remainingAuthority - model.getTickDistance();
 		
 		if(remainingAuthority < 0) {
 			remainingAuthority = 0;
 		}
 		stopDistance = model.antenna.getStopDistance();
 		if(remainingAuthority <= stopDistance && model.getVelocity() != 0 && brakeStatus != true && eBrakeStatus != true ) {
-			stopTrain();
+			stopTrain(false);
 		}
 		else if (remainingAuthority > 0) {
-			releaseServiceBrakes();
-			releaseEmergencyBrakes();
+			releaseServiceBrakes(false);
+			releaseEmergencyBrakes(false);
 		}
 		return;
 	}
@@ -129,7 +131,10 @@ public class TrainController {
 		targetVelocity = newVelocity;
 	}
 	
-	public void stopTrain() {
+	public void stopTrain(boolean manual) {
+		if(manual) {
+			manualBrake = true;
+		}
 		model.setPower(0);
 		//CHANGE WHEN VITAL
 		powerCommand[0] = 0.0;
@@ -139,7 +144,10 @@ public class TrainController {
 		return;
 	}
 	
-	public void emergencyStop() {
+	public void emergencyStop(boolean manual) {
+		if(manual) {
+			manualEBrake = true;
+		}
 		model.setPower(0);
 		//CHANGE WHEN VITAL
 		powerCommand[0] = 0.0;
@@ -149,15 +157,29 @@ public class TrainController {
 		return;
 	}
 	
-	public void releaseServiceBrakes() {
-		if(brakeStatus == true) {
+	public void releaseServiceBrakes(boolean manual) {
+		if(manualBrake) {
+			if(manual && brakeStatus) {
+				model.deactivateServiceBrakes();
+				brakeStatus = false;
+				manualBrake = false;
+			}
+		}
+		else if(brakeStatus) {
 			model.deactivateServiceBrakes();
 			brakeStatus = false;
 		}
 	}
 		
-	public void releaseEmergencyBrakes() {
-		if(eBrakeStatus == true) {
+	public void releaseEmergencyBrakes(boolean manual) {
+		if(manualEBrake) {
+			if(manual && eBrakeStatus) {
+				model.deactivateEmergencyBrakes();
+				eBrakeStatus = false;
+				manualEBrake = false;
+			}
+		}
+		else if(eBrakeStatus) {
 			model.deactivateEmergencyBrakes();
 			eBrakeStatus = false;
 		}

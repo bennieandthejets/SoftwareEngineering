@@ -215,7 +215,7 @@ public class CTC {
 		//load track somehow
 		//this.blocks = ben.getBlocks();	//call this once it exists
 		
-		//!!!call jackie directly until ben gets his shit together
+		//!!!call jackie directly to set up map
 		this.blocks = notReggie.trackModel.getBlocks();
 		
 		this.blockCount = blocks.length;
@@ -238,6 +238,14 @@ public class CTC {
 		//draw awesome sexy map
 		for(int i = 1; i < blockCount; i++){
 			
+			//set yard blocks
+			if(blocks[i].isToYard()){
+				toYard = i;
+			}
+			if(blocks[i].isFromYard()){
+				fromYard = i;
+			}
+			
 			
 			//check i+-1; will only paint if getTouch returns a good value
 			myWindow.addTrack(blocks[i].mapRow, blocks[i].mapCol, getTouch(i,i+1));
@@ -252,6 +260,10 @@ public class CTC {
 			} else if (blocks[i].getSwitchRoot() > 0){
 				myWindow.addTrack(blocks[i].mapRow, blocks[i].mapCol, getTouch(i,blocks[i].getSwitchRoot()));
 			}
+			
+			//add special labels for block # and train
+			myWindow.setTrackLabel(blocks[i],  i);
+			
 			
 			//set dat color
 			myWindow.setTrackStatus(blocks[i]);

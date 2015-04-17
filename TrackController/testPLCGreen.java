@@ -51,11 +51,25 @@ public class testPLCGreen {
 			return null;
 		}
 		for (int routeStep = 0; routeStep < route.length; routeStep++) {
+			//if the train is on block 62 (from yard) and 
+			if (routeStep == 0 && train.position == 62) {
+				HashMap<String,Integer> switchInfo = new HashMap<String,Integer>();
+				switchInfo.put("switchOn",62);
+				//comment out if 62 is not part of the route
+				switchInfo.put("switchBlock",route[routeStep]);
+				//comment out if 62 is part of the route
+				//switchInfo.put("switchBlock",62);
+
+				switchInfo.put("afterSwitch",route[routeStep+1]);
+			}
+			
 			//step through the route until the current train position is found
 			boolean posFound = false;
 			if (route[routeStep] == train.position) {
 				posFound = true;
 			}
+			
+			
 			//find the first switch the train will encounter after its current position
 			if (switches.contains(route[routeStep]) && posFound && (route[routeStep] != train.position)) {
 				//return the block the train will occupy before it reaches the switch, and the block it will occupy after the switch
@@ -65,6 +79,9 @@ public class testPLCGreen {
 				switchInfo.put("afterSwitch", route[routeStep+1]);
 				return switchInfo;
 			}
+			/*if (switches.contains(route[routeStep]) && posFound && (route[routeStep] == train.position)) {
+				switchInfo.put("switchOn",);
+			}*/
 		}
 		
 		return null;

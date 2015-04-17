@@ -64,7 +64,7 @@ public class TrackController {
 	public void tick(HashMap<Integer, Train> trains, Block map[]) {
 		if(myPLC != null) {
 			myPLC.checkRoutes(trains);
-			myPLC.checkSwitches(map);
+			myPLC.checkSwitches(map, trains);
 		}
 		return;
 	}
@@ -78,11 +78,13 @@ public class TrackController {
 			URL[] urls = new URL[]{url};
 			
 			ClassLoader cl = new URLClassLoader(urls);*/
-			System.out.println("Loaded successfully!");
 			Class cls = cl.loadClass(filename);
 			Object o = cls.newInstance();
 			
 			myPLC = (PLC) o;
+			
+			System.out.println("Loaded successfully!");
+
 			
 			return true;
 		}
