@@ -1,7 +1,10 @@
 package MBO;
 
+import TrainModel.Antenna;
+
 import java.awt.EventQueue;
 import java.awt.FileDialog;
+
 import javax.swing.JFrame;
 import javax.swing.JComboBox;
 import javax.swing.JScrollPane;
@@ -20,7 +23,6 @@ import java.awt.event.ActionEvent;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.awt.SystemColor;
-
 
 public class MBOUI {
 
@@ -41,7 +43,7 @@ public class MBOUI {
 	private JTextField txtStatus;
 	private JTextField txtStopDistance;
 	private JTextArea txtrStops;
-	private JComboBox trainSelectBox;
+	private JComboBox<String> trainSelectBox;
 	private MBO mbo;
 	
     private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
@@ -56,8 +58,8 @@ public class MBOUI {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					MBOUI window = new MBOUI();
-					window.frame.setVisible(true);
+					//MBOUI window = new MBOUI();
+					//window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -68,26 +70,30 @@ public class MBOUI {
 	/**
 	 * Create the application.
 	 */
-	public MBOUI() {
+	public MBOUI(MBO mbo) {
+		this.mbo = mbo;
 		initialize();
 		//frame.setVisible(true);
 	}
 	
 	/// Called when the user selects the train whose info they'd like to see displayed
 	public void selectTrain() {
-		String value = trainSelectBox.getSelectedItem().toString();
-		this.selectedTrain = Integer.parseInt(value.substring(value.length() - 1)) - 1;
+		if(trainSelectBox.getItemCount() > 0) {
+			String value = trainSelectBox.getSelectedItem().toString();
+			this.selectedTrain = Integer.parseInt(value.substring(value.length() - 1));
+			//this.setItems();
+		}
 	}
 	
 	/// Called after a train has been added to the system
 	public void setTrainSelectBox() {
-		for(int i = 0; i < mbo.reggies.size(); i++) {
-			trainSelectBox.addItem("Train " + (i+1));
+		trainSelectBox.removeAllItems();
+		for(Antenna reggie : mbo.reggies) {
+			trainSelectBox.addItem("Train " + (reggie.getTrainID()));
 		}
 	}
 	
-	public void setItems(MBO mbo) {
-		this.mbo = mbo;
+	public void setItems() {
 		this.txtRequiredThroughput.setText("" + mbo.throughput);
 		
 		displayTime();
@@ -100,12 +106,18 @@ public class MBOUI {
 		}
 		
 		if(mbo.reggies.size() > 0) {
+			double currentVelocity = mbo.currentVelocities.get(selectedTrain);
+			TrackModel.Block currentBlock = mbo.currentLocations.get(selectedTrain);
+			if(currentBlock != null) {
+				this.txtTrainLocation.setText("Block " + currentBlock.getBlockID());
+			}
 			this.txtAuthority.setText("" + mbo.currentAuthorities.get(selectedTrain));
-			this.txtVelocity.setText("" + mbo.currentVelocities.get(selectedTrain));
+			this.txtVelocity.setText("" + currentVelocity);
 			this.txtMoving.setText("" + mbo.movingBlockAuthorities.get(selectedTrain));
 			this.txtSafeVelocity.setText("" + mbo.safeVelocities.get(selectedTrain));
 			this.txtSafeAuthority.setText("" + mbo.movingBlockAuthorities.get(selectedTrain));
-			//this.txtStopDistance.setText("" + mbo.calculateStopDistance(mbo.currentVelocities.get(selectedTrain)));
+			double stopDistance = mbo.calculateStopDistance(currentVelocity);
+			this.txtStopDistance.setText("" + stopDistance);
 		}
 		//this.txtrStops.setText(mbo.trainSchedules.get(1).toString());
 	}

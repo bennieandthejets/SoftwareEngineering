@@ -52,8 +52,7 @@ public class MBO
 		movingBlockAuthorities = new HashMap<Integer, Double>();
 		safeVelocities = new HashMap<Integer, Double>();
 		
-		this.ui = new MBOUI();
-		ui.setItems(this);
+		this.ui = new MBOUI(this);
 	}
 	
 	public MBO(Simulator simulator) {
@@ -73,14 +72,6 @@ public class MBO
 	
 	public void trainAdded() {
 		this.reggies = trainModelWrapper.getAllAntennas();
-		for(Antenna reggie : reggies) {
-			int trainID = reggie.getTrainID();
-			currentVelocities.put(trainID, reggie.getVelocity());
-			currentAuthorities.put(trainID, reggie.getAuthority());
-			currentLocations.put(trainID, reggie.getBlock());
-			calculateSafeAuthority(trainID);
-			calculateSafeSetpoint(trainID);
-		}
 		ui.setTrainSelectBox();
 	}
 	
@@ -283,14 +274,10 @@ public class MBO
 			calculateSafeSetpoint(trainID);
 		}
 		
-		ui.setItems(this);
+		ui.setItems();
 	}
 	
 	public static void main(String args[]) throws InterruptedException {
-		MBOUI ui = new MBOUI();
-		/*MBO prototype = new MBO(ui);
-		prototype.setThroughput(35, 0)
-		prototype.createTrainSchedule(35);
-		ui.setItems(prototype);*/
+		//MBOUI ui = new MBOUI();
 	}
 }
