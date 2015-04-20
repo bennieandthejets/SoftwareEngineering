@@ -272,7 +272,7 @@ public class CTC {
 	}
 	
 	//helper function to see if blocks touch
-	private int getTouch(int n, int m){
+	public int getTouch(int n, int m){
 		//assume n is a valid index, but check m
 		if (m<1||m>=blockCount){
 			return -1;
@@ -554,7 +554,7 @@ public class CTC {
 			increment = -1;
 		}
 		
-		while (blocks[block].getSwitch() == null && blocks[block].getSwitchRoot() == -1 ){	
+		while (!(block == toYard || block == fromYard ) && block > 0 && blocks[block].getSwitch() == null && blocks[block].getSwitchRoot() == -1 ){	
 			//myWindow.setAnnouncement("looking for dest on Block " + block);
 			if (block == dest){
 				return true;				

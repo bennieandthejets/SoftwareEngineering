@@ -54,7 +54,7 @@ public class ctcWindow {
 	private int mapLeft = 10;
 	private int mapTop = 52;
 	//filepaths for lines; change to "src\\n.png" relative path eventually
-	private String nPath = "src\\n.png"; //"c:\\source\\track\\15px\\n.png";
+	private String nPath =  this.getClass().getResource("/n.png").getFile();//"src\\n.png"; //"c:\\source\\track\\15px\\n.png";
 	private String sPath = "src\\s.png";
 	private String ePath = "src\\e.png";
 	private String wPath = "src\\w.png";
