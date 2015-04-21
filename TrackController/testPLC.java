@@ -45,7 +45,7 @@ public class testPLC implements PLC{
 						
 			HashMap<String,Integer> nextSwitchInfo = findNextSwitch(train);
 			if (nextSwitchInfo == null) {
-				return -1;
+				continue;
 			}
 			train.nextSwitch = nextSwitchInfo.get("switchBlock");
 			train.blockBefore = nextSwitchInfo.get("switchOn");
@@ -107,10 +107,14 @@ public class testPLC implements PLC{
 				switchInfo.put("switchOn",);
 			}*/
 		}
+		//if the position was found but the look didnt return, no more switches on route!
+		if (posFound) {
+			return null;
+		}
 		
 		//If above loop did not return, either there are no switches, or the train's position is not in the route
 		//If the latter, there will be a firstSwitch and its index stored
-		if (firstSwitch != -1) {
+		if (firstSwitch != -1 && train.position == 77) {
 			HashMap<String,Integer> switchInfo = new HashMap<String,Integer>();
 			if (switchIndex == 0) {
 				switchInfo.put("switchOn", train.position);
