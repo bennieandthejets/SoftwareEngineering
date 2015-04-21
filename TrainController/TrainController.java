@@ -21,7 +21,7 @@ public class TrainController {
 	
 	private TrainModel			model;
 	private TrainControllerUI	ui;
-	//private VitalControl		vc;
+	private VitalControl		vc;
 	
 	//REMOVE WHEN VITAL
 	private final int		MAX_POWER = 120000;			//Maximum power output (W)
@@ -40,7 +40,7 @@ public class TrainController {
 		model = newTrainModel;
 		model.setTrainController(this);
 		ui = newUI;
-		//vc = new VitalControl();
+		vc = new VitalControl(this);
 		mode = 1;
 		setpointVelocity = 0.0;
 		velocityFeedback = 0.0;
@@ -49,12 +49,12 @@ public class TrainController {
 		eBrakeStatus = false;
 		
 		//REMOVE WHEN VITAL
-		powerCommand[0] = 0.0;
-		powerCommand[1] = 0.0;
-		velocityError[0] = 0.0;
-		velocityError[1] = 0.0;
-		u[0] = 0.0;
-		u[1] = 0.0;
+//		powerCommand[0] = 0.0;
+//		powerCommand[1] = 0.0;
+//		velocityError[0] = 0.0;
+//		velocityError[1] = 0.0;
+//		u[0] = 0.0;
+//		u[1] = 0.0;
 		
 		//TEST
 		//remainingAuthority = 1000.0;
@@ -62,10 +62,6 @@ public class TrainController {
 	
 	public int getID() {
 		return this.ID;
-	}
-	
-	public void setMode(int newMode) {
-		mode = newMode;
 	}
 	
 	public double getSetpointVelocity() {
@@ -80,6 +76,15 @@ public class TrainController {
 		return remainingAuthority;
 	}
 	
+	public void setMode(int newMode) {
+		mode = newMode;
+	}
+	
+	public void setTargetVelocity(double newVelocity) {
+		targetVelocity = newVelocity;
+		vc.setTargetVelocity(newVelocity);
+	}
+	
 	public void setAuthority(double newAuthority) {
 		remainingAuthority = newAuthority;
 		return;
@@ -92,7 +97,7 @@ public class TrainController {
 			remainingAuthority = 0;
 		}
 		stopDistance = model.antenna.getStopDistance();
-		if(remainingAuthority <= stopDistance && model.getVelocity() != 0 && brakeStatus != true && eBrakeStatus != true ) {
+		if((remainingAuthority - model.getTickDistance()) <= stopDistance && model.getVelocity() != 0 && brakeStatus != true && eBrakeStatus != true ) {
 			stopTrain(false);
 		}
 		else if (remainingAuthority > 0) {
@@ -103,32 +108,33 @@ public class TrainController {
 	}
 	
 	//REMOVE WHEN VITAL
-	public void calculatePower() {
-		
-		velocityFeedback = model.getVelocity();
-		
-		velocityError[1] = targetVelocity - velocityFeedback;
-		
-		if(powerCommand[1] < MAX_POWER) {
-			u[1] = u[0] + (TIME_PERIOD/2) * (velocityError[1] + velocityError[0]);
-		}
-		else {
-			u[1] = u[0];
-		}
-		
-		powerCommand[1] = Kp * velocityError[1] + Ki * u[1];
-			
-		u[0] = u[1];
-		powerCommand[0] = powerCommand[1];
-		velocityError[0] = velocityError[1];
-		
-		model.setPower(powerCommand[1]);
-		
-		return;
-	}
+//	public void calculatePower() {
+//		
+//		velocityFeedback = model.getVelocity();
+//		
+//		velocityError[1] = targetVelocity - velocityFeedback;
+//		
+//		if(powerCommand[1] < MAX_POWER) {
+//			u[1] = u[0] + (TIME_PERIOD/2) * (velocityError[1] + velocityError[0]);
+//		}
+//		else {
+//			u[1] = u[0];
+//		}
+//		
+//		powerCommand[1] = Kp * velocityError[1] + Ki * u[1];
+//			
+//		u[0] = u[1];
+//		powerCommand[0] = powerCommand[1];
+//		velocityError[0] = velocityError[1];
+//		
+//		model.setPower(powerCommand[1]);
+//		
+//		return;
+//	}
 	
-	public void setTargetVelocity(double newVelocity) {
-		targetVelocity = newVelocity;
+	public void sendPower(double power) {
+		model.setPower(power);
+		return;
 	}
 	
 	public void stopTrain(boolean manual) {
@@ -137,8 +143,8 @@ public class TrainController {
 		}
 		model.setPower(0);
 		//CHANGE WHEN VITAL
-		powerCommand[0] = 0.0;
-		//vc.resetPower();
+//		powerCommand[0] = 0.0;
+		vc.resetPower();
 		model.activateServiceBrakes();
 		brakeStatus = true;
 		return;
@@ -150,8 +156,8 @@ public class TrainController {
 		}
 		model.setPower(0);
 		//CHANGE WHEN VITAL
-		powerCommand[0] = 0.0;
-		//vc.resetPower();
+//		powerCommand[0] = 0.0;
+		vc.resetPower();
 		model.activateEmergencyBrakes();
 		eBrakeStatus = true;
 		return;
@@ -185,7 +191,7 @@ public class TrainController {
 		}
 	}
 	
-	public void tick(long currentTime, int currentTemp) {
+	public void tick(long currentTime, int currentTemp) {		
 		//checkFailures();
 		checkRemainingAuthority();
 		setpointVelocity = model.getSetpointVelocity();
@@ -194,14 +200,12 @@ public class TrainController {
 		}
 		if(!brakeStatus && !eBrakeStatus && remainingAuthority != 0) {
 			//CHANGE WHEN VITAL
-			calculatePower();
-			//model.setPower(vc.vitalPower(model.getVelocity(), model.getVelocity(), model.getVelocity()));
+//			calculatePower();
+			vc.vitalPower(model.getVelocity(), model.getVelocity(), model.getVelocity());
 		}
 		
 		//controlSubsystems(currentTime, currentTemp);
 		
 	}
-	
-	
 	
 }
