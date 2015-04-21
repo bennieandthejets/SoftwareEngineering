@@ -156,7 +156,8 @@ public class CTC {
 						int loc  = locations[i];
 						int blockedBlock = routes[i].block;
 						if((loc==root)){ // this is the only time a train could go to more than one place
-							if(loc==one&&blocks[two].isTrainPresent() && blockedBlock != two){
+							if(blocks[two].isTrainPresent() && blockedBlock != two){
+								known[i] = true;
 								myWindow.setLocation(i,  two, -1);
 								reverses[i]=locations[i];
 								locations[i]=two;
@@ -171,7 +172,8 @@ public class CTC {
 								}
 								routeTrainCTC(i, speeds[i], destination);
 								
-							} else if (loc==two&&blocks[one].isTrainPresent() && blockedBlock != one){
+							} else if (blocks[one].isTrainPresent() && blockedBlock != one){
+								known[i] = true;
 								myWindow.setLocation(i,  one, -1);
 								reverses[i]=locations[i];
 								locations[i]=one;
@@ -206,7 +208,7 @@ public class CTC {
 		for(int i = 0;i<activeTrains;i++){
 			if(!known[i] && locations[i]>0){
 				myWindow.setAnnouncement("!!Lost Train " + (i + 1) + "! What have you done?!?!");
-				locations[i] = 0;
+				//locations[i] = 0;
 			} else if(locations[i] > 0 && blocks[locations[i]].getStation() != null){
 				//record a stop
 				this.stops++;
@@ -508,9 +510,9 @@ public class CTC {
 		
 		//calculate both directions, choose shortest	
 		//myWindow.setAnnouncement("start calc up");
-		TrainRoute rtUp = calcRoute(block, dest, true);		
+		TrainRoute rtUp = calcRoute(block, dest, true, reverses[train]);		
 		//myWindow.setAnnouncement("start calc down");
-		TrainRoute rtDwn = calcRoute(block, dest, false);
+		TrainRoute rtDwn = calcRoute(block, dest, false, reverses[train]);
 		//myWindow.setAnnouncement("calced both directions");
 		
 		//see which path is illegal because it went backwards
@@ -531,7 +533,7 @@ public class CTC {
 				
 	}
 	//sub to determine a path in a specific direction
-	private TrainRoute calcRoute(int block, int dest, boolean up){
+	private TrainRoute calcRoute(int block, int dest, boolean up, int from){
 		TrainRoute rt = new TrainRoute(block, null);
 		TrainRoute save = rt; //save start point because we're adding to the end
 		int inc; //increment
@@ -546,6 +548,11 @@ public class CTC {
 		
 		int next = -1;
 		boolean justSwitched = false;
+		
+		//special case if routing from a switch branch
+		if(blocks[block].getSwitchRoot() == from){
+			justSwitched = true;
+		}
 		
 		while(block!=dest){
 			
