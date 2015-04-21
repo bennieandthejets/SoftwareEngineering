@@ -36,10 +36,10 @@ public class TrackController {
 	
 	public UI ui;
 
-	TrackController(Simulator simulator, int fraction) {
+	TrackController(Simulator simulator, int fraction, HashMap<Integer, Train> trns) {
 		myModel = simulator.trackModel;
 		present = new ArrayList<Integer>(); 
-		trains = new HashMap<>();
+		trains = trns;
 		half = fraction;
 		ui = new UI(this);
 		//ui.setvisible(true);
@@ -50,21 +50,34 @@ public class TrackController {
 		System.out.println(myPLC.returnFive());
 	}
 	
-	public void setRoute(int trainBlock, int destination, double suggestedSpeed, int suggestedAuthority, int[] route) {
-		Train train = trains.get(trainBlock);
+	public void setRoute(int trainID, int destination, double suggestedSpeed, int suggestedAuthority, int[] route) {
+		Train train = trains.get(trainID);
 		
-		train.destination = destination;
-		train.sugSpeed = suggestedSpeed;
-		train.sugAuthority = suggestedAuthority;
-		train.suggestedRoute = route;
-		
+		if (myPLC == null) {
+			train.speed = 0;
+			train.sugSpeed = 0;
+			train.sugAuthority = 0;
+			myModel.setAuthority(0, train.position);
+			myModel.setSpeed(0, train.position);
+		}
+		else {
+			train.speed = suggestedSpeed;
+			train.sugSpeed = suggestedSpeed;
+			myModel.setAuthority((double) suggestedAuthority, train.position);
+			myModel.setSpeed(suggestedSpeed, train.position);
+		}
 		
 	}
 	
 	public void tick(HashMap<Integer, Train> trains, Block map[]) {
 		if(myPLC != null) {
-			myPLC.checkRoutes(trains);
-			myPLC.checkSwitches(map, trains);
+			if (map[1] != null) {
+				myPLC.addSwitches(map, ui);
+			}
+			int routeCheck = myPLC.checkRoutes(trains, ui);
+			int speedCheck = myPLC.getSafeSpeed(trains, map, myModel);
+			
+			myPLC.checkSwitches(map, trains, ui);
 		}
 		return;
 	}

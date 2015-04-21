@@ -3,15 +3,17 @@ package TrackController;
 import java.util.*;
 
 import TrackController.TrackCtrlWrapper.Train;
-import TrackModel.Block;
+import TrackModel.*;
 
 public class testPLC implements PLC{
 	int startblock;
 	int endblock;
 
 	
-	public HashSet<Integer> switches = new HashSet<>(Arrays.asList(16, 27, 33, 38, 44, 52));
+	public HashSet<Integer> switches = new HashSet<>(Arrays.asList(9, 16, 27, 33, 38, 44, 52));
 	public HashSet<Integer> trainsWaiting = new HashSet<Integer>();
+	
+	boolean firstTick = true;
 	
 	public int returnFive() {
 		return 5;
@@ -19,9 +21,19 @@ public class testPLC implements PLC{
 	public void setSwitch(Block switchBlock, Block destBlock){
 	
 	}
-	public boolean checkRoutes(HashMap<Integer, Train> trains) {
+	
+	public void addSwitches(Block[] map, UI ui) {
+		if (firstTick) {
+			for (Integer switchNum : switches) {
+				ui.addSwitch(switchNum, map[switchNum].getSwitch().getSwitchTaken());
+			}
+			firstTick = false;
+		}
+	}
+	
+	public int checkRoutes(HashMap<Integer, Train> trains, UI ui) {
 		if (trains.size() == 0) {
-			return false;
+			return -1;
 		}
 		Iterator it = trains.entrySet().iterator();
 		while (it.hasNext()) {
@@ -29,10 +41,11 @@ public class testPLC implements PLC{
 			int key = (Integer) pair.getKey();
 			Train train = (Train) pair.getValue();
 			
-			
+			ui.updatePosition(train.id, train.position);
+						
 			HashMap<String,Integer> nextSwitchInfo = findNextSwitch(train);
 			if (nextSwitchInfo == null) {
-				return false;
+				continue;
 			}
 			train.nextSwitch = nextSwitchInfo.get("switchBlock");
 			train.blockBefore = nextSwitchInfo.get("switchOn");
@@ -41,7 +54,7 @@ public class testPLC implements PLC{
 			trainsWaiting.add(key);
 			
 		}
-		return true;
+		return 0;
 	}
 	
 	private HashMap<String, Integer> findNextSwitch(Train train) {
@@ -94,10 +107,14 @@ public class testPLC implements PLC{
 				switchInfo.put("switchOn",);
 			}*/
 		}
+		//if the position was found but the look didnt return, no more switches on route!
+		if (posFound) {
+			return null;
+		}
 		
 		//If above loop did not return, either there are no switches, or the train's position is not in the route
 		//If the latter, there will be a firstSwitch and its index stored
-		if (firstSwitch != -1) {
+		if (firstSwitch != -1 && train.position == 77) {
 			HashMap<String,Integer> switchInfo = new HashMap<String,Integer>();
 			if (switchIndex == 0) {
 				switchInfo.put("switchOn", train.position);
@@ -115,7 +132,7 @@ public class testPLC implements PLC{
 		return null;
 	}
 	
-	public boolean checkSwitches(Block[] map, HashMap<Integer, Train> trains) {
+	public boolean checkSwitches(Block[] map, HashMap<Integer, Train> trains, UI ui) {
 		Iterator tw = trainsWaiting.iterator();
 		
 		while(tw.hasNext()) {
@@ -173,7 +190,42 @@ public class testPLC implements PLC{
 				}
 		}
 		
+		//update all switches in the ui
+		for (Integer sw : switches) {
+			ui.updateSwitchPoint(sw, map[sw].getSwitch().getSwitchTaken());
+		}
 		return true;
+	}
+	
+	public int getSafeSpeed(HashMap<Integer, Train> trains, Block[] map, TrackModel trackmodel) {
+		if (trains.size() == 0) {
+			return -1;
+		}
+		Iterator it = trains.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry pair = (Map.Entry) it.next();
+			int key = (Integer) pair.getKey();
+			Train train = (Train) pair.getValue();
+			
+			double speedLimit = map[train.position].getSpeedLimit();
+			
+			//If the train is going faster than the speed limit, decelerate
+			if (train.speed > speedLimit) {
+				train.speed = speedLimit;
+				trackmodel.setSpeed(train.speed, train.position);
+				
+				return -1;
+			}
+			//otherwise if the train's suggested speed is higher than its current speed, but lower than the speed limit, accellerate
+			else if (train.speed < train.sugSpeed && train.sugSpeed <= speedLimit) {
+				train.speed = train.sugSpeed;
+				trackmodel.setSpeed(train.speed, train.position);
+			}
+		}
+		
+
+		
+		return 0;
 	}
 	
 	public void setCrossing(int crossingBlock) {

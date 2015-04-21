@@ -49,11 +49,12 @@ public class TrackCtrlWrapper {
 	
 	public TrackCtrlWrapper(Simulator sim) {
 		simulator = sim;
-		upish = new TrackController(simulator,1);
-		downish = new TrackController(simulator,2);
 		myModel = simulator.trackModel;
 		present = new HashSet<>();
-		trains = new HashMap<>();		
+		trains = new HashMap<>();
+		
+		upish = new TrackController(simulator,1, trains);
+		downish = new TrackController(simulator,2, trains);
 	}
 	
 	public Block[] getBlocks() {
@@ -80,13 +81,13 @@ public class TrackCtrlWrapper {
 				trackedTrain.oldposition = trackedTrain.position;
 				trackedTrain.position = trainlocs[trainID];
 				
-				upish.ui.updatePosition(trainID, trainlocs[trainID]);
-				downish.ui.updatePosition(trainID, trainlocs[trainID]);
+				//upish.ui.updatePosition(trainID, trainlocs[trainID]);
+				//downish.ui.updatePosition(trainID, trainlocs[trainID]);
 
 			}
 			//If there is not a train already with this ID, add one
 			else {
-				trains.put(trainID, new Train(trainlocs[trainID]));
+				trains.put(trainID, new Train(trainlocs[trainID], trainID));
 				upish.ui.addTrain(trainID, trainlocs[trainID]);
 				downish.ui.addTrain(trainID, trainlocs[trainID]);
 			}
@@ -117,7 +118,6 @@ public class TrackCtrlWrapper {
 		train.sugAuthority = suggestedAuthority;
 		train.suggestedRoute = route;
 		
-		myModel.setAuthority((double) suggestedAuthority);
 		int routeStep;
 		for (routeStep = 0; routeStep < train.suggestedRoute.length; routeStep++) {
 			if (train.suggestedRoute[routeStep] == train.position) {
@@ -133,7 +133,10 @@ public class TrackCtrlWrapper {
 		safespeed = Math.min(safespeed, thirdLimit);
 		
 		myModel.setSpeed(safespeed);*/
-		myModel.setSpeed(suggestedSpeed);
+		upish.setRoute(train.id, destination, suggestedSpeed, suggestedAuthority, route);
+		downish.setRoute(train.id, destination, suggestedSpeed, suggestedAuthority, route);
+
+
 	}
 	
 	void populateTrainmap() {
@@ -163,9 +166,11 @@ public class TrackCtrlWrapper {
 		int blockBefore;
 		int blockAfter;
 		
-		Train(int pos, int dest) {
+		int id;
+		
+		Train(int pos, int idnum) {
 			position = pos;
-			destination = dest;
+			id = idnum;
 			speed = 0;
 		}
 		Train(int pos) {

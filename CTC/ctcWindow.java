@@ -125,7 +125,11 @@ public class ctcWindow {
 	public void setAnnouncement(String ann){
 		
 		DefaultTableModel model = (DefaultTableModel) tblAnnouncements.getModel();
-		model.insertRow(0,new Object[]{ann});
+		String oldString = "";
+		if(model.getValueAt(0,0) != null ){oldString = model.getValueAt(0, 0).toString();}
+		if(!oldString.equals(ann)){ //avoid 1000 messages on ticks
+			model.insertRow(0,new Object[]{ann});
+		}
 	}
 	
 	//prepend routing commands to list; currently no limit
@@ -226,7 +230,9 @@ public class ctcWindow {
 		trainlabel.setBounds(0,0,15,15);				
 		trainlabel.setIcon(new ImageIcon(trainPath));				
 		trainlabel.setIconTextGap(-15); //if we add numbers they will appear above the image
+		//trainlabel.setToolTipText("ohhhhh" + b);
 		pnl.add(trainlabel);
+		pnl.setToolTipText("Block " + b);
 		
 		/*//add track number and leave visible for now
 		JLabel numLabel = new JLabel("" + b);

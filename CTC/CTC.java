@@ -19,6 +19,8 @@ public class CTC {
 	private boolean[] closedBlocks;
 	public int activeTrains;
 	public int[] locations;
+	public int[] reverses; // array of blocks the trains came from: can't turn around
+	private double[] speeds;
 	private TrainRoute[] routes;
 	private ctcWindow myWindow;
 	private fakeWindow faaake;
@@ -90,7 +92,52 @@ public class CTC {
 		//check destinations to see if the trains made it 
 		for(int i = 0; i <activeTrains; i++){			
 			if(!known[i]){
-				if(routes[i] == null){continue;}
+				if(routes[i] == null){
+					//train moved unexpectedly; hit a switch or Kyle fucked up the stop distance
+					//overshot backwards
+					if(locations[i]+1<blockCount && reverses[i] != locations[i]+1 && blocks[locations[i]+1].isTrainPresent()){
+						//check that another train isn't already there
+						boolean blocked = false;
+						for(int j = 0; j < activeTrains; j++){
+							if(i != j && locations[j] == locations[i]+1){
+								blocked = true;
+								break;
+							}							
+						}
+						if(!blocked){//the train went here
+							known[i] = true;
+							reverses[i] = locations[i];
+							locations[i] = locations[i]+1;							
+							
+							myWindow.setLocation(i,  locations[i], -1);
+														
+							continue;
+						}
+					}
+					//overshot forwards
+					if(locations[i]>1 && reverses[i] != locations[i]-1 && blocks[locations[i]-1].isTrainPresent()){
+						//check that another train isn't already there
+						boolean blocked = false;
+						for(int j = 0; j < activeTrains; j++){
+							if(i != j && locations[j] == locations[i]-1){
+								blocked = true;
+								break;
+							}							
+						}
+						if(!blocked){//the train went here
+							known[i] = true;
+							reverses[i] = locations[i];
+							locations[i] = locations[i]-1;		
+							
+							myWindow.setLocation(i,  locations[i], -1);
+							
+							continue;
+						}
+					}
+									
+					
+					continue;
+				}
 				//make sure a train isn't already there
 				boolean cockBlocked = false; 
 				for(int j = 0; j < activeTrains; j++){
@@ -107,13 +154,40 @@ public class CTC {
 						int one = sw.getSwitchBlocks()[0];
 						int two = sw.getSwitchBlocks()[1];
 						int loc  = locations[i];
+						int blockedBlock = routes[i].block;
 						if((loc==root)){ // this is the only time a train could go to more than one place
-							if(loc==one&&blocks[two].isTrainPresent()){
+							if(blocks[two].isTrainPresent() && blockedBlock != two){
+								known[i] = true;
 								myWindow.setLocation(i,  two, -1);
+								reverses[i]=locations[i];
+								locations[i]=two;
+								
 								//!!! do something about the broken route
-							} else if (loc==two&&blocks[one].isTrainPresent()){
+								
+								int destination = 0;
+								TrainRoute notTaken = routes[i];
+								while(notTaken != null){
+									destination = notTaken.block;
+									notTaken = notTaken.next;
+								}
+								routeTrainCTC(i, speeds[i], destination);
+								
+							} else if (blocks[one].isTrainPresent() && blockedBlock != one){
+								known[i] = true;
 								myWindow.setLocation(i,  one, -1);
+								reverses[i]=locations[i];
+								locations[i]=one;
+								
 								//!!! do something about the broken route
+
+								int destination = 0;
+								TrainRoute notTaken = routes[i];
+								while(notTaken != null){
+									destination = notTaken.block;
+									notTaken = notTaken.next;
+								}
+								routeTrainCTC(i, speeds[i], destination);
+								
 							}
 						}
 						
@@ -121,6 +195,7 @@ public class CTC {
 				} else if(blocks[routes[i].block].isTrainPresent()){
 				//set current location to this one and cycle route
 				myWindow.setLocation(i,routes[i].block, -1);
+				reverses[i] = locations[i];
 				locations[i] = routes[i].block;
 				known[i] = true;
 				routes[i] = routes[i].next;
@@ -133,7 +208,7 @@ public class CTC {
 		for(int i = 0;i<activeTrains;i++){
 			if(!known[i] && locations[i]>0){
 				myWindow.setAnnouncement("!!Lost Train " + (i + 1) + "! What have you done?!?!");
-				locations[i] = 0;
+				//locations[i] = 0;
 			} else if(locations[i] > 0 && blocks[locations[i]].getStation() != null){
 				//record a stop
 				this.stops++;
@@ -162,9 +237,12 @@ public class CTC {
 		this.blockCount = blocks;
 		this.closedBlocks = new boolean[blocks];
 		this.locations = new int[blocks];
+		this.reverses = new int[blocks];
+		this.speeds = new double[blocks];
 		this.routes = new TrainRoute[blocks]; 
 		Arrays.fill(closedBlocks, false);
 		Arrays.fill(locations,  -1); //use -1 for trains that don't exist yet
+		Arrays.fill(reverses, -1);
 		Arrays.fill(routes,  null);//new TrainRoute(-1, null));
 		
 				
@@ -194,9 +272,12 @@ public class CTC {
 		this.closedBlocks = new boolean[blockCount];
 		this.locations = new int[blockCount];
 		this.routes = new TrainRoute[blockCount]; 
+		this.reverses = new int[blockCount];
+		this.speeds = new double[blockCount];
 		Arrays.fill(closedBlocks, false);
 		Arrays.fill(locations,  -1); //use -1 for trains that don't exist yet
 		Arrays.fill(routes,  null);//new TrainRoute(-1, null));
+		Arrays.fill(reverses, -1);
 		
 				
 		//setup window(s)		
@@ -228,10 +309,13 @@ public class CTC {
 		
 		this.closedBlocks = new boolean[blockCount];
 		this.locations = new int[blockCount];
+		this.reverses = new int[blockCount];
 		this.routes = new TrainRoute[blockCount]; 
+		this.speeds = new double[blockCount];
 		Arrays.fill(closedBlocks, false);
 		Arrays.fill(locations,  -1); //use -1 for trains that don't exist yet
 		Arrays.fill(routes,  null);//new TrainRoute(-1, null));
+		Arrays.fill(reverses,  -1);
 		
 		myWindow.setAnnouncement("loaded a map with " + blockCount + " blocks");
 		
@@ -348,7 +432,7 @@ public class CTC {
 		if(block > 0 ){
 			//route it
 			//calculate full path
-			TrainRoute path = calcRoute(block, dest);
+			TrainRoute path = calcRoute(train,block, dest);
 						
 			int[] lengths = routeLength(path);			
 			//chop start point off of route after it is used to calculate authority
@@ -367,13 +451,15 @@ public class CTC {
 			myWindow.setAnnouncement(ann);
 			myWindow.setAnnouncement("Train: " + (train + 1) + " Distance: " + lengths[0] + "m Dest: " + dest);
 			
+			
+			
 			System.out.println(ann);
 				//this.faaake.routeTrain( block, speed, dest, path);			
 				//myWindow.setAnnouncement("route set");			
 				myWindow.setLocation(train, -1,  dest);
 				
 				ben.setRoute( block,  dest, speed, lengths[0], p);
-				
+				speeds[train] = speed; //remember this for re-routes
 				
 				return true;
 			
@@ -382,7 +468,7 @@ public class CTC {
 			
 			
 		} else {
-			myWindow.setAnnouncement("Cannot Route Train: Still in Yard");
+			myWindow.setAnnouncement("Cannot Route Train:  Still in Yard or Location unknown");
 			return false;
 		}
 		
@@ -418,27 +504,36 @@ public class CTC {
 	}
 	
 	//sub to find the best route
-	private TrainRoute calcRoute(int block, int dest){
+	private TrainRoute calcRoute(int train, int block, int dest){
 		
 		//myWindow.setAnnouncement("entered calcRoute");
 		
 		//calculate both directions, choose shortest	
 		//myWindow.setAnnouncement("start calc up");
-		TrainRoute rtUp = calcRoute(block, dest, true);		
+		TrainRoute rtUp = calcRoute(block, dest, true, reverses[train]);		
 		//myWindow.setAnnouncement("start calc down");
-		TrainRoute rtDwn = calcRoute(block, dest, false);
+		TrainRoute rtDwn = calcRoute(block, dest, false, reverses[train]);
 		//myWindow.setAnnouncement("calced both directions");
+		
+		//see which path is illegal because it went backwards
+		if(rtUp.next.block == reverses[train]){
+			return rtDwn;
+		} else {
+			return rtUp;
+		}
+		
+		/* don't care about length because only one route is valid
 		int upLength = routeLength(rtUp)[0];
 		int downLength = routeLength(rtDwn)[0];
 		if(upLength > downLength){
 			return rtDwn;
 		} else {
 			return rtUp;
-		}
+		}*/
 				
 	}
 	//sub to determine a path in a specific direction
-	private TrainRoute calcRoute(int block, int dest, boolean up){
+	private TrainRoute calcRoute(int block, int dest, boolean up, int from){
 		TrainRoute rt = new TrainRoute(block, null);
 		TrainRoute save = rt; //save start point because we're adding to the end
 		int inc; //increment
@@ -453,6 +548,11 @@ public class CTC {
 		
 		int next = -1;
 		boolean justSwitched = false;
+		
+		//special case if routing from a switch branch
+		if(blocks[block].getSwitchRoot() == from){
+			justSwitched = true;
+		}
 		
 		while(block!=dest){
 			
