@@ -46,26 +46,13 @@ public class TrackModel {
 	}
 	
 	public void tick()
-	{
-		//getAllTrains();
-		
+	{		
 		if (train != null) {
 			findTrain();
 			trainMoved();
 			t.paintMap();
 		}
 	}
-	/*
-	public void getAllTrains()
-	{
-		trainWrap = s.trainModelWrapper;
-		trains = trainWrap.trains;
-		if(trains.size() > 0)
-		{
-			train = trains.get(0);
-		}
-	}
-	*/
 	
 	public void setSpeed(double speed)
 	{
@@ -119,7 +106,7 @@ public class TrackModel {
 		{
 			travelRoute.add(String.valueOf(trainOnBlock));
 		}
-		else if(totalTrainDist > totalBlockDist && travelRoute.size() > 0)
+		if(totalTrainDist > totalBlockDist && travelRoute.size() > 0)
 		{
 			blocks[trainOnBlock].trainPresent = false;
 			travelRoute.add(String.valueOf(trainOnBlock));
