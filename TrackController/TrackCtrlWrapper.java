@@ -132,8 +132,7 @@ public class TrackCtrlWrapper {
 		safespeed = Math.min(safespeed, thirdLimit);
 		
 		myModel.setSpeed(safespeed);*/
-		myModel.setAuthority((double) suggestedAuthority);
-		myModel.setSpeed(suggestedSpeed);
+
 	}
 	
 	void populateTrainmap() {

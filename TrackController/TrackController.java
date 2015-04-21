@@ -53,8 +53,14 @@ public class TrackController {
 	public void setRoute(int trainBlock, int destination, double suggestedSpeed, int suggestedAuthority, int[] route) {
 		Train train = trains.get(trainBlock);
 		
-		
-		
+		if (myPLC == null) {
+			myModel.setAuthority(0, trainBlock);
+			myModel.setSpeed(0, trainBlock);
+		}
+		else {
+			myModel.setAuthority((double) suggestedAuthority, trainBlock);
+			myModel.setSpeed(suggestedSpeed, trainBlock);
+		}
 		
 	}
 	
@@ -63,7 +69,12 @@ public class TrackController {
 			if (map[1] != null) {
 				myPLC.addSwitches(map, ui);
 			}
-			myPLC.checkRoutes(trains, ui);
+			int routeCheck = myPLC.checkRoutes(trains, ui);
+			//If routeCheck returns 1, it means that I should update the safespeeds of the trains
+			//if (routeCheck == 1) {
+				
+			//}
+			
 			myPLC.checkSwitches(map, trains, ui);
 		}
 		return;

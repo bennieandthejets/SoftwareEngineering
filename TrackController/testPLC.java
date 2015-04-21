@@ -31,9 +31,9 @@ public class testPLC implements PLC{
 		}
 	}
 	
-	public boolean checkRoutes(HashMap<Integer, Train> trains, UI ui) {
+	public int checkRoutes(HashMap<Integer, Train> trains, UI ui) {
 		if (trains.size() == 0) {
-			return false;
+			return -1;
 		}
 		Iterator it = trains.entrySet().iterator();
 		while (it.hasNext()) {
@@ -45,7 +45,7 @@ public class testPLC implements PLC{
 			
 			HashMap<String,Integer> nextSwitchInfo = findNextSwitch(train);
 			if (nextSwitchInfo == null) {
-				return false;
+				return -1;
 			}
 			train.nextSwitch = nextSwitchInfo.get("switchBlock");
 			train.blockBefore = nextSwitchInfo.get("switchOn");
@@ -54,7 +54,7 @@ public class testPLC implements PLC{
 			trainsWaiting.add(key);
 			
 		}
-		return true;
+		return 0;
 	}
 	
 	private HashMap<String, Integer> findNextSwitch(Train train) {
