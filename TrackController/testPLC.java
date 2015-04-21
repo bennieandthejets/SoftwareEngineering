@@ -10,7 +10,7 @@ public class testPLC implements PLC{
 	int endblock;
 
 	
-	public HashSet<Integer> switches = new HashSet<>(Arrays.asList(15, 27, 32, 38, 43, 52));
+	public HashSet<Integer> switches = new HashSet<>(Arrays.asList(16, 27, 33, 38, 44, 52));
 	public HashSet<Integer> trainsWaiting = new HashSet<Integer>();
 	
 	public int returnFive() {
@@ -124,25 +124,26 @@ public class testPLC implements PLC{
 				
 				if (train.position == train.blockBefore) {
 					int switchblock = train.nextSwitch;
+					System.out.println(switchblock);
 					int switchDestId = map[switchblock].getSwitch().getSwitchTaken();
 					//if the train is at one of the heads of a switch and is attempting to cross the switch, ensure the switch points at that head
 					if (map[train.position].getSwitchRoot() != -1) {
 						//If the switch is pointing to the block the train is on, don't change the switch
 						if (switchDestId == train.position) {
-							train.blockBefore = -1;
-							train.nextSwitch = -1;
-							train.blockAfter = -1;
+							//train.blockBefore = -1;
+							//train.nextSwitch = -1;
+							//train.blockAfter = -1;
 							tw.remove();
 							continue;
 						}
 						//if the switch is pointing the opposite direction, switch the switch
 						else {
 							map[switchblock].getSwitch().direction = !(map[switchblock].getSwitch().direction);
-							train.blockBefore = -1;
-							train.nextSwitch = -1;
-							train.blockAfter = -1;
+							//train.blockBefore = -1;
+							//train.nextSwitch = -1;
+							//train.blockAfter = -1;
 							tw.remove();
-
+							continue;
 
 						}
 					}
@@ -151,19 +152,20 @@ public class testPLC implements PLC{
 					else {
 						//if the switch is pointing to the block the train wants to go to, don't change it
 						if (switchDestId == train.blockAfter) {
-							train.blockBefore = -1;
-							train.nextSwitch = -1;
-							train.blockAfter = -1;
+							//train.blockBefore = -1;
+							//train.nextSwitch = -1;
+							//train.blockAfter = -1;
 							tw.remove();
 							continue;
 						}
 						//otherwise, toggle that switch
 						else{
 							map[switchblock].getSwitch().direction = !(map[switchblock].getSwitch().direction);
-							train.blockBefore = -1;
-							train.nextSwitch = -1;
-							train.blockAfter = -1;
+							//train.blockBefore = -1;
+							//train.nextSwitch = -1;
+							//train.blockAfter = -1;
 							tw.remove();
+							continue;
 
 						}
 					}
