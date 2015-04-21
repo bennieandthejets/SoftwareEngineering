@@ -3,7 +3,7 @@ package TrackController;
 import java.util.*;
 
 import TrackController.TrackCtrlWrapper.Train;
-import TrackModel.Block;
+import TrackModel.*;
 
 public class testPLC implements PLC{
 	int startblock;
@@ -42,7 +42,7 @@ public class testPLC implements PLC{
 			Train train = (Train) pair.getValue();
 			
 			ui.updatePosition(train.id, train.position);
-			
+						
 			HashMap<String,Integer> nextSwitchInfo = findNextSwitch(train);
 			if (nextSwitchInfo == null) {
 				return -1;
@@ -191,6 +191,31 @@ public class testPLC implements PLC{
 			ui.updateSwitchPoint(sw, map[sw].getSwitch().getSwitchTaken());
 		}
 		return true;
+	}
+	
+	public int getSafeSpeed(HashMap<Integer, Train> trains, Block[] map, TrackModel trackmodel) {
+		if (trains.size() == 0) {
+			return -1;
+		}
+		Iterator it = trains.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry pair = (Map.Entry) it.next();
+			int key = (Integer) pair.getKey();
+			Train train = (Train) pair.getValue();
+			
+			double speedLimit = map[train.position].getSpeedLimit();
+			
+			if (train.speed > speedLimit) {
+				train.speed = speedLimit;
+				trackmodel.setSpeed(train.speed, train.position);
+				
+				return -1;
+			}
+		}
+		
+
+		
+		return 0;
 	}
 	
 	public void setCrossing(int crossingBlock) {

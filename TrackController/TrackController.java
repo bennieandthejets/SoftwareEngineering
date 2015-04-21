@@ -50,16 +50,20 @@ public class TrackController {
 		System.out.println(myPLC.returnFive());
 	}
 	
-	public void setRoute(int trainBlock, int destination, double suggestedSpeed, int suggestedAuthority, int[] route) {
-		Train train = trains.get(trainBlock);
+	public void setRoute(int trainID, int destination, double suggestedSpeed, int suggestedAuthority, int[] route) {
+		Train train = trains.get(trainID);
 		
 		if (myPLC == null) {
-			myModel.setAuthority(0, trainBlock);
-			myModel.setSpeed(0, trainBlock);
+			train.speed = 0;
+			train.sugSpeed = 0;
+			train.sugAuthority = 0;
+			myModel.setAuthority(0, train.position);
+			myModel.setSpeed(0, train.position);
 		}
 		else {
-			myModel.setAuthority((double) suggestedAuthority, trainBlock);
-			myModel.setSpeed(suggestedSpeed, trainBlock);
+			train.speed = suggestedSpeed;
+			myModel.setAuthority((double) suggestedAuthority, train.position);
+			myModel.setSpeed(suggestedSpeed, train.position);
 		}
 		
 	}
@@ -70,10 +74,7 @@ public class TrackController {
 				myPLC.addSwitches(map, ui);
 			}
 			int routeCheck = myPLC.checkRoutes(trains, ui);
-			//If routeCheck returns 1, it means that I should update the safespeeds of the trains
-			//if (routeCheck == 1) {
-				
-			//}
+			int speedCheck = myPLC.getSafeSpeed(trains, map, myModel);
 			
 			myPLC.checkSwitches(map, trains, ui);
 		}
