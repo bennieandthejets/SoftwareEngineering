@@ -63,8 +63,8 @@ public class Simulator {
     public void makeTrainPuppy() {
     	int trainID = trainModelWrapper.birthTrain();
     	mbo.trainAdded();
-    	trackModel.trainBirthed();
-    	trackModel.addTrain(trainModelWrapper.getTrain(trainID));
+    	trackModel.trainBirthed(trainID);
+    	trackModel.addTrain(trainID);
     }
     
     public String getBlockMode() {
