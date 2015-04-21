@@ -20,6 +20,7 @@ public class CTC {
 	public int activeTrains;
 	public int[] locations;
 	public int[] reverses; // array of blocks the trains came from: can't turn around
+	private double[] speeds;
 	private TrainRoute[] routes;
 	private ctcWindow myWindow;
 	private fakeWindow faaake;
@@ -162,12 +163,29 @@ public class CTC {
 								
 								//!!! do something about the broken route
 								
+								int destination = 0;
+								TrainRoute notTaken = routes[i];
+								while(notTaken != null){
+									destination = notTaken.block;
+									notTaken = notTaken.next;
+								}
+								routeTrainCTC(i, speeds[i], destination);
+								
 							} else if (loc==two&&blocks[one].isTrainPresent() && blockedBlock != one){
 								myWindow.setLocation(i,  one, -1);
 								reverses[i]=locations[i];
 								locations[i]=one;
 								
 								//!!! do something about the broken route
+
+								int destination = 0;
+								TrainRoute notTaken = routes[i];
+								while(notTaken != null){
+									destination = notTaken.block;
+									notTaken = notTaken.next;
+								}
+								routeTrainCTC(i, speeds[i], destination);
+								
 							}
 						}
 						
@@ -218,6 +236,7 @@ public class CTC {
 		this.closedBlocks = new boolean[blocks];
 		this.locations = new int[blocks];
 		this.reverses = new int[blocks];
+		this.speeds = new double[blocks];
 		this.routes = new TrainRoute[blocks]; 
 		Arrays.fill(closedBlocks, false);
 		Arrays.fill(locations,  -1); //use -1 for trains that don't exist yet
@@ -252,6 +271,7 @@ public class CTC {
 		this.locations = new int[blockCount];
 		this.routes = new TrainRoute[blockCount]; 
 		this.reverses = new int[blockCount];
+		this.speeds = new double[blockCount];
 		Arrays.fill(closedBlocks, false);
 		Arrays.fill(locations,  -1); //use -1 for trains that don't exist yet
 		Arrays.fill(routes,  null);//new TrainRoute(-1, null));
@@ -289,6 +309,7 @@ public class CTC {
 		this.locations = new int[blockCount];
 		this.reverses = new int[blockCount];
 		this.routes = new TrainRoute[blockCount]; 
+		this.speeds = new double[blockCount];
 		Arrays.fill(closedBlocks, false);
 		Arrays.fill(locations,  -1); //use -1 for trains that don't exist yet
 		Arrays.fill(routes,  null);//new TrainRoute(-1, null));
@@ -428,13 +449,15 @@ public class CTC {
 			myWindow.setAnnouncement(ann);
 			myWindow.setAnnouncement("Train: " + (train + 1) + " Distance: " + lengths[0] + "m Dest: " + dest);
 			
+			
+			
 			System.out.println(ann);
 				//this.faaake.routeTrain( block, speed, dest, path);			
 				//myWindow.setAnnouncement("route set");			
 				myWindow.setLocation(train, -1,  dest);
 				
 				ben.setRoute( block,  dest, speed, lengths[0], p);
-				
+				speeds[train] = speed; //remember this for re-routes
 				
 				return true;
 			
