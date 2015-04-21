@@ -95,7 +95,7 @@ public class CTC {
 				if(routes[i] == null){
 					//train moved unexpectedly; hit a switch or Kyle fucked up the stop distance
 					//overshot backwards
-					if(reverses[i] != locations[i]+1 && blocks[locations[i]+1].isTrainPresent()){
+					if(locations[i]+1<blockCount && reverses[i] != locations[i]+1 && blocks[locations[i]+1].isTrainPresent()){
 						//check that another train isn't already there
 						boolean blocked = false;
 						for(int j = 0; j < activeTrains; j++){
@@ -115,7 +115,7 @@ public class CTC {
 						}
 					}
 					//overshot forwards
-					if(reverses[i] != locations[i]-1 && blocks[locations[i]-1].isTrainPresent()){
+					if(locations[i]>1 && reverses[i] != locations[i]-1 && blocks[locations[i]-1].isTrainPresent()){
 						//check that another train isn't already there
 						boolean blocked = false;
 						for(int j = 0; j < activeTrains; j++){
