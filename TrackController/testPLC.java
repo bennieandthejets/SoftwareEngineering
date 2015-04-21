@@ -10,8 +10,10 @@ public class testPLC implements PLC{
 	int endblock;
 
 	
-	public HashSet<Integer> switches = new HashSet<>(Arrays.asList(16, 27, 33, 38, 44, 52));
+	public HashSet<Integer> switches = new HashSet<>(Arrays.asList(9, 16, 27, 33, 38, 44, 52));
 	public HashSet<Integer> trainsWaiting = new HashSet<Integer>();
+	
+	boolean firstTick = true;
 	
 	public int returnFive() {
 		return 5;
@@ -19,7 +21,17 @@ public class testPLC implements PLC{
 	public void setSwitch(Block switchBlock, Block destBlock){
 	
 	}
-	public boolean checkRoutes(HashMap<Integer, Train> trains) {
+	
+	public void addSwitches(Block[] map, UI ui) {
+		if (firstTick) {
+			for (Integer switchNum : switches) {
+				ui.addSwitch(switchNum, map[switchNum].getSwitch().getSwitchTaken());
+			}
+			firstTick = false;
+		}
+	}
+	
+	public boolean checkRoutes(HashMap<Integer, Train> trains, UI ui) {
 		if (trains.size() == 0) {
 			return false;
 		}
@@ -29,6 +41,7 @@ public class testPLC implements PLC{
 			int key = (Integer) pair.getKey();
 			Train train = (Train) pair.getValue();
 			
+			ui.updatePosition(train.id, train.position);
 			
 			HashMap<String,Integer> nextSwitchInfo = findNextSwitch(train);
 			if (nextSwitchInfo == null) {
@@ -115,7 +128,7 @@ public class testPLC implements PLC{
 		return null;
 	}
 	
-	public boolean checkSwitches(Block[] map, HashMap<Integer, Train> trains) {
+	public boolean checkSwitches(Block[] map, HashMap<Integer, Train> trains, UI ui) {
 		Iterator tw = trainsWaiting.iterator();
 		
 		while(tw.hasNext()) {
@@ -173,6 +186,10 @@ public class testPLC implements PLC{
 				}
 		}
 		
+		//update all switches in the ui
+		for (Integer sw : switches) {
+			ui.updateSwitchPoint(sw, map[sw].getSwitch().getSwitchTaken());
+		}
 		return true;
 	}
 	

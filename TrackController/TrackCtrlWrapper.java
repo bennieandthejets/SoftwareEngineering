@@ -80,13 +80,13 @@ public class TrackCtrlWrapper {
 				trackedTrain.oldposition = trackedTrain.position;
 				trackedTrain.position = trainlocs[trainID];
 				
-				upish.ui.updatePosition(trainID, trainlocs[trainID]);
-				downish.ui.updatePosition(trainID, trainlocs[trainID]);
+				//upish.ui.updatePosition(trainID, trainlocs[trainID]);
+				//downish.ui.updatePosition(trainID, trainlocs[trainID]);
 
 			}
 			//If there is not a train already with this ID, add one
 			else {
-				trains.put(trainID, new Train(trainlocs[trainID]));
+				trains.put(trainID, new Train(trainlocs[trainID], trainID));
 				upish.ui.addTrain(trainID, trainlocs[trainID]);
 				downish.ui.addTrain(trainID, trainlocs[trainID]);
 			}
@@ -163,9 +163,11 @@ public class TrackCtrlWrapper {
 		int blockBefore;
 		int blockAfter;
 		
-		Train(int pos, int dest) {
+		int id;
+		
+		Train(int pos, int idnum) {
 			position = pos;
-			destination = dest;
+			id = idnum;
 			speed = 0;
 		}
 		Train(int pos) {
