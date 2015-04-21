@@ -132,6 +132,9 @@ public class TrackCtrlWrapper {
 		safespeed = Math.min(safespeed, thirdLimit);
 		
 		myModel.setSpeed(safespeed);*/
+		upish.setRoute(trainBlock, destination, suggestedSpeed, suggestedAuthority, route);
+		downish.setRoute(trainBlock, destination, suggestedSpeed, suggestedAuthority, route);
+
 
 	}
 	
