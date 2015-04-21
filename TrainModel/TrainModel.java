@@ -186,10 +186,10 @@ public class TrainModel{
 	
 	public void calcAcceleration(){
 		double totalMass = getMass();
-		trainAcceleration = trainForce/(totalMass*10);	// a = F/M = N/kg = m/s^2 
+		trainAcceleration = trainForce/(totalMass);	// a = F/M = N/kg = m/s^2 
 		//If calculated acceleration is greater than the limit, set to the limit
 		if(trainAcceleration > TRAIN_ACCELERATION_LIMIT)
-			trainAcceleration = TRAIN_ACCELERATION_LIMIT/10;
+			trainAcceleration = TRAIN_ACCELERATION_LIMIT;
 		if(trainAcceleration < 0.0 & trainVelocity == 0.0)
 			trainAcceleration = 0.0;
 	}

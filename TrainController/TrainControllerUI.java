@@ -101,6 +101,7 @@ public class TrainControllerUI {
 		frame.setResizable(false);
 		frame.getContentPane().setBackground(Color.DARK_GRAY);
 		frame.getContentPane().setForeground(SystemColor.info);
+		frame.setTitle("Train Controller");
 		frame.setBounds(100, 100, 754, 654);
 		frame.getContentPane().setLayout(null);
 		
