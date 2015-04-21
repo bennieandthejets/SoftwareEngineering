@@ -19,6 +19,7 @@ public class CTC {
 	private boolean[] closedBlocks;
 	public int activeTrains;
 	public int[] locations;
+	public int[] reverses; // array of blocks the trains came from: can't turn around
 	private TrainRoute[] routes;
 	private ctcWindow myWindow;
 	private fakeWindow faaake;
@@ -162,9 +163,11 @@ public class CTC {
 		this.blockCount = blocks;
 		this.closedBlocks = new boolean[blocks];
 		this.locations = new int[blocks];
+		this.reverses = new int[blocks];
 		this.routes = new TrainRoute[blocks]; 
 		Arrays.fill(closedBlocks, false);
 		Arrays.fill(locations,  -1); //use -1 for trains that don't exist yet
+		Arrays.fill(reverses, -1);
 		Arrays.fill(routes,  null);//new TrainRoute(-1, null));
 		
 				
@@ -194,9 +197,11 @@ public class CTC {
 		this.closedBlocks = new boolean[blockCount];
 		this.locations = new int[blockCount];
 		this.routes = new TrainRoute[blockCount]; 
+		this.reverses = new int[blockCount];
 		Arrays.fill(closedBlocks, false);
 		Arrays.fill(locations,  -1); //use -1 for trains that don't exist yet
 		Arrays.fill(routes,  null);//new TrainRoute(-1, null));
+		Arrays.fill(reverses, -1);
 		
 				
 		//setup window(s)		
@@ -228,10 +233,12 @@ public class CTC {
 		
 		this.closedBlocks = new boolean[blockCount];
 		this.locations = new int[blockCount];
+		this.reverses = new int[blockCount];
 		this.routes = new TrainRoute[blockCount]; 
 		Arrays.fill(closedBlocks, false);
 		Arrays.fill(locations,  -1); //use -1 for trains that don't exist yet
 		Arrays.fill(routes,  null);//new TrainRoute(-1, null));
+		Arrays.fill(reverses,  -1);
 		
 		myWindow.setAnnouncement("loaded a map with " + blockCount + " blocks");
 		
@@ -348,7 +355,7 @@ public class CTC {
 		if(block > 0 ){
 			//route it
 			//calculate full path
-			TrainRoute path = calcRoute(block, dest);
+			TrainRoute path = calcRoute(train,block, dest);
 						
 			int[] lengths = routeLength(path);			
 			//chop start point off of route after it is used to calculate authority
@@ -382,7 +389,7 @@ public class CTC {
 			
 			
 		} else {
-			myWindow.setAnnouncement("Cannot Route Train: Still in Yard");
+			myWindow.setAnnouncement("Cannot Route Train:  Still in Yard or Location unknown");
 			return false;
 		}
 		
@@ -418,7 +425,7 @@ public class CTC {
 	}
 	
 	//sub to find the best route
-	private TrainRoute calcRoute(int block, int dest){
+	private TrainRoute calcRoute(int train, int block, int dest){
 		
 		//myWindow.setAnnouncement("entered calcRoute");
 		
@@ -428,13 +435,22 @@ public class CTC {
 		//myWindow.setAnnouncement("start calc down");
 		TrainRoute rtDwn = calcRoute(block, dest, false);
 		//myWindow.setAnnouncement("calced both directions");
+		
+		//see which path is illegal because it went backwards
+		if(rtUp.next.block == reverses[train]){
+			return rtDwn;
+		} else {
+			return rtUp;
+		}
+		
+		/* don't care about length because only one route is valid
 		int upLength = routeLength(rtUp)[0];
 		int downLength = routeLength(rtDwn)[0];
 		if(upLength > downLength){
 			return rtDwn;
 		} else {
 			return rtUp;
-		}
+		}*/
 				
 	}
 	//sub to determine a path in a specific direction

@@ -226,7 +226,9 @@ public class ctcWindow {
 		trainlabel.setBounds(0,0,15,15);				
 		trainlabel.setIcon(new ImageIcon(trainPath));				
 		trainlabel.setIconTextGap(-15); //if we add numbers they will appear above the image
+		//trainlabel.setToolTipText("ohhhhh" + b);
 		pnl.add(trainlabel);
+		pnl.setToolTipText("Block " + b);
 		
 		/*//add track number and leave visible for now
 		JLabel numLabel = new JLabel("" + b);
