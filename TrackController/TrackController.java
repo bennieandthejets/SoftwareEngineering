@@ -36,10 +36,10 @@ public class TrackController {
 	
 	public UI ui;
 
-	TrackController(Simulator simulator, int fraction) {
+	TrackController(Simulator simulator, int fraction, HashMap<Integer, Train> trns) {
 		myModel = simulator.trackModel;
 		present = new ArrayList<Integer>(); 
-		trains = new HashMap<>();
+		trains = trns;
 		half = fraction;
 		ui = new UI(this);
 		//ui.setvisible(true);
@@ -62,6 +62,7 @@ public class TrackController {
 		}
 		else {
 			train.speed = suggestedSpeed;
+			train.sugSpeed = suggestedSpeed;
 			myModel.setAuthority((double) suggestedAuthority, train.position);
 			myModel.setSpeed(suggestedSpeed, train.position);
 		}

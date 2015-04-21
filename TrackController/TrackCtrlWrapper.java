@@ -49,11 +49,12 @@ public class TrackCtrlWrapper {
 	
 	public TrackCtrlWrapper(Simulator sim) {
 		simulator = sim;
-		upish = new TrackController(simulator,1);
-		downish = new TrackController(simulator,2);
 		myModel = simulator.trackModel;
 		present = new HashSet<>();
-		trains = new HashMap<>();		
+		trains = new HashMap<>();
+		
+		upish = new TrackController(simulator,1, trains);
+		downish = new TrackController(simulator,2, trains);
 	}
 	
 	public Block[] getBlocks() {
@@ -132,8 +133,8 @@ public class TrackCtrlWrapper {
 		safespeed = Math.min(safespeed, thirdLimit);
 		
 		myModel.setSpeed(safespeed);*/
-		upish.setRoute(trainBlock, destination, suggestedSpeed, suggestedAuthority, route);
-		downish.setRoute(trainBlock, destination, suggestedSpeed, suggestedAuthority, route);
+		upish.setRoute(train.id, destination, suggestedSpeed, suggestedAuthority, route);
+		downish.setRoute(train.id, destination, suggestedSpeed, suggestedAuthority, route);
 
 
 	}

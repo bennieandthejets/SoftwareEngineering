@@ -205,11 +205,17 @@ public class testPLC implements PLC{
 			
 			double speedLimit = map[train.position].getSpeedLimit();
 			
+			//If the train is going faster than the speed limit, decelerate
 			if (train.speed > speedLimit) {
 				train.speed = speedLimit;
 				trackmodel.setSpeed(train.speed, train.position);
 				
 				return -1;
+			}
+			//otherwise if the train's suggested speed is higher than its current speed, but lower than the speed limit, accellerate
+			else if (train.speed < train.sugSpeed && train.sugSpeed <= speedLimit) {
+				train.speed = train.sugSpeed;
+				trackmodel.setSpeed(train.speed, train.position);
 			}
 		}
 		
