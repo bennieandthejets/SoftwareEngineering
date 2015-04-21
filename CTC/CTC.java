@@ -91,7 +91,52 @@ public class CTC {
 		//check destinations to see if the trains made it 
 		for(int i = 0; i <activeTrains; i++){			
 			if(!known[i]){
-				if(routes[i] == null){continue;}
+				if(routes[i] == null){
+					//train moved unexpectedly; hit a switch or Kyle fucked up the stop distance
+					//overshot backwards
+					if(reverses[i] != locations[i]+1 && blocks[locations[i]+1].isTrainPresent()){
+						//check that another train isn't already there
+						boolean blocked = false;
+						for(int j = 0; j < activeTrains; j++){
+							if(i != j && locations[j] == locations[i]+1){
+								blocked = true;
+								break;
+							}							
+						}
+						if(!blocked){//the train went here
+							known[i] = true;
+							reverses[i] = locations[i];
+							locations[i] = locations[i]+1;							
+							
+							myWindow.setLocation(i,  locations[i], -1);
+														
+							continue;
+						}
+					}
+					//overshot forwards
+					if(reverses[i] != locations[i]-1 && blocks[locations[i]-1].isTrainPresent()){
+						//check that another train isn't already there
+						boolean blocked = false;
+						for(int j = 0; j < activeTrains; j++){
+							if(i != j && locations[j] == locations[i]-1){
+								blocked = true;
+								break;
+							}							
+						}
+						if(!blocked){//the train went here
+							known[i] = true;
+							reverses[i] = locations[i];
+							locations[i] = locations[i]-1;		
+							
+							myWindow.setLocation(i,  locations[i], -1);
+							
+							continue;
+						}
+					}
+									
+					
+					continue;
+				}
 				//make sure a train isn't already there
 				boolean cockBlocked = false; 
 				for(int j = 0; j < activeTrains; j++){
@@ -108,12 +153,20 @@ public class CTC {
 						int one = sw.getSwitchBlocks()[0];
 						int two = sw.getSwitchBlocks()[1];
 						int loc  = locations[i];
+						int blockedBlock = routes[i].block;
 						if((loc==root)){ // this is the only time a train could go to more than one place
-							if(loc==one&&blocks[two].isTrainPresent()){
+							if(loc==one&&blocks[two].isTrainPresent() && blockedBlock != two){
 								myWindow.setLocation(i,  two, -1);
+								reverses[i]=locations[i];
+								locations[i]=two;
+								
 								//!!! do something about the broken route
-							} else if (loc==two&&blocks[one].isTrainPresent()){
+								
+							} else if (loc==two&&blocks[one].isTrainPresent() && blockedBlock != one){
 								myWindow.setLocation(i,  one, -1);
+								reverses[i]=locations[i];
+								locations[i]=one;
+								
 								//!!! do something about the broken route
 							}
 						}
@@ -122,6 +175,7 @@ public class CTC {
 				} else if(blocks[routes[i].block].isTrainPresent()){
 				//set current location to this one and cycle route
 				myWindow.setLocation(i,routes[i].block, -1);
+				reverses[i] = locations[i];
 				locations[i] = routes[i].block;
 				known[i] = true;
 				routes[i] = routes[i].next;
