@@ -70,9 +70,13 @@ public class TrainModelWrapper{
 	}
 	
 	public void tick(){
-		for(int i = 0; i < trains.size();i++){
-			trains.get(i).updateTrain();
-		}	
+		int j = 0;
+		while(j < 10){
+			for(int i = 0; i < trains.size();i++){
+				trains.get(i).updateTrain();
+			}
+		j++;
+		}
 	}
 	
 	public static void main(String[] args) throws InterruptedException{
