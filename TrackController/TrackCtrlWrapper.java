@@ -80,13 +80,13 @@ public class TrackCtrlWrapper {
 				trackedTrain.oldposition = trackedTrain.position;
 				trackedTrain.position = trainlocs[trainID];
 				
-				upish.ui.updatePosition(trainID, trainlocs[trainID]);
-				downish.ui.updatePosition(trainID, trainlocs[trainID]);
+				//upish.ui.updatePosition(trainID, trainlocs[trainID]);
+				//downish.ui.updatePosition(trainID, trainlocs[trainID]);
 
 			}
 			//If there is not a train already with this ID, add one
 			else {
-				trains.put(trainID, new Train(trainlocs[trainID]));
+				trains.put(trainID, new Train(trainlocs[trainID], trainID));
 				upish.ui.addTrain(trainID, trainlocs[trainID]);
 				downish.ui.addTrain(trainID, trainlocs[trainID]);
 			}
@@ -117,7 +117,6 @@ public class TrackCtrlWrapper {
 		train.sugAuthority = suggestedAuthority;
 		train.suggestedRoute = route;
 		
-		myModel.setAuthority((double) suggestedAuthority);
 		int routeStep;
 		for (routeStep = 0; routeStep < train.suggestedRoute.length; routeStep++) {
 			if (train.suggestedRoute[routeStep] == train.position) {
@@ -133,6 +132,7 @@ public class TrackCtrlWrapper {
 		safespeed = Math.min(safespeed, thirdLimit);
 		
 		myModel.setSpeed(safespeed);*/
+		myModel.setAuthority((double) suggestedAuthority);
 		myModel.setSpeed(suggestedSpeed);
 	}
 	
@@ -163,9 +163,11 @@ public class TrackCtrlWrapper {
 		int blockBefore;
 		int blockAfter;
 		
-		Train(int pos, int dest) {
+		int id;
+		
+		Train(int pos, int idnum) {
 			position = pos;
-			destination = dest;
+			id = idnum;
 			speed = 0;
 		}
 		Train(int pos) {

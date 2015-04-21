@@ -21,6 +21,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import java.awt.TextField;
+import javax.swing.JScrollPane;
 
 
 public class UI {
@@ -91,19 +92,10 @@ public class UI {
 		Object[][] switchData = {{}};
 		String[] switchColumnNames = {"Switch Root", "Pointing to"};
 		
-		train_table = new JTable();
-		trainModel = new DefaultTableModel(0,0);
+		trainModel = new DefaultTableModel(0,2);
 		trainModel.setColumnIdentifiers(trainColumnNames);
-		train_table.setModel(trainModel);
-		train_table.setBounds(6, 23, 204, 143);
-		panel.add(train_table);
-		
-		switch_table = new JTable(switchData, switchColumnNames);
-		switchModel = new DefaultTableModel(0,0);
+		switchModel = new DefaultTableModel(0,2);
 		switchModel.setColumnIdentifiers(switchColumnNames);
-		switch_table.setModel(switchModel);
-		switch_table.setBounds(222, 23, 222, 143);
-		panel.add(switch_table);
 		
 		PLCName = new JTextField();
 		PLCName.setBounds(6, 206, 162, 29);
@@ -113,6 +105,20 @@ public class UI {
 		JButton loadPLCBtn = new JButton("Load PLC");
 		loadPLCBtn.setBounds(164, 206, 117, 29);
 		panel.add(loadPLCBtn);
+		
+		JScrollPane scrollPaneTrain = new JScrollPane();
+		scrollPaneTrain.setBounds(6, 21, 213, 145);
+		panel.add(scrollPaneTrain);
+		train_table = new JTable(trainModel);
+		scrollPaneTrain.setViewportView(train_table);
+		
+		JScrollPane scrollPaneSwitch = new JScrollPane();
+		scrollPaneSwitch.setBounds(231, 21, 213, 145);
+		panel.add(scrollPaneSwitch);
+		switch_table = new JTable(switchData, switchColumnNames);
+		scrollPaneSwitch.setViewportView(switch_table);
+		
+		switch_table.setModel(switchModel);
 		loadPLCBtn.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -124,35 +130,36 @@ public class UI {
 		
 	}
 	public void addTrain(int trainNum, int pos) {
-		/*DefaultTableModel model = (DefaultTableModel) train_table.getModel();
-		model.addRow(new Object[]{Integer.toString(trainNum), Integer.toString(pos)});*/
+		DefaultTableModel model = (DefaultTableModel) train_table.getModel();
+		model.addRow(new Object[]{Integer.toString(trainNum), Integer.toString(pos)});
 	}
 	public void updatePosition(int trainNum, int newPos) {
-		/*DefaultTableModel model = (DefaultTableModel) train_table.getModel();
+		DefaultTableModel model = (DefaultTableModel) train_table.getModel();
 
 		for (int row = 0; row < model.getRowCount(); row++) {
-			int num = Integer.parseInt(model.getValueAt(row, 0));
+			int r = model.getRowCount();
+			int num = Integer.parseInt((String)model.getValueAt(row, 0));
 			
 			if (num == trainNum) {
 				model.setValueAt(Integer.toString(newPos), row, 1);
 			}
-		}*/
+		}
 	}
 	
 	public void addSwitch(int switchRoot, int pos) {
-		/*DefaultTableModel model = (DefaultTableModel) train_table.getModel();
-		model.addRow(new Object[]{Integer.toString(switchRoot), Integer.toString(pos)});*/
+		DefaultTableModel model = (DefaultTableModel) switch_table.getModel();
+		model.addRow(new Object[]{Integer.toString(switchRoot), Integer.toString(pos)});
 	}
 	public void updateSwitchPoint(int switchRoot, int newPoint) {
-		/*DefaultTableModel model = (DefaultTableModel) train_table.getModel();
+		DefaultTableModel model = (DefaultTableModel) switch_table.getModel();
 
 		for (int row = 0; row < model.getRowCount(); row++) {
-			int num = (Integer) model.getValueAt(row, 0);
+			int num = Integer.parseInt((String)model.getValueAt(row, 0));
 			
 			if (num == switchRoot) {
 				model.setValueAt(Integer.toString(newPoint), row, 1);
 			}
-		}*/
+		}
 	}
 	
 	public void updateSwitches() {

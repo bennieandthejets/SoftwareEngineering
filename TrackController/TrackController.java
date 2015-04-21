@@ -53,18 +53,18 @@ public class TrackController {
 	public void setRoute(int trainBlock, int destination, double suggestedSpeed, int suggestedAuthority, int[] route) {
 		Train train = trains.get(trainBlock);
 		
-		train.destination = destination;
-		train.sugSpeed = suggestedSpeed;
-		train.sugAuthority = suggestedAuthority;
-		train.suggestedRoute = route;
+		
 		
 		
 	}
 	
 	public void tick(HashMap<Integer, Train> trains, Block map[]) {
 		if(myPLC != null) {
-			myPLC.checkRoutes(trains);
-			myPLC.checkSwitches(map, trains);
+			if (map[1] != null) {
+				myPLC.addSwitches(map, ui);
+			}
+			myPLC.checkRoutes(trains, ui);
+			myPLC.checkSwitches(map, trains, ui);
 		}
 		return;
 	}
