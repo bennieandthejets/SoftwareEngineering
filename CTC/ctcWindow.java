@@ -71,6 +71,7 @@ public class ctcWindow {
 	private Color train = Color.green;
 	private Color broken = Color.red;
 	private Color switchh = Color.cyan;
+	private Color both = Color.blue;
 	
 	public JFrame frmCtc;
 	public JTable tblAnnouncements;
@@ -248,7 +249,12 @@ public class ctcWindow {
 		//trainlabel.setToolTipText("ohhhhh" + b);
 		//trainlabel.setBorder(BorderFactory.createLineBorder(Color.red,2));
 		pnl.add(trainlabel);
-		pnl.setToolTipText("Block " + b);
+		if(bl.getStation() == null){
+			pnl.setToolTipText("Block " + b);
+		} else {
+			pnl.setToolTipText("Block " + b + ", " + bl.getStation());
+		}
+		
 		
 			
 		//hide image until train is present
@@ -269,14 +275,19 @@ public class ctcWindow {
 			/*} else if(bl.isTrainPresent()){
 			desired = train;*/
 		} else if(sw != null){
-			desired = switchh;			
-		} else if(bl.getSwitchRoot() > 0){
-			//check if the switch is pointed here
-			if(owner.blocks[bl.getSwitchRoot()].getSwitch().getSwitchTaken() == bl.getBlockID()){
-				desired = switchh;
+			if(bl.getStation() != null){//switch is also a station in one case
+				desired = both;
 			} else {
-				desired = empty;
-			}
+				desired = switchh;	
+			}			
+		} else if(bl.getSwitchRoot() > 0 && owner.blocks[bl.getSwitchRoot()].getSwitch().getSwitchTaken() == bl.getBlockID()){
+				if(bl.getStation() != null){//switch is also a station in one case
+					desired = both;
+				} else {
+					desired = switchh;	
+				}		
+		} else if(bl.getStation() != null){
+			desired = station;
 		} else {
 			desired = empty;
 		}

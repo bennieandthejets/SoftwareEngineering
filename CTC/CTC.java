@@ -193,13 +193,20 @@ public class CTC {
 						
 					} 
 				} else if(blocks[routes[i].block].isTrainPresent()){
-				//set current location to this one and cycle route
-				myWindow.setLocation(i,routes[i].block, -1);
-				reverses[i] = locations[i];
-				locations[i] = routes[i].block;
-				known[i] = true;
-				routes[i] = routes[i].next;
-			
+					//set current location to this one and cycle route
+					myWindow.setLocation(i,routes[i].block, -1);
+					reverses[i] = locations[i];
+					locations[i] = routes[i].block;
+					known[i] = true;
+					routes[i] = routes[i].next;
+					
+					//record stop when it reaches station block that it is scheduled to stop at
+					if (blocks[locations[i]].getStation() != null && routes[i] == null){
+						//record a stop
+						myWindow.setAnnouncement("Train " + (i + 1) + " reached " + blocks[locations[i]].getStation() + " station");
+						this.stops++;
+						myWindow.setStops(stops, 0, 0); //!!!not calculating expected yet
+					}
 				}
 			}
 		}
@@ -209,11 +216,7 @@ public class CTC {
 			if(!known[i] && locations[i]>0){
 				myWindow.setAnnouncement("!!Lost Train " + (i + 1) + "! What have you done?!?!");
 				//locations[i] = 0;
-			} else if(locations[i] > 0 && blocks[locations[i]].getStation() != null){
-				//record a stop
-				this.stops++;
-				myWindow.setStops(stops, 0, 0); //!!!not calculating expected yet
-			}
+			} 
 			
 		}
 		
