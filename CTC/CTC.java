@@ -476,7 +476,7 @@ public class CTC {
 		
 	}
 	
-	private int[] pathFromRoute(TrainRoute rt, int length){
+	public int[] pathFromRoute(TrainRoute rt, int length){
 		int[] p = new int[length];
 		
 		for (int i = 0; i < length; i++){
@@ -533,7 +533,7 @@ public class CTC {
 				
 	}
 	//sub to determine a path in a specific direction
-	private TrainRoute calcRoute(int block, int dest, boolean up, int from){
+	public TrainRoute calcRoute(int block, int dest, boolean up, int from){
 		TrainRoute rt = new TrainRoute(block, null);
 		TrainRoute save = rt; //save start point because we're adding to the end
 		int inc; //increment
@@ -619,7 +619,7 @@ public class CTC {
 	}
 
 	//sub for determining route length. used to pick between up and down
-	private int[] routeLength(TrainRoute rt){
+	public int[] routeLength(TrainRoute rt){
 		int[] length = {0,0};
 		
 		while(rt!=null){
