@@ -499,17 +499,23 @@ public class CTC {
 	public void spawnTrainCTC(){
 		//!!! for demo don't optimize train selection. new trains will always be at the end of the array
 		
-		
-		//use old max for index of new train
-		routes[activeTrains] = new TrainRoute(fromYard, null); 
-		locations[activeTrains] = 0; //special flag for yard
-		
-		myWindow.setLocation(activeTrains, -1,  fromYard);
-		
-		activeTrains++; 
-		
-		//make train puppy in sim
-		notReggie.makeTrainPuppy();
+		if(blockCount == 0 ){
+			myWindow.setAnnouncement("Wait For Track To Load to Make a Train Puppy!");
+		} else if (blocks[fromYard].isTrainPresent()){
+			myWindow.setAnnouncement("Yard Blocked, Wait Your turn!");
+		} else {
+							
+			//use old max for index of new train
+			routes[activeTrains] = new TrainRoute(fromYard, null); 
+			locations[activeTrains] = 0; //special flag for yard
+			
+			myWindow.setLocation(activeTrains, -1,  fromYard);
+			
+			activeTrains++; 
+			
+			//make train puppy in sim
+			notReggie.makeTrainPuppy();
+		}
 	}
 	
 	//sub to find the best route
