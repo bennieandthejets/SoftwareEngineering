@@ -100,7 +100,7 @@ public class TrainController {
 		if((remainingAuthority - model.getTickDistance()) <= stopDistance && model.getVelocity() != 0 && brakeStatus != true && eBrakeStatus != true ) {
 			stopTrain(false);
 		}
-		else if (remainingAuthority > 0) {
+		else if ((brakeStatus || eBrakeStatus) && model.getVelocity() == 0 && remainingAuthority != 0) {
 			releaseServiceBrakes(false);
 			releaseEmergencyBrakes(false);
 		}
