@@ -21,6 +21,7 @@ public class CTC {
 	public int[] locations;
 	public int[] reverses; // array of blocks the trains came from: can't turn around
 	private double[] speeds;
+	private boolean[] panics; //help to only print error messages once
 	private TrainRoute[] routes;
 	private ctcWindow myWindow;
 	private fakeWindow faaake;
@@ -87,6 +88,7 @@ public class CTC {
 			if(locations[i] > 0 && blocks[locations[i]].isTrainPresent()){
 				//assume this train is still the one on that block. should hold unless active train # approaches block number
 				known[i] = true;
+				panics[i] = false;
 			}			
 		}
 		//check destinations to see if the trains made it 
@@ -162,8 +164,7 @@ public class CTC {
 								reverses[i]=locations[i];
 								locations[i]=two;
 								
-								//!!! do something about the broken route
-								
+								//route it again
 								int destination = 0;
 								TrainRoute notTaken = routes[i];
 								while(notTaken != null){
@@ -178,8 +179,7 @@ public class CTC {
 								reverses[i]=locations[i];
 								locations[i]=one;
 								
-								//!!! do something about the broken route
-
+								//route it again
 								int destination = 0;
 								TrainRoute notTaken = routes[i];
 								while(notTaken != null){
@@ -213,9 +213,9 @@ public class CTC {
 		
 		//verify that all train locations actually have a train on them
 		for(int i = 0;i<activeTrains;i++){
-			if(!known[i] && locations[i]>0){
+			if(!known[i] && locations[i]>0 && !panics[i]){
 				myWindow.setAnnouncement("!!Lost Train " + (i + 1) + "! What have you done?!?!");
-				//locations[i] = 0;
+				panics[i] = true;
 			} 
 			
 		}
@@ -243,6 +243,8 @@ public class CTC {
 		this.reverses = new int[blocks];
 		this.speeds = new double[blocks];
 		this.routes = new TrainRoute[blocks]; 
+		this.panics = new boolean[blocks];
+		Arrays.fill(panics, false);
 		Arrays.fill(closedBlocks, false);
 		Arrays.fill(locations,  -1); //use -1 for trains that don't exist yet
 		Arrays.fill(reverses, -1);
@@ -277,6 +279,8 @@ public class CTC {
 		this.routes = new TrainRoute[blockCount]; 
 		this.reverses = new int[blockCount];
 		this.speeds = new double[blockCount];
+		this.panics = new boolean[blockCount];
+		Arrays.fill(panics, false);
 		Arrays.fill(closedBlocks, false);
 		Arrays.fill(locations,  -1); //use -1 for trains that don't exist yet
 		Arrays.fill(routes,  null);//new TrainRoute(-1, null));
@@ -315,6 +319,8 @@ public class CTC {
 		this.reverses = new int[blockCount];
 		this.routes = new TrainRoute[blockCount]; 
 		this.speeds = new double[blockCount];
+		this.panics = new boolean[blockCount];
+		Arrays.fill(panics, false);
 		Arrays.fill(closedBlocks, false);
 		Arrays.fill(locations,  -1); //use -1 for trains that don't exist yet
 		Arrays.fill(routes,  null);//new TrainRoute(-1, null));
