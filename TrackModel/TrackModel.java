@@ -228,9 +228,11 @@ public class TrackModel {
 				} else if (row.get(7).equals("TO YARD")) {
 					blocks[count].sw = new Switch(count);
 					blocks[count].sw.toYardSwitch = true;
+					blocks[count].sw.fromYardSwitch = false;
 				} else if (row.get(7).equals("FROM YARD")) {
 					blocks[count].sw = new Switch(count);
 					blocks[count].sw.fromYardSwitch = true;
+					blocks[count].sw.toYardSwitch = false;
 				} else if (row.get(7).equals("TO YARD/FROM YARD")) {
 					blocks[count].sw = new Switch(count);
 					blocks[count].sw.toYardSwitch = true;
