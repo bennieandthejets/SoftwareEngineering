@@ -68,6 +68,7 @@ public class TrainModel{
 	private Block nextBlock;
 	private double blockLocation;
 	private boolean atStation;
+	private String stationName;
 	
 	//MBO stuff
 	private int safeAuthority;
@@ -214,6 +215,11 @@ public class TrainModel{
 		//}
 	}
 	
+	public void setStationInfo(String stationName, String stationSide){
+		this.stationName = stationName;
+		trainController.setStationInfo(stationName,stationSide);
+	}
+	
 	public void addPassengers(){
 		int newPassengers = randomPass.nextInt(MAX_PASS-passengers+1);
 		passengers += newPassengers;
@@ -351,6 +357,7 @@ public class TrainModel{
 	
 	public void setSafeVelocity(double safeVel){
 		safeSetpoint = safeVel;
+		trainController.setSetpointVelocity(safeVel);
 	}
 	
 	public void setVelocity(double vel){

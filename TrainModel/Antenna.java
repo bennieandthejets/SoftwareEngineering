@@ -8,10 +8,10 @@ public class Antenna{
 	private TrainModel train;
 	private TrackModel track;
 	private MBO mbo;
-	public boolean trainNear;
-	public int trainID;
-	public String stationName;
-	public String stationSide;
+	private boolean trainNear;
+	private int trainID;
+	private String stationName;
+	private String stationSide;
 	
 	//FUNCTIONS
 	public Antenna(TrainModel train, TrackModel track, MBO mbo){
@@ -26,6 +26,7 @@ public class Antenna{
 		this.trainID = trainID;
 		this.stationName = stationName;
 		this.stationSide = stationSide;
+		train.setStationInfo(stationName, stationSide);
 	}
 	
 	public int getTrainID() {
