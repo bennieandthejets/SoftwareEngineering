@@ -93,7 +93,8 @@ public class CTC {
 		}
 		
 		//get schedule so we have it 
-		schedules = drewBaby.getDefaultSchedule().stops;
+		if(drewBaby.getDefaultSchedule() != null)
+			schedules = drewBaby.getDefaultSchedule().stops;
 		
 		if(this.mode > 0 && activeTrains < 1){ //1 train, hard coded for now :(
 			spawnTrainCTC();

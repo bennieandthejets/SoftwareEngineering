@@ -218,7 +218,7 @@ public class SimulatorUI {
 		frmBennieAndThe.getContentPane().add(label);
 		
 		JLabel lblWave = new JLabel("");
-		String pth = this.getClass().getResource("/little wave.png").getFile();
+		String pth ="/little wave.png";
 		lblWave.setIcon(new ImageIcon(pth));
 		
 		lblWave.setBounds(129, 122, 259, 193);

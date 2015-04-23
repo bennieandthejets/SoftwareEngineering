@@ -55,15 +55,15 @@ public class ctcWindow {
 	private int mapLeft = 10;
 	private int mapTop = 52;
 	//filepaths for lines; change to "src\\n.png" relative path eventually
-	private String nPath =  this.getClass().getResource("/n.png").getFile();//"src\\n.png"; //"c:\\source\\track\\15px\\n.png";
-	private String sPath = this.getClass().getResource("/s.png").getFile();
-	private String ePath = this.getClass().getResource("/e.png").getFile();
-	private String wPath = this.getClass().getResource("/w.png").getFile();
-	private String swPath = this.getClass().getResource("/sw.png").getFile();
-	private String sePath = this.getClass().getResource("/se.png").getFile();
-	private String nwPath = this.getClass().getResource("/nw.png").getFile();
-	private String nePath = this.getClass().getResource("/ne.png").getFile();
-	private String trainPath = this.getClass().getResource("/tinytrain.png").getFile();
+	private String nPath =  "src\\n.png";//"src\\n.png"; //"c:\\source\\track\\15px\\n.png";
+	private String sPath = "src\\s.png";
+	private String ePath = "src\\e.png";
+	private String wPath = "src\\w.png";
+	private String swPath = "src\\sw.png";
+	private String sePath = "src\\se.png";
+	private String nwPath = "src\\nw.png";
+	private String nePath = "src\\ne.png";
+	private String trainPath = "src\\tinyTrain.png";
 	//colors for various track states
 	private Color yard = Color.BLACK;
 	private Color station = Color.pink;
