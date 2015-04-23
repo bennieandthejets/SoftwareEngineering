@@ -211,7 +211,9 @@ public class testPLC implements PLC{
 			int key = (Integer) pair.getKey();
 			Train train = (Train) pair.getValue();
 			
+			//get block speed limit (in kph) and convert to meters per second
 			double speedLimit = map[train.position].getSpeedLimit();
+			speedLimit *= 0.2777777778;
 			
 			//If the train is going faster than the speed limit, decelerate
 			if (train.speed > speedLimit) {
@@ -245,7 +247,7 @@ public class testPLC implements PLC{
 			if (train.routeStep == train.suggestedRoute.length - 1) {
 				continue;
 			}
-			if ((train.routeStep < train.suggestedRoute.length - 1 && map[train.suggestedRoute[train.routeStep+1]].isTrainPresent()) || (train.routeStep < train.suggestedRoute.length - 2 && map[train.suggestedRoute[train.routeStep+2]].isTrainPresent()) || (train.routeStep < train.suggestedRoute.length - 3 && map[train.suggestedRoute[train.routeStep+3]].isTrainPresent())) {
+			if ((train.routeStep < train.suggestedRoute.length - 1 && (map[train.suggestedRoute[train.routeStep+1]].isTrainPresent() || map[train.suggestedRoute[train.routeStep + 1]].isBroken())) ) {
 				int rs = train.routeStep;
 				int pos  = train.position;
 				//boolean new = train.suggestedRoute[routeStep+1];
@@ -254,7 +256,8 @@ public class testPLC implements PLC{
 				train.speed = 0;
 				train.authstop = true; 
 			}
-			else if ((train.routeStep < train.suggestedRoute.length - 2 && map[train.suggestedRoute[train.routeStep+2]].isTrainPresent()) || (train.routeStep < train.suggestedRoute.length - 3 && map[train.suggestedRoute[train.routeStep+3]].isTrainPresent())) {
+			else if ((train.routeStep < train.suggestedRoute.length - 2 && (map[train.suggestedRoute[train.routeStep+2]].isTrainPresent() || map[train.suggestedRoute[train.routeStep + 2]].isBroken()))) {
+				
 				int rs = train.routeStep;
 				int pos  = train.position;
 				//boolean new = train.suggestedRoute[routeStep+1];
@@ -263,7 +266,7 @@ public class testPLC implements PLC{
 				train.speed = 0;
 				train.authstop = true; 
 			}
-			else if ((train.routeStep < train.suggestedRoute.length - 3 && map[train.suggestedRoute[train.routeStep+3]].isTrainPresent())) {
+			else if ((train.routeStep < train.suggestedRoute.length - 3 && (map[train.suggestedRoute[train.routeStep+3]].isTrainPresent() || map[train.suggestedRoute[train.routeStep + 3]].isBroken()))) {
 				int rs = train.routeStep;
 				int pos  = train.position;
 				//boolean new = train.suggestedRoute[routeStep+1];
