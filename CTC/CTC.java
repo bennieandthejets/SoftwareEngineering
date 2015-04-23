@@ -672,24 +672,25 @@ public class CTC {
 		int increment;
 		
 		if(blocks[block].getSwitchRoot() == block - 1 || getTouch(block, block - 1) == -1){ 
-			//block++;
+			block++;
 			increment = 1;
 		} 
 		else {
-			//block--;
+			block--;
 			increment = -1;
 		}
 		
-		while (!(block == toYard || block == fromYard ) && block > 0 && blocks[block].getSwitch() == null && blocks[block].getSwitchRoot() == -1 ){	
+		do {
 			//myWindow.setAnnouncement("looking for dest on Block " + block);
 			if (block == dest){
 				return true;				
 			}
-			if(block == toYard || block == fromYard ){
+			if(block == toYard || block == fromYard || block == 0 || block >= blockCount){
 				break;
 			}
 			block += increment;
-		}	
+		} while (!(block == toYard || block == fromYard ) && block > 0 && blocks[block].getSwitch() == null && blocks[block].getSwitchRoot() == -1 );
+		
 		
 		//destination might also have switch
 		if (block == dest){
