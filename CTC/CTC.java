@@ -9,7 +9,6 @@ import MBO.*;
 import TrackController.*;
 import Simulator.*;
 import TrackModel.*;
-import TrackModel.Block;
 
 public class CTC {
 	private int mode;
@@ -74,6 +73,16 @@ public class CTC {
 		time = notReggie.getTime();
 		myWindow.setTime(time);
 		
+		//do throughput stuff every hour
+		String mins = myWindow.txtTime.getText().split(":")[1];
+		String secs = myWindow.txtTime.getText().split(":")[2];
+		if(Integer.parseInt(mins)==0 && Integer.parseInt(secs)==0){
+			myWindow.setStops(0,  0,  stops);
+			//Tell Andrew
+			//drewBaby.set
+			drewBaby.setActualThroughput(stops);
+			stops = 0;
+		}
 		
 		//update map
 		//blocks = ben.getBlocks(); 
@@ -205,7 +214,9 @@ public class CTC {
 						//record a stop
 						myWindow.setAnnouncement("Train " + (i + 1) + " reached " + blocks[locations[i]].getStation() + " station");
 						this.stops++;
-						myWindow.setStops(stops, 0, 0); //!!!not calculating expected yet
+						mins = myWindow.txtTime.getText().split(":")[1]; 
+						double expected = (double)stops/Double.parseDouble(mins) * 60;
+						myWindow.setStops(stops, expected, -1); //!!!not calculating expected yet
 					}
 				}
 			}
@@ -299,6 +310,8 @@ public class CTC {
 	
 	//sub to initialize after a map is loaded
 	public void start(){
+		
+		this.drewBaby = notReggie.mbo;
 		
 		//load track somehow
 		//this.blocks = ben.getBlocks();	//call this once it exists
@@ -563,14 +576,15 @@ public class CTC {
 		
 		int next = -1;
 		boolean justSwitched = false;
-		
+		Switch sw = blocks[block].getSwitch();
 		//special case if routing from a switch branch
-		if(blocks[block].getSwitchRoot() == from){
+		if(blocks[block].getSwitchRoot() == from ||
+			sw != null && (sw.getBlockOne() == from || sw.getBlockTwo() == from)){
 			justSwitched = true;
 		}
 		
 		while(block!=dest){			
-			Switch sw = blocks[block].getSwitch();			
+			sw = blocks[block].getSwitch();			
 			boolean hasSwitch = (sw != null);
 			//myWindow.setAnnouncement("route: " + block + ". has switch? " + hasSwitch);
 			if(hasSwitch && !justSwitched){
