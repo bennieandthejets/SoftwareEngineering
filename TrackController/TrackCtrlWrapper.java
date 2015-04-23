@@ -16,7 +16,6 @@ public class TrackCtrlWrapper {
 	//private static UI ui;
 	private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 	private Block[] map;
-	private int penis = 0;
 	private Simulator simulator;
 	private TrackModel myModel;
 	HashSet<Integer> present;
