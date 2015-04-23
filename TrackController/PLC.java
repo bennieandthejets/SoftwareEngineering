@@ -14,4 +14,5 @@ public interface PLC {
 	void setCrossing(int crossingBlock);
 	boolean checkSwitches(Block[] map, HashMap<Integer, Train> trains, UI ui);
 	int getSafeSpeed(HashMap<Integer, Train> trains, Block[] map, TrackModel trackmodel);
+	void checkTrainEmergency(Block[] map, HashMap<Integer, Train> trains, TrackModel trackmodel);
 }
