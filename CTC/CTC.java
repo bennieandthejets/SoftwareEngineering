@@ -41,7 +41,7 @@ public class CTC {
 	//function setSchedule
 	//function getMode
 	//This comment is a test bro 
-	
+	/*
 	public static void main(String[] args) {	
 		
 		CTC ctc = new CTC(); 
@@ -60,7 +60,7 @@ public class CTC {
 		//update window forever
 		
 		
-	}
+	}*/
 	
 	//function to monitor train locations and whatever else I feel like
 	//made public for prototype, will be private later
@@ -608,8 +608,9 @@ public class CTC {
 					next = block - 1;
 					
 					//else we know the train just switched
-				} else if (getTouch(block, block + 1) >= 0 &&
-							(sw != null && sw.getBlockOne() != block + 1 && sw.getBlockTwo() != block + 1)) {
+				} else if	(getTouch(block, block + 1) >= 0 &&
+							(sw == null || 
+							(sw.getBlockOne() != (block + 1) && sw.getBlockTwo() != (block + 1)))) {
 					next = block + 1;
 				} else { //it better fucking touch <-1> so don't even check
 					next = block - 1;
@@ -639,9 +640,18 @@ public class CTC {
 	public int[] routeLength(TrainRoute rt){
 		int[] length = {0,0};
 		
+		boolean first = true; 
+		
 		while(rt!=null){
-			if(rt.next == null){
-				length[0]+=10;
+			
+			if(rt.block == fromYard || rt.block == toYard){
+				// always count the whole block leaving the yard
+				length[0] += blocks[rt.block].getBlockSize(); 
+				first = false;
+			} else if(rt.next == null || first){
+				//route it to halfway 
+				first = false;
+				length[0] += blocks[rt.block].getBlockSize()/2;
 			} else {
 				length[0] += blocks[rt.block].getBlockSize();				
 			}
@@ -656,13 +666,12 @@ public class CTC {
 	*  Allows the main routing calculation to ignore branches
 	*/
 	private boolean onBranch(int block, int dest){
-		//!!! account for hitting the yard to avoid infinite loop
 		
 		
 		//find direction of initial switch 
 		int increment;
 		
-		if(blocks[block].getSwitchRoot() == block - 1 ){ 
+		if(blocks[block].getSwitchRoot() == block - 1 || getTouch(block, block - 1) == -1){ 
 			block++;
 			increment = 1;
 		} 

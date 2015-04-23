@@ -434,6 +434,7 @@ public class TrainControllerUI {
 			updateAuthority(controller.getAuthority() * METERS_TO_MILES);
 			checkBrakes();
 			checkDoors();
+			checkLights();
 		}
 	}
 	
@@ -466,6 +467,15 @@ public class TrainControllerUI {
 		}
 		else {
 			rightDoorStatusField.setText("CLOSED");
+		}
+	}
+	
+	public void checkLights() {
+		if(controller.lightStatus) {
+			lightStatusField.setText("ON");
+		}
+		else {
+			lightStatusField.setText("OFF");
 		}
 	}
 	

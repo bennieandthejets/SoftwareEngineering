@@ -39,11 +39,11 @@ public class TrainControllerWrapper {
 	
 	
 	
-	public void tick() {
+	public void tick(long time) {
 //		this.temperature = simulator.getTemp();
 //		this.systemTime = simulator.getTime();
 		for(int i = 0; i < controllers.size(); i++) {
-			controllers.get(i).tick(0, 0);
+			controllers.get(i).tick(time, 0);
 		}
 		ui.update();
 	}

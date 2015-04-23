@@ -145,10 +145,6 @@ public class TrainModel{
 		calcForce();
 		calcAcceleration();
 		calcVelocity();
-		if(trainVelocity == 0.0 & atStation){
-			removePassengers();
-			addPassengers();
-		}
 		calcDistance();
 		if(ui.getCurrTrain() == trainID)
 			setDisplay();
@@ -375,10 +371,18 @@ public class TrainModel{
 	
 	public void setLeftDoor(boolean doorStatus){
 		leftDoorStatus = doorStatus;
+		if(leftDoorStatus){
+			removePassengers();
+			addPassengers();
+		}	
 	}
 	
 	public void setRightDoor(boolean doorStatus){
 		rightDoorStatus = doorStatus;
+		if(rightDoorStatus){
+			removePassengers();
+			addPassengers();
+		}	
 	}
 	
 	public void setLights(boolean lights){
@@ -416,7 +420,7 @@ public class TrainModel{
 		ui.setPower(SigFig.format(trainPower));
 		//ui.setBrakes(brake);
 		//ui.setLights(lightStatus);
-		//ui.setDoors(doorStatus);
+		ui.setDoors(leftDoorStatus,rightDoorStatus);
 		//ui.setNextStation(NextStation);
 		//ui.setArrival(Arrival);
 		//ui.setCurrBlock(CurrentBlock);

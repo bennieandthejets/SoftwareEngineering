@@ -23,11 +23,11 @@ public class TrainController {
 	private boolean		manualEBrake;
 	
 	//SUBSYSTEMS
-	private boolean		lightStatus;
+	public boolean		lightStatus;
 	public boolean		leftDoorStatus;
 	public boolean		rightDoorStatus;
-	private boolean		heatStatus;
-	private	boolean		acStatus;
+	public boolean		heatStatus;
+	public	boolean		acStatus;
 	
 	//STATION INFO
 	private boolean		approachingStation;
@@ -119,6 +119,12 @@ public class TrainController {
 		return;
 	}
 	
+	private void controlPower() {
+		if(!brakeStatus && !eBrakeStatus && remainingAuthority != 0) {
+			vc.vitalPower(model.getVelocity(), model.getVelocity(), model.getVelocity());
+		}
+	}
+	
 	public void sendPower(double power) {
 		model.setPower(power);
 		return;
@@ -178,6 +184,25 @@ public class TrainController {
 	}
 	
 	//SUBSYSTEM CONTROL
+	
+	public void controlSubsystems(long currentTime, long currentTemp) {
+		if(model.atStation) {
+			if(remainingAuthority == 0.0 && !checkDoors() && model.getVelocity() == 0.0) {
+				controlDoors(false, true, stationSide);
+			}
+			else if(remainingAuthority != 0.0 && checkDoors()) {
+				controlDoors(false, false, stationSide);
+			}
+		}
+		
+		//Lights are on between 6PM and 6AM
+		if( currentTime > 18*60*60 || currentTime < 6*60*60) {
+			controlLights(true);
+		}
+		else {
+			controlLights(false);
+		}
+	}
 	public void controlDoors(boolean manual, boolean open, String side) {
 		//Opening doors
 		if(open) {
@@ -207,6 +232,11 @@ public class TrainController {
 		return;
 	}
 	
+	public void controlLights(boolean on) {
+		model.setLights(on);
+		lightStatus = on;
+	}
+	
 	//Check if doors are open
 	public boolean checkDoors() {
 		return leftDoorStatus || rightDoorStatus;
@@ -215,22 +245,8 @@ public class TrainController {
 	public void tick(long currentTime, int currentTemp) {		
 		//checkFailures();
 		checkRemainingAuthority();
-		
-		if(model.atStation) {
-			if(remainingAuthority == 0.0 && !checkDoors() && model.getVelocity() == 0.0) {
-				controlDoors(false, true, stationSide);
-			}
-			else if(remainingAuthority != 0.0 && checkDoors()) {
-				controlDoors(false, false, stationSide);
-			}
-		}
-		
-		if(!brakeStatus && !eBrakeStatus && remainingAuthority != 0) {
-			vc.vitalPower(model.getVelocity(), model.getVelocity(), model.getVelocity());
-		}
-		
-		
-		//controlSubsystems(currentTime, currentTemp);
+		controlPower();
+		controlSubsystems(currentTime, currentTemp);
 		return;
 	}
 	

@@ -56,7 +56,7 @@ public class Simulator {
         trackControllerWrapper.tick();
         trackModel.tick();
         trainModelWrapper.tick();
-        trainControllerWrapper.tick();
+        trainControllerWrapper.tick(systemTime);
     }
     
     /// Creates a new train in the train model wrapper, then tells other modules
