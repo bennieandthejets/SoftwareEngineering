@@ -576,14 +576,15 @@ public class CTC {
 		
 		int next = -1;
 		boolean justSwitched = false;
-		
+		Switch sw = blocks[block].getSwitch();
 		//special case if routing from a switch branch
-		if(blocks[block].getSwitchRoot() == from){
+		if(blocks[block].getSwitchRoot() == from ||
+			sw != null && (sw.getBlockOne() == from || sw.getBlockTwo() == from)){
 			justSwitched = true;
 		}
 		
 		while(block!=dest){			
-			Switch sw = blocks[block].getSwitch();			
+			sw = blocks[block].getSwitch();			
 			boolean hasSwitch = (sw != null);
 			//myWindow.setAnnouncement("route: " + block + ". has switch? " + hasSwitch);
 			if(hasSwitch && !justSwitched){
