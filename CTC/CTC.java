@@ -1,11 +1,13 @@
 package CTC;
 
 import java.awt.EventQueue;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.swing.table.DefaultTableModel;
 
 import MBO.*;
+import MBO.TrainSchedule.Stop;
 import TrackController.*;
 import Simulator.*;
 import TrackModel.*;
@@ -29,6 +31,10 @@ public class CTC {
 	//defautl red line yard block until jackie gives me a better option
 	private int fromYard = 77; //tell where new trains will come from
 	private int toYard = 77; //which block leads to the yard
+	private  ArrayList<Stop> schedules;
+	private int scheduleStop = 0;
+	private int dwelled = 0;
+	public int waitForspawn = 0;
 	
 	
 	//modules i can talk to
@@ -69,6 +75,8 @@ public class CTC {
 			start();
 		}
 		
+		this.mode = myWindow.cboMode.getSelectedIndex();
+		
 		//update time
 		time = notReggie.getTime();
 		myWindow.setTime(time);
@@ -82,6 +90,19 @@ public class CTC {
 			//drewBaby.set
 			drewBaby.setActualThroughput(stops);
 			stops = 0;
+		}
+		
+		//get schedule so we have it 
+		schedules = drewBaby.getDefaultSchedule().stops;
+		
+		if(this.mode > 0 && activeTrains < 1){ //1 train, hard coded for now :(
+			spawnTrainCTC();
+			waitForspawn = 3;
+			return;
+		}
+		if(waitForspawn > 0){
+			waitForspawn--;
+			return;
 		}
 		
 		//update map
@@ -234,6 +255,30 @@ public class CTC {
 		//update pretty colors
 		for(int i = 1; i < blockCount; i++){
 			myWindow.setTrackStatus(blocks[i]);			
+		}
+		
+		
+		
+		if(this.mode > 0 && schedules.size() > 0){
+			Stop st = schedules.get(scheduleStop);
+			
+			
+			if (locations[0] == st.block){
+				if(dwelled < st.dwellTime){
+					dwelled++;
+				} else { //next step
+					scheduleStop++;
+					if(scheduleStop >= schedules.size()){
+						scheduleStop = 0;
+					}
+					
+					dwelled = 0;
+					routeTrainCTC(0, 11.11, schedules.get(scheduleStop).block);
+				}
+			} else if(routes[0]==null){
+				routeTrainCTC(0, 11.11, schedules.get(scheduleStop).block);
+			}
+			
 		}
 		
 	}

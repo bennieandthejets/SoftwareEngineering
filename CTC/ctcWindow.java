@@ -86,6 +86,7 @@ public class ctcWindow {
 	public JTextField txtCloseBlockNum;
 	public JTextField txtTime;
 	private JComboBox cboClose;
+	public JComboBox cboMode;
 	
 	private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
 
@@ -345,7 +346,7 @@ public class ctcWindow {
 		frmCtc.setBounds(100, 100, 965, 747);
 		frmCtc.getContentPane().setLayout(null);
 		
-		JComboBox cboMode = new JComboBox();
+		cboMode = new JComboBox();
 		cboMode.setForeground(new Color(0, 100, 0));
 		cboMode.setBackground(Color.LIGHT_GRAY);
 		cboMode.setModel(new DefaultComboBoxModel(new String[] {"Manual", "MBO", "Fixed Block"}));
