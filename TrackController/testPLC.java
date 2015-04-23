@@ -211,6 +211,9 @@ public class testPLC implements PLC{
 			int key = (Integer) pair.getKey();
 			Train train = (Train) pair.getValue();
 			
+			if (train == null || train.position == 0 || map[train.position] == null) {
+				continue;
+			}
 			//get block speed limit (in kph) and convert to meters per second
 			double speedLimit = map[train.position].getSpeedLimit();
 			speedLimit *= 0.2777777778;
@@ -257,7 +260,16 @@ public class testPLC implements PLC{
 				train.authstop = true; 
 			}
 			else if ((train.routeStep < train.suggestedRoute.length - 2 && (map[train.suggestedRoute[train.routeStep+2]].isTrainPresent() || map[train.suggestedRoute[train.routeStep + 2]].isBroken()))) {
-				
+				//If there is a switch between this train and the obstructed block, determine if this train can be sent down an alternate path
+				if (map[train.suggestedRoute[train.routeStep + 1]].getSwitch() != null ) {
+					//if the train is on the root side of the switch, reroute to the other head. otherwise, just stop
+					if (map[train.suggestedRoute[train.routeStep + 1]].getSwitch().getBlockOne() != train.position && map[train.suggestedRoute[train.routeStep + 1]].getSwitch().getBlockTwo() != train.position) {
+						map[train.suggestedRoute[train.routeStep + 1]].getSwitch().direction = !map[train.suggestedRoute[train.routeStep + 1]].getSwitch().direction;
+						
+						train.suggestedRoute[train.routeStep + 2] = map[train.suggestedRoute[train.routeStep+1]].getSwitch().getSwitchTaken();
+						continue;
+					}
+				}
 				int rs = train.routeStep;
 				int pos  = train.position;
 				//boolean new = train.suggestedRoute[routeStep+1];
@@ -267,6 +279,28 @@ public class testPLC implements PLC{
 				train.authstop = true; 
 			}
 			else if ((train.routeStep < train.suggestedRoute.length - 3 && (map[train.suggestedRoute[train.routeStep+3]].isTrainPresent() || map[train.suggestedRoute[train.routeStep + 3]].isBroken()))) {
+				//If there is a switch between this train and the obstructed block, determine if this train can be sent down an alternate path
+				//If there is a switch between this train and the obstructed block, determine if this train can be sent down an alternate path
+				if (map[train.suggestedRoute[train.routeStep + 2]].getSwitch() != null ) {
+					//if the train is on the root side of the switch, reroute to the other head. otherwise, just stop
+					if (map[train.suggestedRoute[train.routeStep + 2]].getSwitch().getBlockOne() != train.suggestedRoute[train.routeStep+1] && map[train.suggestedRoute[train.routeStep + 1]].getSwitch().getBlockTwo() != train.suggestedRoute[train.routeStep+1]) {
+						map[train.suggestedRoute[train.routeStep + 2]].getSwitch().direction = !map[train.suggestedRoute[train.routeStep + 2]].getSwitch().direction;
+						
+						train.suggestedRoute[train.routeStep + 3] = map[train.suggestedRoute[train.routeStep+2]].getSwitch().getSwitchTaken();
+						continue;
+					}
+				}
+				else if (map[train.suggestedRoute[train.routeStep + 1]].getSwitch() != null ) {
+					//if the train is on the root side of the switch, reroute to the other head. otherwise, just stop
+					if (map[train.suggestedRoute[train.routeStep + 1]].getSwitch().getBlockOne() != train.position && map[train.suggestedRoute[train.routeStep + 1]].getSwitch().getBlockTwo() != train.position) {
+						map[train.suggestedRoute[train.routeStep + 1]].getSwitch().direction = !map[train.suggestedRoute[train.routeStep + 1]].getSwitch().direction;
+						
+						train.suggestedRoute[train.routeStep + 2] = map[train.suggestedRoute[train.routeStep+1]].getSwitch().getSwitchTaken();
+						train.suggestedRoute[train.routeStep + 3] = train.suggestedRoute[train.routeStep+2] + 1;
+						continue;
+					}
+				}
+				
 				int rs = train.routeStep;
 				int pos  = train.position;
 				//boolean new = train.suggestedRoute[routeStep+1];
