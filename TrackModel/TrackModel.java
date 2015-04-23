@@ -115,7 +115,8 @@ public class TrackModel {
 				&& travelRoute.size() > 0) {
 			blocks[trainOnBlock.get(trainID)].trainPresent = false;
 			blocks[trainOnBlock.get(trainID)].trainID = -1;
-			travelRoute.add(trainOnBlock.get(trainID));
+			if(trainOnBlock.get(trainID) != travelRoute.get(travelRoute.size()-1))
+				travelRoute.add(trainOnBlock.get(trainID));
 
 			t.trainOffBlock(blocks[trainOnBlock.get(trainID)].mapRow,
 					blocks[trainOnBlock.get(trainID)].mapCol);
