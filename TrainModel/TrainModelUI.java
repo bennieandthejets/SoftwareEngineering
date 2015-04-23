@@ -78,7 +78,7 @@ public class TrainModelUI{ //implements ActionListener{
 	 */
 	private void initialize() {
 		frame = new JFrame("Train Model");
-		frame.setBounds(100, 100, 585, 360);
+		frame.setBounds(100, 100, 420, 360);
 		frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
@@ -93,12 +93,6 @@ public class TrainModelUI{ //implements ActionListener{
 		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
 		lblNewLabel.setBounds(190, 11, 200, 14);
 		frame.getContentPane().add(lblNewLabel);
-		
-		JLabel lblFailureModes = new JLabel("Failure Modes");
-		lblFailureModes.setHorizontalAlignment(SwingConstants.CENTER);
-		lblFailureModes.setFont(new Font("Tahoma", Font.BOLD, 12));
-		lblFailureModes.setBounds(423, 11, 125, 14);
-		frame.getContentPane().add(lblFailureModes);
 		
 		JLabel lblHeight = new JLabel("Height (ft)");
 		lblHeight.setFont(new Font("Tahoma", Font.PLAIN, 12));
@@ -180,11 +174,6 @@ public class TrainModelUI{ //implements ActionListener{
 		separator_1.setOrientation(SwingConstants.VERTICAL);
 		separator_1.setBounds(180, 11, 10, 255);
 		frame.getContentPane().add(separator_1);
-		
-		JSeparator separator_2 = new JSeparator();
-		separator_2.setOrientation(SwingConstants.VERTICAL);
-		separator_2.setBounds(403, 11, 10, 255);
-		frame.getContentPane().add(separator_2);
 		
 		JLabel lblAcceleration = new JLabel("Acceleration (ft/s^2)");
 		lblAcceleration.setFont(new Font("Tahoma", Font.PLAIN, 12));
@@ -282,10 +271,6 @@ public class TrainModelUI{ //implements ActionListener{
 		lblNewLabel_3.setBounds(190, 214, 87, 14);
 		frame.getContentPane().add(lblNewLabel_3);
 		
-		JSeparator separator_3 = new JSeparator();
-		separator_3.setBounds(417, 135, 145, 2);
-		frame.getContentPane().add(separator_3);
-		
 		JSeparator separator_4 = new JSeparator();
 		separator_4.setBounds(10, 188, 160, 2);
 		frame.getContentPane().add(separator_4);
@@ -309,48 +294,33 @@ public class TrainModelUI{ //implements ActionListener{
 		frame.getContentPane().add(trainSelectBox);
 		
 		JSeparator separator_5 = new JSeparator();
-		separator_5.setBounds(10, 269, 549, 2);
+		separator_5.setBounds(10, 269, 383, 2);
 		frame.getContentPane().add(separator_5);
 		
 		JLabel lblNewLabel_4 = new JLabel("  Current Train");
 		lblNewLabel_4.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel_4.setFont(new Font("Tahoma", Font.BOLD, 12));
-		lblNewLabel_4.setBounds(119, 277, 130, 14);
+		lblNewLabel_4.setBounds(20, 277, 130, 14);
 		frame.getContentPane().add(lblNewLabel_4);
 		
 		txtCurrTrain = new JTextField();
 		txtCurrTrain.setHorizontalAlignment(SwingConstants.CENTER);
 		txtCurrTrain.setEditable(false);
-		txtCurrTrain.setBounds(140, 293, 100, 20);
+		txtCurrTrain.setBounds(41, 293, 100, 20);
 		frame.getContentPane().add(txtCurrTrain);
 		txtCurrTrain.setColumns(10);
-		
-		JCheckBox chckbxNewCheckBox = new JCheckBox("Engine Failure");
-		chckbxNewCheckBox.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		chckbxNewCheckBox.setBounds(419, 33, 109, 23);
-		frame.getContentPane().add(chckbxNewCheckBox);
-		
-		JCheckBox chckbxSignalPickupFailure = new JCheckBox("Signal Pickup Failure");
-		chckbxSignalPickupFailure.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		chckbxSignalPickupFailure.setBounds(419, 68, 140, 23);
-		frame.getContentPane().add(chckbxSignalPickupFailure);
-		
-		JCheckBox chckbxBrakeFailure = new JCheckBox("Brake Failure");
-		chckbxBrakeFailure.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		chckbxBrakeFailure.setBounds(419, 103, 109, 23);
-		frame.getContentPane().add(chckbxBrakeFailure);
 		
 		JLabel lblDistanceTraveled = new JLabel("Distance Traveled");
 		lblDistanceTraveled.setHorizontalAlignment(SwingConstants.CENTER);
 		lblDistanceTraveled.setFont(new Font("Tahoma", Font.BOLD, 12));
-		lblDistanceTraveled.setBounds(339, 277, 130, 14);
+		lblDistanceTraveled.setBounds(221, 277, 130, 14);
 		frame.getContentPane().add(lblDistanceTraveled);
 		
 		txtDistance = new JTextField();
 		txtDistance.setHorizontalAlignment(SwingConstants.CENTER);
 		txtDistance.setEditable(false);
 		txtDistance.setColumns(10);
-		txtDistance.setBounds(360, 293, 90, 20);
+		txtDistance.setBounds(242, 293, 90, 20);
 		frame.getContentPane().add(txtDistance);
 	}
 	public void addTrain(int trainID) {
