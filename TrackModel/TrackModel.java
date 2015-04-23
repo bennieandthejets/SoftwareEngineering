@@ -46,6 +46,11 @@ public class TrackModel {
 			findTrain(k);
 			t.paintMap();
 		}
+		for(int i=1; i<blocks.length; i++)
+		{
+			if(blocks[i].beacon != null)
+				blocks[i].getBeacon().tick();
+		}
 	}
 
 	public void setSpeed(double speed, int blockID) {
