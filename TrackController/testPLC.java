@@ -2,6 +2,7 @@ package TrackController;
 
 import java.util.*;
 
+import CTC.CTC;
 import TrackController.TrackCtrlWrapper.Train;
 import TrackModel.*;
 
@@ -11,6 +12,21 @@ public class testPLC implements PLC{
 
 	
 	public HashSet<Integer> switches = new HashSet<>(Arrays.asList(9, 16, 27, 33, 38, 44, 52));
+	//public HashSet<Integer> crossings = new HashSet<>(Arrays.asList(9));
+	
+	
+	public HashSet<Integer> toploop = new HashSet<>(Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15));
+	public HashSet<Integer> topstraight = new HashSet<>(Arrays.asList(17,18,19,20,21,22,23,24,25,26));
+	public HashSet<Integer> A1 = new HashSet<>(Arrays.asList(28,29,30,31,32));
+	public HashSet<Integer> A2 = new HashSet<>(Arrays.asList(76,75,74,73,72));
+	public HashSet<Integer> midstraight = new HashSet<>(Arrays.asList(34,35,36,37));
+	public HashSet<Integer> B1 = new HashSet<>(Arrays.asList(39,40,41,42,43));
+	public HashSet<Integer> B2 = new HashSet<>(Arrays.asList(67,68,69,70,71));
+	public HashSet<Integer> bottomstraight = new HashSet<>(Arrays.asList(45,46,47,48,49,50,51));
+	public HashSet<Integer> bottomloop = new HashSet<>(Arrays.asList(53,54,55,56,57,58,59,60,61,62,63,64,65,66));
+
+
+	
 	public HashSet<Integer> trainsWaiting = new HashSet<Integer>();
 	
 	boolean firstTick = true;
@@ -143,7 +159,15 @@ public class testPLC implements PLC{
 				Integer trainNum = (Integer) tw.next();
 				Train train = trains.get(trainNum);
 				
-				if (train.position == train.blockBefore) {
+				if (train.position == train.blockBefore && train.crossingWait) {
+					map[train.nextSwitch].setRRStatus(true);
+				}
+				else if (train.position == train.blockAfter && train.crossingWait) {
+					map[train.nextSwitch].setRRStatus(false);
+					train.crossingWait = false;
+					findNextSwitch(train);
+				}
+				else if (train.position == train.blockBefore) {
 					int switchblock = train.nextSwitch;
 					System.out.println(switchblock);
 					int switchDestId = map[switchblock].getSwitch().getSwitchTaken();
@@ -316,6 +340,93 @@ public class testPLC implements PLC{
 			}
 			
 		}
+	}
+	
+	public void setRegions(HashMap<Integer, Train> trains) {
+		Iterator it = trains.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry pair = (Map.Entry) it.next();
+			int key = (Integer) pair.getKey();
+			Train train = (Train) pair.getValue();
+			int region = -1;
+			
+			if (train.position==0) {
+				train.region = -1;
+				continue;
+			}
+			else {
+				if (toploop.contains(train.position))
+					train.region = 0;
+				else if (topstraight.contains(train.position))
+					train.region = 1;
+				else if (A1.contains(train.position))
+					train.region = 2;
+				else if (A2.contains(train.position))
+					train.region = 3;
+				else if (midstraight.contains(train.position))
+					train.region = 4;
+				else if (B1.contains(train.position))
+					train.region = 5;
+				else if (B2.contains(train.position))
+					train.region = 6;
+				else if (bottomstraight.contains(train.position))
+					train.region = 7;
+				else if (bottomloop.contains(train.position))
+					train.region = 8;
+			}
+		}
+	}
+	
+	public boolean checkRegion (int region, int switchnum, HashMap<Integer, Train> trains) {
+		Iterator it = trains.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry pair = (Map.Entry) it.next();
+			int key = (Integer) pair.getKey();
+			Train train = (Train) pair.getValue();
+			
+			if (train.region == region && train.nextSwitch == switchnum) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	private boolean onBranch(int firstblock, int secondblock, Block[] map, CTC myCTC){
+		
+		
+		//find direction of initial switch 
+		int increment;
+		
+		boolean trainpresent = false;
+		
+		if(map[firstblock].getSwitchRoot() == firstblock - 1 || myCTC.getTouch(firstblock, firstblock - 1) == -1){ 
+			firstblock++;
+			increment = 1;
+		} 
+		else {
+			firstblock--;
+			increment = -1;
+		}
+		
+		do {
+			//myWindow.setAnnouncement("looking for dest on Block " + block);
+			if (firstblock == secondblock){
+				return true;				
+			}
+			if( firstblock == 0 ||map[firstblock].isToYard() || map[firstblock].isFromYard() || firstblock >= map.length-1){
+				break;
+			}
+			firstblock += increment;
+		} while (!(map[firstblock].isToYard() || map[firstblock].isFromYard() ) && firstblock > 0 && map[firstblock].getSwitch() == null && map[firstblock].getSwitchRoot() == -1 );
+		
+		
+		//destination might also have switch
+		if (firstblock == secondblock){
+			return true;
+		}
+		
+	return false;
 	}
 	
 	public void setCrossing(int crossingBlock) {
