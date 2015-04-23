@@ -178,6 +178,8 @@ public class TrackModel {
 			blocks[trainOnBlock.get(trainID)].trainID = trainID;
 			t.trainOnBlock(blocks[trainOnBlock.get(trainID)].mapRow,
 					blocks[trainOnBlock.get(trainID)].mapCol);
+			//HERE YOU GO, REGGIE. blocks[trainOnBlock.get(trainID)];
+			s.trainModelWrapper.getTrain(trainID).setBlock(blocks[trainOnBlock.get(trainID)]);
 		}
 
 		System.out.println("TRAIN ON BLOCK " + trainOnBlock.get(trainID));

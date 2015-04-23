@@ -38,6 +38,10 @@ public class Antenna{
 		return train.getBlock();
 	}
 	
+	public double getBlockDistance() {
+		return train.getBlockDistance();
+	}
+	
 	public double getVelocity(){
 		return train.getVelocity();
 	}

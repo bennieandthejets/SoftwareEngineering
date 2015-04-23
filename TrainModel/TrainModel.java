@@ -67,7 +67,7 @@ public class TrainModel{
 	private Block currentBlock;
 	private Block nextBlock;
 	private double blockLocation;
-	private boolean atStation;
+	public boolean atStation;
 	private String stationName;
 	
 	//MBO stuff
@@ -159,6 +159,7 @@ public class TrainModel{
 		System.out.println("Train Velocity: "+trainVelocity+" m/s");
 		System.out.println("Tick Distance: "+ tickDistance);
 		System.out.println("Distance Traveled: "+ distanceTraveled);
+		System.out.println("Block Distance: " + blockLocation);
 		System.out.println();
 	}
 	
@@ -208,11 +209,7 @@ public class TrainModel{
 		tickDistance = trainVelocity;
 		blockLocation += tickDistance;
 		distanceTraveled += tickDistance;
-		
-		//Check which block train is on, communicate with Track Model
-		//if(blockLocation > currentBlock.getBlockSize()){
-			
-		//}
+				
 	}
 	
 	public void setStationInfo(String stationName, String stationSide){
@@ -337,6 +334,15 @@ public class TrainModel{
 		return currentBlock;
 	}
 	
+	public double getBlockDistance() {
+		return this.blockLocation;
+	}
+	
+	public void setBlock(Block bigDickBlock){
+		this.currentBlock = bigDickBlock;
+		this.blockLocation = 0;
+	}
+	
 	public void setPower(double power){
 		trainPower = power;
 	}
@@ -362,6 +368,7 @@ public class TrainModel{
 	
 	public void setVelocity(double vel){
 		setpoint = vel;
+		trainController.setSetpointVelocity(vel);
 	}
 	
 	public void setLeftDoor(boolean doorStatus){
