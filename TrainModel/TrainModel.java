@@ -339,8 +339,10 @@ public class TrainModel{
 	}
 	
 	public void setBlock(Block bigDickBlock){
+		if(this.currentBlock != null) {
+			this.blockLocation -= this.currentBlock.getBlockSize();
+		}
 		this.currentBlock = bigDickBlock;
-		this.blockLocation = 0;
 	}
 	
 	public void setPower(double power){

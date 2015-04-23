@@ -36,6 +36,7 @@ public class TrainModelWrapper{
 		int trainID = trains.size()+1;
 		TrainModel newTrain = new TrainModel(trainID, sim);
 		newTrain.setUI(ui);
+		newTrain.setBlock(sim.trackModel.getBlocks()[77]);
 		//sim.trackModel.addTrain(newTrain);
 		trains.add(trainID-1,newTrain);
 		antennas.add(trainID-1,newTrain.antenna);

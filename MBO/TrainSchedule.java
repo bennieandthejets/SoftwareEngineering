@@ -10,12 +10,8 @@ public class TrainSchedule
 		this.stops = new ArrayList<Stop>();
 	}
 	
-	public void addStop(int minute, String station) {
-		//stops.add(new Stop(minute, station));
-	}
-	
-	public void addStop(int minute, String station, int dwellTime) {
-		stops.add(new Stop(minute, station, dwellTime));
+	public void addStop(int minute, int block, String station, int dwellTime) {
+		 stops.add(new Stop(minute, block, station, dwellTime));
 	}
 	
 	public String toString() {
@@ -44,11 +40,13 @@ public class TrainSchedule
 	
 	public class Stop {
 		public int minute;		// Minute the train will arrive (rounded down)
+		public int block;		// The block the station is located on
 		public String station;	// The station to stop at
 		public int dwellTime; 	// Dwell time in seconds
 		
-		public Stop(int minute, String station, int dwellTime) {
+		public Stop(int minute, int block, String station, int dwellTime) {
 			this.minute = minute;
+			this.block = block;
 			this.station = station;
 			this.dwellTime = dwellTime;
 		}

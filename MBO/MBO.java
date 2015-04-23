@@ -7,6 +7,9 @@ import TrackModel.*;
 import TrainModel.*;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.io.FileReader;
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.File;
 import java.io.FileNotFoundException;
 
@@ -29,6 +32,7 @@ public class MBO
 	
 	// Map Train ID to train attributes
 	protected ArrayList<Antenna> reggies;
+	private ArrayList<StationInfo> stations;
 	private HashMap<Integer, TrainSchedule> trainSchedules;
 	private HashMap<Integer, CrewSchedule> crewSchedules;	
 	protected HashMap<Integer, Double> currentVelocities;
@@ -44,13 +48,13 @@ public class MBO
 		this.actualThroughput = -1;
 		
 		reggies = new ArrayList<Antenna>();		
-		trainSchedules = new HashMap<Integer, TrainSchedule>();
-		crewSchedules = new HashMap<Integer, CrewSchedule>();
-		currentVelocities = new HashMap<Integer, Double>();
-		currentAuthorities = new HashMap<Integer, Double>();
-		currentLocations = new HashMap<Integer, Block>();
-		movingBlockAuthorities = new HashMap<Integer, Double>();
-		safeVelocities = new HashMap<Integer, Double>();
+		trainSchedules = new HashMap<>();
+		crewSchedules = new HashMap<>();
+		currentVelocities = new HashMap<>();
+		currentAuthorities = new HashMap<>();
+		currentLocations = new HashMap<>();
+		movingBlockAuthorities = new HashMap<>();
+		safeVelocities = new HashMap<>();
 		
 		this.ui = new MBOUI(this);
 	}
@@ -169,6 +173,39 @@ public class MBO
 	/// If either of the above are not set, fails to create schedule
 	/// Typically called at the beginning of the day (when system is started)
 	public void createTrainSchedule(int throughput)	{
+		TrainSchedule trainSchedule = new TrainSchedule();
+		if(throughput == 0 || trackModel == null) {
+			System.out.println("Throughput and track model required.");
+			return;
+		}
+		
+		int iThroughput = 0, i = 0;
+		int lengthBtwStations = 0;
+		int roundedMinute = 0, scheduleEnd = 0;
+		double suggestedVelocity = 18.0; 	// 18 m/s, or ~40 mph
+		double secsElapsed = 0.0;
+		int currentBlock = -1;
+		int currentStationID = 0;
+		StationInfo currentStation = stations.get(0);
+		while(scheduleEnd < 58) {
+			if(currentBlock == -1) {
+				currentBlock = 77;
+				currentStation = stations.get(0);
+			}
+			else {
+				currentStationID++;
+				currentStation = stations.get(currentStationID);
+			}
+			
+			TrainRoute route = ctc.calcRoute(currentBlock, currentStation.block, false, 420);	
+			double routeLength = ctc.routeLength(route)[0];
+			secsElapsed += this.travelTimeBetweenStations((int) routeLength, suggestedVelocity);
+			secsElapsed += currentStation.dwellTime;
+			roundedMinute = (int) Math.round(secsElapsed / 60.0);
+			currentBlock = currentStation.block;
+			trainSchedule.addStop(roundedMinute, currentBlock, currentStation.stationName, currentStation.dwellTime);
+		}
+		
 		/*TrainSchedule trainSchedule = new TrainSchedule();
 		if(throughput == 0 || trackModel == null ) {
 			System.out.println("Throughput and track model required.");
@@ -254,6 +291,21 @@ public class MBO
 	
 	public void loadTrainSchedule(String filePath) {
 		File file = new File(filePath);
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(file));
+			this.stations = new ArrayList<>();
+			String line;
+			while((line = reader.readLine()) != null) {
+				String[] stuff = line.split(",");
+				int block = Integer.parseInt(stuff[0]);
+				String stationName = stuff[1];
+				int dwellTime = Integer.parseInt(stuff[1]);
+				stations.add(new StationInfo(block, stationName, dwellTime));
+			}
+			reader.close();
+		} catch(IOException e) {
+			System.out.println("Uh oh, ioexception brah");
+		}
 	}
 	
 	/// Creates a crew schedule for a train
@@ -279,5 +331,17 @@ public class MBO
 	
 	public static void main(String args[]) throws InterruptedException {
 		//MBOUI ui = new MBOUI();
+	}
+	
+	public class StationInfo {
+		public int block;
+		public String stationName;
+		public int dwellTime;
+		
+		public StationInfo(int block, String stationName, int dwellTime) {
+			this.block = block;
+			this.stationName = stationName;
+			this.dwellTime = dwellTime;
+		}
 	}
 }
