@@ -8,51 +8,64 @@ public class TrainController {
 	private final double	MPS_TO_MPH = 2.23694;		//Conversion ratio for meters per second to miles per hour
 	
 	//TRAIN INFO
-	private int			ID;
+	private	int			ID;
 	private	int			mode;							//0 for automatic, 1 for manual
 	
 	//POWER CONTROL
-	public boolean		brakeStatus;
-	public boolean		eBrakeStatus;
 	private	double		setpointVelocity;
 	private	double		velocityFeedback;
-	private double		targetVelocity;
-	private double		remainingAuthority;
-	private double		stopDistance;
-	private boolean		manualBrake;
-	private boolean		manualEBrake;
+	private	double		targetVelocity;
+	private	double		remainingAuthority;
+	
+	//BRAKING
+	public	boolean		brakeStatus;					//true = on
+	public	boolean		eBrakeStatus;					//true = on
+	private	boolean		manualBrake;					//true = manual braking
+	private	boolean		manualEBrake;					//true = manual e-braking
 	
 	//SUBSYSTEMS
-	public boolean		lightStatus;
-	public boolean		leftDoorStatus;
-	public boolean		rightDoorStatus;
-	public boolean		heatStatus;
-	public	boolean		acStatus;
+	public	boolean		lightStatus;					//true = on
+	public	boolean		leftDoorStatus;					//true = open
+	public	boolean		rightDoorStatus;				//true = open
+	public	boolean		heatStatus;						//true = on
+	public	boolean		acStatus;						//true = open
 	
 	//STATION INFO
-	private boolean		approachingStation;
-	private String		stationName;
-	private String		stationSide;
+	private	boolean		approachingStation;				//A signal has been received from the beacon
+	private	boolean		atStation;						//The train is stopped at a station with no authority
+	private	String		stationName;
+	private	String		stationSide;					//"left" or "right"
+	private	double		distanceFromStation;
 	
-	//OTHER CLASSES
-	private TrainModel			model;
-	private TrainControllerUI	ui;
-	private VitalControl		vc;	
+	//ASSOCIATED CLASSES
+	private	TrainModel			model;
+	private	TrainControllerUI	ui;
+	private	VitalControl		vc;	
+	
+
 	
 	public TrainController(int newID, TrainModel newTrainModel, TrainControllerUI newUI) {
 		ID = newID;
+		
 		model = newTrainModel;
 		model.setTrainController(this);
 		ui = newUI;
 		vc = new VitalControl(this);
 		mode = 1;
+		
 		setpointVelocity = 0.0;
 		velocityFeedback = 0.0;
 		remainingAuthority = 0.0;
+		targetVelocity = 0.0;
+		
 		brakeStatus = false;
 		eBrakeStatus = false;
+		
 		leftDoorStatus = false;
 		rightDoorStatus = false;
+		
+		atStation = false;
+		approachingStation = false;
 	}
 	
 	public int getID() {
@@ -71,14 +84,21 @@ public class TrainController {
 		return remainingAuthority;
 	}
 	
+	//Switch between auto and manual modes
 	public void setMode(int newMode) {
 		mode = newMode;
+		return;
 	}
 	
+	//Get a new setpoint velocity, use it as the target velocity in auto mode
 	public void setSetpointVelocity(double newSetpointVelocity) {
 		setpointVelocity = newSetpointVelocity;
 		if(mode == 1) {
 			setTargetVelocity(setpointVelocity);
+		}
+		
+		if(setpointVelocity == 0.0) {
+			stopTrain(false);
 		}
 		return;
 	}
@@ -94,43 +114,78 @@ public class TrainController {
 		return;
 	}
 	
-	public void setStationInfo(String newStationName, String newStationSide) {
-		stationName = newStationName;
-		stationSide = newStationSide;
-		approachingStation = true;
+	//Get station info from the beacon and activate station approach mode
+	public void setStationInfo(String newStationName, String newStationSide, double newDistanceFromStation) {
+		if(!approachingStation) {
+			approachingStation = true;
+			stationName = newStationName;
+			stationSide = newStationSide;
+			distanceFromStation = newDistanceFromStation;
+		}
 		return;
 	}
 	
+	
+	
+	//===================
+	//POWER & AUTHORITY
+	//===================
+	
 	//Determine how much authority the train has left, and whether or not it should stop
 	private void checkRemainingAuthority() {
-		remainingAuthority = remainingAuthority - model.getTickDistance();
+		double tickDistance = model.getTickDistance();
+		double currentVelocity = model.getVelocity();
+		double stopDistance = model.antenna.getStopDistance();
+		
+		remainingAuthority = remainingAuthority - tickDistance;
 		
 		if(remainingAuthority < 0) {
 			remainingAuthority = 0;
 		}
-		stopDistance = model.antenna.getStopDistance();
-		if((remainingAuthority - model.getTickDistance()) <= stopDistance && model.getVelocity() != 0 && brakeStatus != true && eBrakeStatus != true ) {
+		
+		if((remainingAuthority - tickDistance) <= stopDistance && currentVelocity != 0 && brakeStatus != true && eBrakeStatus != true ) {
 			stopTrain(false);
 		}
-		else if ((brakeStatus || eBrakeStatus) && model.getVelocity() == 0 && remainingAuthority != 0) {
+		else if ((brakeStatus || eBrakeStatus) && currentVelocity == 0 && remainingAuthority != 0 && targetVelocity > 0) {
 			releaseServiceBrakes(false);
 			releaseEmergencyBrakes(false);
 		}
+		
+		if(approachingStation) {
+			distanceFromStation = distanceFromStation - tickDistance;
+			if(distanceFromStation < 0.0) {
+				distanceFromStation = 0.0;
+			}
+			
+			//If the train stopped at a station with no remaining authority
+			if(distanceFromStation == 0.0 && remainingAuthority == 0.0 && currentVelocity == 0.0) {
+				atStation = true;
+				approachingStation = false;
+			}
+		}
+		
 		return;
 	}
 	
+	//Call for vital power control only if the brakes aren't set and the train has authority
 	private void controlPower() {
 		if(!brakeStatus && !eBrakeStatus && remainingAuthority != 0) {
 			vc.vitalPower(model.getVelocity(), model.getVelocity(), model.getVelocity());
 		}
 	}
 	
+	//Send the model its power command
 	public void sendPower(double power) {
 		model.setPower(power);
 		return;
 	}
 	
-	//BRAKING METHODS
+	
+	
+	//===================
+	//		BRAKING
+	//===================
+	
 	public void stopTrain(boolean manual) {
 		if(manual) {
 			manualBrake = true;
@@ -183,15 +238,20 @@ public class TrainController {
 		return;
 	}
 	
+	
+	
+	//===================
 	//SUBSYSTEM CONTROL
+	//===================
 	
 	public void controlSubsystems(long currentTime, long currentTemp) {
-		if(model.atStation) {
-			if(remainingAuthority == 0.0 && !checkDoors() && model.getVelocity() == 0.0) {
+		if(atStation) {
+			if(!checkDoors()) {
 				controlDoors(false, true, stationSide);
 			}
 			else if(remainingAuthority != 0.0 && checkDoors()) {
 				controlDoors(false, false, stationSide);
+				atStation = false;
 			}
 		}
 		
@@ -203,6 +263,7 @@ public class TrainController {
 			controlLights(false);
 		}
 	}
+	
 	public void controlDoors(boolean manual, boolean open, String side) {
 		//Opening doors
 		if(open) {
@@ -242,8 +303,13 @@ public class TrainController {
 		return leftDoorStatus || rightDoorStatus;
 	}
 	
+	
+	
+	//===================
+	//PATRICK WARBURTON
+	//===================
+	
 	public void tick(long currentTime, int currentTemp) {		
-		//checkFailures();
 		checkRemainingAuthority();
 		controlPower();
 		controlSubsystems(currentTime, currentTemp);

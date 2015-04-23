@@ -419,8 +419,8 @@ public class TrainControllerUI {
 		setpointVelocityField.setText(formatter.format(newSetpointVelocity));
 	}
 	
-	private void updateVelocityFeedback(double newSetpointVelocity) {
-		velocityFeedbackField.setText(formatter.format(newSetpointVelocity));
+	private void updateVelocityFeedback(double newVelocityFeedback) {
+		velocityFeedbackField.setText(formatter.format(newVelocityFeedback));
 	}
 	
 	private void updateAuthority(double newAuthority) {
