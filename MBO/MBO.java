@@ -125,9 +125,9 @@ public class MBO
 					if(block.getBlockID() < otherTrainBlock.getBlockID()) {
 						TrainRoute route = ctc.calcRoute(block.getBlockID(), otherTrainBlock.getBlockID(), true, prevBlock);
 						double routeLength =  ctc.routeLength(route)[0];
-						if(routeLength < movingBlockAuthorities.get(trainID)) {
+						/*if(routeLength != 0.0 && movingBlockAuthorities != null && routeLength < movingBlockAuthorities.get(trainID)) {
 							movingBlockAuthorities.put(trainID, routeLength);
-						}
+						}*/
 					}
 				}
 			}
