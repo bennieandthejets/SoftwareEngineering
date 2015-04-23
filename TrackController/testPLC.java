@@ -100,7 +100,10 @@ public class testPLC implements PLC{
 				HashMap<String,Integer> switchInfo = new HashMap<String,Integer>();
 				switchInfo.put("switchOn", route[routeStep-1]);
 				switchInfo.put("switchBlock", route[routeStep]);
-				switchInfo.put("afterSwitch", route[routeStep+1]);
+				if (routeStep + 1 != route.length) 
+					switchInfo.put("afterSwitch", route[routeStep+1]);
+				else
+					switchInfo.put("afterSwitch", -1);
 				return switchInfo;
 			}
 			/*if (switches.contains(route[routeStep]) && posFound && (route[routeStep] == train.position)) {
