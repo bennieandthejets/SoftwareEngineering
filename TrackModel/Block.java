@@ -1,5 +1,7 @@
 package TrackModel;
 
+import TrainModel.TrainModel;
+
 public class Block {
 	
 	int blockID;
@@ -30,6 +32,7 @@ public class Block {
 	public int mapCol;
 	int toYardBlock;
 	int fromYardBlock;
+	int trainID;
 	
 	public Block(int blockID)
 	{
@@ -63,6 +66,10 @@ public class Block {
 	public boolean isTrainPresent()
 	{
 		return trainPresent;
+	}
+	public int getTrainID()
+	{
+		return trainID;
 	}
 	public boolean isRrCrossing()
 	{

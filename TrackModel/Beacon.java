@@ -1,10 +1,13 @@
 package TrackModel;
 
 import Simulator.Simulator;
+import TrainModel.Antenna;
+import TrainModel.TrainModel;
 
 public class Beacon {
 
 	int blockID;
+	int trainID;
 	boolean trainNear;
 	Block[] blocks;
 	String station;
@@ -67,54 +70,70 @@ public class Beacon {
 		return trainNear;
 	}
 	
+	public void tellAntenna()
+	{
+		if(trainNear)
+		{
+			Antenna antenna = s.trainModelWrapper.getTrain(trainID).antenna;
+			antenna.trainNear(trainNear, trainID, station, side);
+		}
+	}
+	
 	public void searchForTrain()
 	{
 		//searches for train from three blocks away
-		//TODO search based on distance rather than blocks
 		if(blocks[blockID+3].trainPresent)
 		{
+			trainID = blocks[blockID+3].trainID;
 			trainNear = true;
 			fromNorth = false;
 			fromSouth = true;
 		}
 		else if(blocks[blockID+2].trainPresent)
 		{
+			trainID = blocks[blockID+2].trainID;
 			trainNear = true;
 			fromNorth = false;
 			fromSouth = true;
 		}
 		else if(blocks[blockID+1].trainPresent)
 		{
+			trainID = blocks[blockID+1].trainID;
 			trainNear = true;
 			fromNorth = false;
 			fromSouth = true;
 		}
 		else if(blocks[blockID].trainPresent)
 		{
+			trainID = blocks[blockID].trainID;
 			trainNear = true;
 			fromNorth = false;
 			fromSouth = false;
 		}
 		else if(blocks[blockID-1].trainPresent)
 		{
+			trainID = blocks[blockID-1].trainID;
 			trainNear = true;
 			fromNorth = true;
 			fromSouth = false;
 		}
 		else if(blocks[blockID-2].trainPresent)
 		{
+			trainID = blocks[blockID-2].trainID;
 			trainNear = true;
 			fromNorth = true;
 			fromSouth = false;
 		}
 		else if(blocks[blockID-3].trainPresent)
 		{
+			trainID = blocks[blockID-3].trainID;
 			trainNear = true;
 			fromNorth = true;
 			fromSouth = false;
 		}
 		else
 		{
+			trainID = -1;
 			trainNear = false;
 			fromNorth = false;
 			fromSouth = false;

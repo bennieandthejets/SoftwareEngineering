@@ -87,7 +87,7 @@ public class TrackModel {
 		TrainModel trainM = s.trainModelWrapper.getTrain(trainID);
 		totalTrainDist.put(trainID, trainM.getDistanceTraveled());
 	}
-
+	
 	public void findTrain(int trainID) {
 		/*
 		 * System.out.println("TOTAL DIST = " + totalTrainDist.get(trainID));
@@ -114,6 +114,7 @@ public class TrackModel {
 		else if (totalTrainDist.get(trainID) > totalBlockDist.get(trainID)
 				&& travelRoute.size() > 0) {
 			blocks[trainOnBlock.get(trainID)].trainPresent = false;
+			blocks[trainOnBlock.get(trainID)].trainID = -1;
 			travelRoute.add(trainOnBlock.get(trainID));
 
 			t.trainOffBlock(blocks[trainOnBlock.get(trainID)].mapRow,
@@ -187,6 +188,7 @@ public class TrackModel {
 			}
 
 			blocks[trainOnBlock.get(trainID)].trainPresent = true;
+			blocks[trainOnBlock.get(trainID)].trainID = trainID;
 			t.trainOnBlock(blocks[trainOnBlock.get(trainID)].mapRow,
 					blocks[trainOnBlock.get(trainID)].mapCol);
 		}
