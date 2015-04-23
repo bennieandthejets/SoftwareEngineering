@@ -424,8 +424,13 @@ public class TrainModelUI{ //implements ActionListener{
 		txtLights.setText(lights);
 	}
 	
-	public void setDoors(String doors){
-		txtDoors.setText(doors);
+	public void setDoors(boolean left, boolean right){
+		if(left)
+			txtDoors.setText("Left Open");
+		else if(right)
+			txtDoors.setText("Right Open");
+		else
+			txtDoors.setText("Closed");
 	}
 	
 	public void setNextStation(String nextStation){
