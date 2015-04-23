@@ -32,7 +32,6 @@ public class TrainModelUI{ //implements ActionListener{
 	private JTextField txtLights;
 	private JTextField txtDoors;
 	private JTextField txtNextStation;
-	private JTextField txtArrival;
 	private JTextField txtCurrBlock;
 	private JTextField txtCurrTrain;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
@@ -222,11 +221,6 @@ public class TrainModelUI{ //implements ActionListener{
 		lblNextStation.setBounds(189, 189, 87, 14);
 		frame.getContentPane().add(lblNextStation);
 		
-		JLabel lblArrivalTime = new JLabel("Arrival Time");
-		lblArrivalTime.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		lblArrivalTime.setBounds(189, 214, 67, 14);
-		frame.getContentPane().add(lblArrivalTime);
-		
 		txtAccel = new JTextField();
 		txtAccel.setHorizontalAlignment(SwingConstants.CENTER);
 		txtAccel.setEditable(false);
@@ -276,23 +270,16 @@ public class TrainModelUI{ //implements ActionListener{
 		txtNextStation.setBounds(293, 186, 100, 20);
 		frame.getContentPane().add(txtNextStation);
 		
-		txtArrival = new JTextField();
-		txtArrival.setHorizontalAlignment(SwingConstants.CENTER);
-		txtArrival.setEditable(false);
-		txtArrival.setColumns(10);
-		txtArrival.setBounds(293, 212, 100, 20);
-		frame.getContentPane().add(txtArrival);
-		
 		txtCurrBlock = new JTextField();
 		txtCurrBlock.setHorizontalAlignment(SwingConstants.CENTER);
 		txtCurrBlock.setEditable(false);
 		txtCurrBlock.setColumns(10);
-		txtCurrBlock.setBounds(293, 238, 100, 20);
+		txtCurrBlock.setBounds(293, 212, 100, 20);
 		frame.getContentPane().add(txtCurrBlock);
 		
 		JLabel lblNewLabel_3 = new JLabel("Current Block");
 		lblNewLabel_3.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		lblNewLabel_3.setBounds(189, 241, 87, 14);
+		lblNewLabel_3.setBounds(190, 214, 87, 14);
 		frame.getContentPane().add(lblNewLabel_3);
 		
 		JSeparator separator_3 = new JSeparator();
@@ -328,13 +315,13 @@ public class TrainModelUI{ //implements ActionListener{
 		JLabel lblNewLabel_4 = new JLabel("  Current Train");
 		lblNewLabel_4.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel_4.setFont(new Font("Tahoma", Font.BOLD, 12));
-		lblNewLabel_4.setBounds(220, 274, 130, 14);
+		lblNewLabel_4.setBounds(119, 277, 130, 14);
 		frame.getContentPane().add(lblNewLabel_4);
 		
 		txtCurrTrain = new JTextField();
 		txtCurrTrain.setHorizontalAlignment(SwingConstants.CENTER);
 		txtCurrTrain.setEditable(false);
-		txtCurrTrain.setBounds(240, 293, 100, 20);
+		txtCurrTrain.setBounds(140, 293, 100, 20);
 		frame.getContentPane().add(txtCurrTrain);
 		txtCurrTrain.setColumns(10);
 		
@@ -353,22 +340,17 @@ public class TrainModelUI{ //implements ActionListener{
 		chckbxBrakeFailure.setBounds(419, 103, 109, 23);
 		frame.getContentPane().add(chckbxBrakeFailure);
 		
-		JLabel lbleverythingCurrentlyIn = new JLabel("* UI under construction");
-		lbleverythingCurrentlyIn.setFont(new Font("Tahoma", Font.ITALIC, 11));
-		lbleverythingCurrentlyIn.setBounds(10, 282, 150, 14);
-		frame.getContentPane().add(lbleverythingCurrentlyIn);
-		
 		JLabel lblDistanceTraveled = new JLabel("Distance Traveled");
 		lblDistanceTraveled.setHorizontalAlignment(SwingConstants.CENTER);
 		lblDistanceTraveled.setFont(new Font("Tahoma", Font.BOLD, 12));
-		lblDistanceTraveled.setBounds(398, 275, 130, 14);
+		lblDistanceTraveled.setBounds(339, 277, 130, 14);
 		frame.getContentPane().add(lblDistanceTraveled);
 		
 		txtDistance = new JTextField();
 		txtDistance.setHorizontalAlignment(SwingConstants.CENTER);
 		txtDistance.setEditable(false);
 		txtDistance.setColumns(10);
-		txtDistance.setBounds(423, 293, 90, 20);
+		txtDistance.setBounds(360, 293, 90, 20);
 		frame.getContentPane().add(txtDistance);
 	}
 	public void addTrain(int trainID) {
@@ -416,12 +398,20 @@ public class TrainModelUI{ //implements ActionListener{
 		txtPower.setText(power);
 	}
 	
-	public void setBrakes(String brakes){
-		txtBrakes.setText(brakes);
+	public void setBrakes(boolean brakes, boolean eBrakes){
+		if(brakes)
+			txtBrakes.setText("Active");
+		else if(eBrakes)
+			txtBrakes.setText("E-Brakes");
+		else
+			txtBrakes.setText("Inactive");
 	}
 	
-	public void setLights(String lights){
-		txtLights.setText(lights);
+	public void setLights(boolean lights){
+		if(lights)
+			txtLights.setText("On");
+		else
+			txtLights.setText("Off");
 	}
 	
 	public void setDoors(boolean left, boolean right){
@@ -435,10 +425,6 @@ public class TrainModelUI{ //implements ActionListener{
 	
 	public void setNextStation(String nextStation){
 		txtNextStation.setText(nextStation);
-	}
-	
-	public void setArrival(int arrivalTime){
-		txtArrival.setText(new Integer(arrivalTime).toString()+" mins");
 	}
 	
 	public void setCurrBlock(int currblock){

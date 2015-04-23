@@ -68,7 +68,7 @@ public class TrainModel{
 	private Block nextBlock;
 	private double blockLocation;
 	public boolean atStation;
-	private String stationName;
+	private String stationName = "";
 	
 	//MBO stuff
 	private int safeAuthority;
@@ -334,11 +334,11 @@ public class TrainModel{
 		return this.blockLocation;
 	}
 	
-	public void setBlock(Block bigDickBlock){
+	public void setBlock(Block currBlock){
 		if(this.currentBlock != null) {
 			this.blockLocation -= this.currentBlock.getBlockSize();
 		}
-		this.currentBlock = bigDickBlock;
+		this.currentBlock = currBlock;
 	}
 	
 	public void setPower(double power){
@@ -418,12 +418,11 @@ public class TrainModel{
 		ui.setVelocity(SigFig.format(trainVelocity*METRIC_VEL_CONV*KM_TO_MI));
 		ui.setDistTrav(SigFig.format(distanceTraveled*KM_TO_MI/1000)+" mi");
 		ui.setPower(SigFig.format(trainPower));
-		//ui.setBrakes(brake);
-		//ui.setLights(lightStatus);
+		ui.setBrakes(brake,eBrake);
+		ui.setLights(lightStatus);
 		ui.setDoors(leftDoorStatus,rightDoorStatus);
-		//ui.setNextStation(NextStation);
-		//ui.setArrival(Arrival);
-		//ui.setCurrBlock(CurrentBlock);
+		ui.setNextStation(stationName);
+		ui.setCurrBlock(currentBlock.getBlockID());
 		ui.setCurrTrain(trainID);
 	}
 	
