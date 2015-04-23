@@ -672,11 +672,11 @@ public class CTC {
 		int increment;
 		
 		if(blocks[block].getSwitchRoot() == block - 1 || getTouch(block, block - 1) == -1){ 
-			block++;
+			//block++;
 			increment = 1;
 		} 
 		else {
-			block--;
+			//block--;
 			increment = -1;
 		}
 		

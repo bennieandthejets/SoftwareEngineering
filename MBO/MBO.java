@@ -179,32 +179,41 @@ public class MBO
 			return;
 		}
 		
+		this.throughput = throughput;
 		int iThroughput = 0, i = 0;
 		int lengthBtwStations = 0;
 		int roundedMinute = 0, scheduleEnd = 0;
-		double suggestedVelocity = 18.0; 	// 18 m/s, or ~40 mph
+		double suggestedVelocity = 11.1111111; 	// m/s, or 40 km/hr
 		double secsElapsed = 0.0;
 		int currentBlock = -1;
 		int currentStationID = 0;
 		StationInfo currentStation = stations.get(0);
-		while(scheduleEnd < 58) {
+		int increment = 1;
+		while(iThroughput < throughput) {
 			if(currentBlock == -1) {
 				currentBlock = 77;
 				currentStation = stations.get(0);
 			}
 			else {
-				currentStationID++;
+				currentStationID += increment;
 				currentStation = stations.get(currentStationID);
+				if(currentStationID == 7) {
+					increment = -1;
+				} else if(currentStationID == 0) {
+					increment = 1;
+				}
 			}
 			
-			TrainRoute route = ctc.calcRoute(currentBlock, currentStation.block, false, 420);	
+			TrainRoute route = ctc.calcRoute(currentBlock, currentStation.block, true, 420);	
 			double routeLength = ctc.routeLength(route)[0];
 			secsElapsed += this.travelTimeBetweenStations((int) routeLength, suggestedVelocity);
 			secsElapsed += currentStation.dwellTime;
 			roundedMinute = (int) Math.round(secsElapsed / 60.0);
 			currentBlock = currentStation.block;
+			iThroughput++;
 			trainSchedule.addStop(roundedMinute, currentBlock, currentStation.stationName, currentStation.dwellTime);
 		}
+		System.out.println(trainSchedule);
 		
 		/*TrainSchedule trainSchedule = new TrainSchedule();
 		if(throughput == 0 || trackModel == null ) {
@@ -299,10 +308,11 @@ public class MBO
 				String[] stuff = line.split(",");
 				int block = Integer.parseInt(stuff[0]);
 				String stationName = stuff[1];
-				int dwellTime = Integer.parseInt(stuff[1]);
+				int dwellTime = Integer.parseInt(stuff[2]);
 				stations.add(new StationInfo(block, stationName, dwellTime));
 			}
 			reader.close();
+			createTrainSchedule(20);
 		} catch(IOException e) {
 			System.out.println("Uh oh, ioexception brah");
 		}
