@@ -14,6 +14,7 @@ public class Block {
 	Switch sw;
 	Beacon beacon;
 	boolean rrCrossing;
+	boolean rrCrossingStatus;
 	boolean underground;
 	String station;
 	int trackTemp;
@@ -37,8 +38,17 @@ public class Block {
 	public Block(int blockID)
 	{
 		this.blockID = blockID;
+		rrCrossingStatus = false;
 	}
 	
+	public boolean getRRStatus()
+	{
+		return rrCrossingStatus;
+	}
+	public void setRRStatus(boolean s)
+	{
+		rrCrossingStatus = s;
+	}
 	public int getSwitchRoot()
 	{
 		return switchRoot;
