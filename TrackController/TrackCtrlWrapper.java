@@ -64,6 +64,10 @@ public class TrackCtrlWrapper {
 		return map;
 	}
 	
+	public void closeBlock(int blockindex) {
+		myModel.breakTrack(blockindex);
+	}
+	
 	public void tick() {
 		getBlocks();
 		

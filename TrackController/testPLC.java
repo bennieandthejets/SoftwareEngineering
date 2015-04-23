@@ -250,14 +250,32 @@ public class testPLC implements PLC{
 				int pos  = train.position;
 				//boolean new = train.suggestedRoute[routeStep+1];
 				//boolean check = map[train.routeStep+2].isTrainPresent();
-				trackmodel.setAuthority(0, train.position);
+				trackmodel.setSpeed(0, train.position);
+				train.speed = 0;
+				train.authstop = true; 
+			}
+			else if ((train.routeStep < train.suggestedRoute.length - 2 && map[train.suggestedRoute[train.routeStep+2]].isTrainPresent()) || (train.routeStep < train.suggestedRoute.length - 3 && map[train.suggestedRoute[train.routeStep+3]].isTrainPresent())) {
+				int rs = train.routeStep;
+				int pos  = train.position;
+				//boolean new = train.suggestedRoute[routeStep+1];
+				//boolean check = map[train.routeStep+2].isTrainPresent();
+				trackmodel.setSpeed(0, train.position);
+				train.speed = 0;
+				train.authstop = true; 
+			}
+			else if ((train.routeStep < train.suggestedRoute.length - 3 && map[train.suggestedRoute[train.routeStep+3]].isTrainPresent())) {
+				int rs = train.routeStep;
+				int pos  = train.position;
+				//boolean new = train.suggestedRoute[routeStep+1];
+				//boolean check = map[train.routeStep+2].isTrainPresent();
+				trackmodel.setSpeed(0, train.position);
 				train.speed = 0;
 				train.authstop = true; 
 			}
 			else if (train.authstop) {
 				train.authstop = false;
 				train.speed = train.sugSpeed;
-				trackmodel.setAuthority(train.speed, train.position);
+				trackmodel.setSpeed(train.speed, train.position);
 			}
 			
 		}
