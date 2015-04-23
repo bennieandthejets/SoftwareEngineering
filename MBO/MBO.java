@@ -137,7 +137,7 @@ public class MBO
 	/// In moving block mode, set the velocity setpoints for all trains
 	/// Called on every tick (second)
 	public void calculateSafeSetpoint(int trainID) {
-		safeVelocities.put(trainID, 0.0);
+		safeVelocities.put(trainID, currentVelocities.get(trainID));
 	}
 	
 	/// In moving block mode, calculate the stop distances for all trains
@@ -158,7 +158,6 @@ public class MBO
 	public double travelTimeBetweenStations(int distanceToTravel, double suggestedVelocity) {
 		double secElapsed = 0;
 		double distanceToGo = distanceToTravel;
-		double stopDistance = 0.0;
 		
 		double tryVelocity = suggestedVelocity / 2.0, tryDist = 0.0, tryStopDist = 0.0;
 		while(tryVelocity <= suggestedVelocity) {
@@ -237,7 +236,7 @@ public class MBO
 		
 		while(roundedMinute != 60) {
 			roundedMinute = 0;
-			int iThroughput = 0, i = 0;
+			int iThroughput = 0;
 			double secsElapsed = 0.0;
 			int currentBlock = -1, currentStationID = 0;
 			StationInfo currentStation = stations.get(0);
