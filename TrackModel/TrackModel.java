@@ -115,8 +115,7 @@ public class TrackModel {
 				&& travelRoute.size() > 0) {
 			blocks[trainOnBlock.get(trainID)].trainPresent = false;
 			blocks[trainOnBlock.get(trainID)].trainID = -1;
-			if(trainOnBlock.get(trainID) != travelRoute.get(travelRoute.size()-1))
-				travelRoute.add(trainOnBlock.get(trainID));
+			travelRoute.add(trainOnBlock.get(trainID));
 
 			t.trainOffBlock(blocks[trainOnBlock.get(trainID)].mapRow,
 					blocks[trainOnBlock.get(trainID)].mapCol);
@@ -183,8 +182,6 @@ public class TrackModel {
 			s.trainModelWrapper.getTrain(trainID).setBlock(blocks[trainOnBlock.get(trainID)]);
 		}
 
-		System.out.println("TRAIN ON BLOCK " + trainOnBlock.get(trainID));
-		System.out.println("TRAIN ROUTE " + allRoutes.get(trainID));
 		allRoutes.put(trainID, travelRoute);
 
 	}

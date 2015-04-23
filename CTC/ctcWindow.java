@@ -71,7 +71,7 @@ public class ctcWindow {
 	private Color train = Color.green;
 	private Color broken = Color.red;
 	private Color switchh = Color.cyan;
-	private Color both = Color.blue;
+	private Color both = Color.yellow;
 	
 	public JFrame frmCtc;
 	public JTable tblAnnouncements;
@@ -249,10 +249,16 @@ public class ctcWindow {
 		//trainlabel.setToolTipText("ohhhhh" + b);
 		//trainlabel.setBorder(BorderFactory.createLineBorder(Color.red,2));
 		pnl.add(trainlabel);
-		if(bl.getStation() == null){
-			pnl.setToolTipText("Block " + b);
-		} else {
+		if(bl.getStation() != null){
 			pnl.setToolTipText("Block " + b + ", " + bl.getStation());
+		} else if(bl.isToYard() && bl.isFromYard()){
+			pnl.setToolTipText("Block " + b + ", To/From Yard");
+		} else if(bl.isToYard()){
+			pnl.setToolTipText("Block " + b + ", To Yard");
+		} else if(bl.isFromYard()){
+			pnl.setToolTipText("Block " + b + ", From Yard");
+		} else {
+			pnl.setToolTipText("Block " + b);
 		}
 		
 		
