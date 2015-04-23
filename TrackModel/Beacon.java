@@ -15,6 +15,7 @@ public class Beacon {
 	Simulator s;
 	boolean fromNorth;
 	boolean fromSouth;
+	double distFromStation;
 		
 	public Beacon(int blockID, TrackModel t, Simulator s)
 	{
@@ -70,12 +71,17 @@ public class Beacon {
 		return trainNear;
 	}
 	
+	public double getDistFromStation()
+	{
+		return distFromStation;
+	}
+	
 	public void tellAntenna()
 	{
 		if(trainNear)
 		{
 			Antenna antenna = s.trainModelWrapper.getTrain(trainID).antenna;
-			antenna.trainNear(trainNear, trainID, station, side);
+			antenna.trainNear(trainNear, trainID, station, side, distFromStation);
 		}
 	}
 	
@@ -85,6 +91,7 @@ public class Beacon {
 		if(blocks[blockID+3].trainPresent)
 		{
 			trainID = blocks[blockID+3].trainID;
+			distFromStation = (double) blocks[blockID+3].blockSize + blocks[blockID+2].blockSize + blocks[blockID+1].blockSize;
 			trainNear = true;
 			fromNorth = false;
 			fromSouth = true;
@@ -92,6 +99,7 @@ public class Beacon {
 		else if(blocks[blockID+2].trainPresent)
 		{
 			trainID = blocks[blockID+2].trainID;
+			distFromStation = (double) blocks[blockID+2].blockSize + blocks[blockID+1].blockSize;
 			trainNear = true;
 			fromNorth = false;
 			fromSouth = true;
@@ -99,6 +107,7 @@ public class Beacon {
 		else if(blocks[blockID+1].trainPresent)
 		{
 			trainID = blocks[blockID+1].trainID;
+			distFromStation = (double) blocks[blockID+1].blockSize;
 			trainNear = true;
 			fromNorth = false;
 			fromSouth = true;
@@ -106,6 +115,7 @@ public class Beacon {
 		else if(blocks[blockID].trainPresent)
 		{
 			trainID = blocks[blockID].trainID;
+			distFromStation = 0.0;
 			trainNear = true;
 			fromNorth = false;
 			fromSouth = false;
@@ -113,6 +123,7 @@ public class Beacon {
 		else if(blocks[blockID-1].trainPresent)
 		{
 			trainID = blocks[blockID-1].trainID;
+			distFromStation = (double) blocks[blockID-1].blockSize;
 			trainNear = true;
 			fromNorth = true;
 			fromSouth = false;
@@ -120,6 +131,7 @@ public class Beacon {
 		else if(blocks[blockID-2].trainPresent)
 		{
 			trainID = blocks[blockID-2].trainID;
+			distFromStation = (double) blocks[blockID-2].blockSize + blocks[blockID-1].blockSize;
 			trainNear = true;
 			fromNorth = true;
 			fromSouth = false;
@@ -127,12 +139,14 @@ public class Beacon {
 		else if(blocks[blockID-3].trainPresent)
 		{
 			trainID = blocks[blockID-3].trainID;
+			distFromStation = (double) blocks[blockID-3].blockSize + blocks[blockID-2].blockSize + blocks[blockID-1].blockSize;
 			trainNear = true;
 			fromNorth = true;
 			fromSouth = false;
 		}
 		else
 		{
+			distFromStation = -1.0;
 			trainID = -1;
 			trainNear = false;
 			fromNorth = false;
