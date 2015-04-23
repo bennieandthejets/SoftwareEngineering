@@ -87,6 +87,7 @@ public class testPLC implements PLC{
 			//In that case, keep track of the first switch found
 			if (route[routeStep] == train.position) {
 				posFound = true;
+				train.routeStep = routeStep;
 			}
 			if (firstSwitch == -1 && switches.contains(route[routeStep])) {
 				firstSwitch = route[routeStep];
@@ -229,6 +230,37 @@ public class testPLC implements PLC{
 
 		
 		return 0;
+	}
+	
+	public void checkTrainEmergency(Block[] map, HashMap<Integer, Train> trains, TrackModel trackmodel) {
+		Iterator it = trains.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry pair = (Map.Entry) it.next();
+			int key = (Integer) pair.getKey();
+			Train train = (Train) pair.getValue();
+			
+			if (train.suggestedRoute == null) {
+				continue;
+			}
+			if (train.routeStep == train.suggestedRoute.length - 1) {
+				continue;
+			}
+			if ((train.routeStep < train.suggestedRoute.length - 1 && map[train.suggestedRoute[train.routeStep+1]].isTrainPresent()) || (train.routeStep < train.suggestedRoute.length - 2 && map[train.suggestedRoute[train.routeStep+2]].isTrainPresent()) || (train.routeStep < train.suggestedRoute.length - 3 && map[train.suggestedRoute[train.routeStep+3]].isTrainPresent())) {
+				int rs = train.routeStep;
+				int pos  = train.position;
+				//boolean new = train.suggestedRoute[routeStep+1];
+				//boolean check = map[train.routeStep+2].isTrainPresent();
+				trackmodel.setAuthority(0, train.position);
+				train.speed = 0;
+				train.authstop = true; 
+			}
+			else if (train.authstop) {
+				train.authstop = false;
+				train.speed = train.sugSpeed;
+				trackmodel.setAuthority(train.speed, train.position);
+			}
+			
+		}
 	}
 	
 	public void setCrossing(int crossingBlock) {

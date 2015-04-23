@@ -154,12 +154,15 @@ public class TrackCtrlWrapper {
 	}
 	
 	public class Train {
+		int routeStep;
 		int oldposition;
 		int position;
 		int destination;
 		double speed;
 		double sugSpeed;
 		int sugAuthority;
+		int authority;
+		boolean authstop;
 		int[] suggestedRoute;
 		
 		int nextSwitch;
