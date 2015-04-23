@@ -208,9 +208,9 @@ public class TrainModel{
 				
 	}
 	
-	public void setStationInfo(String stationName, String stationSide){
+	public void setStationInfo(String stationName, String stationSide, double distFromStation){
 		this.stationName = stationName;
-		trainController.setStationInfo(stationName,stationSide);
+		trainController.setStationInfo(stationName,stationSide,distFromStation);
 	}
 	
 	public void addPassengers(){

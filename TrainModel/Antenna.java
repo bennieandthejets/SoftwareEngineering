@@ -21,12 +21,12 @@ public class Antenna{
 	}
 	
 	//Beacon Communication
-	public void trainNear(boolean trainNear, int trainID, String stationName, String stationSide){
+	public void trainNear(boolean trainNear, int trainID, String stationName, String stationSide, double distFromStation){
 		this.trainNear = trainNear;
 		this.trainID = trainID;
 		this.stationName = stationName;
 		this.stationSide = stationSide;
-		train.setStationInfo(stationName, stationSide);
+		train.setStationInfo(stationName, stationSide,distFromStation);
 	}
 	
 	public int getTrainID() {
