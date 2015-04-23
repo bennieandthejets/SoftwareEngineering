@@ -29,6 +29,7 @@ public class Beacon {
 	{
 		searchForTrain();
 		findSide();
+		tellAntenna();
 	}
 	
 	public void findSide()
