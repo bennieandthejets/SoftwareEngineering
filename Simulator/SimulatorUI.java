@@ -181,7 +181,7 @@ public class SimulatorUI {
 		sliderSimulationTime = new JSlider();
 		sliderSimulationTime.setValue(1);
 		sliderSimulationTime.setMinimum(1);
-		sliderSimulationTime.setMaximum(10);
+		sliderSimulationTime.setMaximum(50);
 		sliderSimulationTime.setBounds(129, 62, 180, 23);
 		frmBennieAndThe.getContentPane().add(sliderSimulationTime);
 		
