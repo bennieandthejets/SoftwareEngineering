@@ -88,6 +88,11 @@ public class MBO
 	public void setThroughput(int throughput, int hour) {
 		this.throughput = throughput;
 	}
+	
+	public void setActualThroughput(int largeBooties){
+		this.actualThroughput = largeBooties;
+		System.out.println("Thanks Jason. " + largeBooties);
+	}
 		
 	/// In moving block mode, set the authorities for all trains
 	/// Called on every tick (second)
