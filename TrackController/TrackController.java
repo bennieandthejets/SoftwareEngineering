@@ -74,6 +74,7 @@ public class TrackController {
 			if (map[1] != null) {
 				myPLC.addSwitches(map, ui);
 			}
+			myPLC.setRegions(trains);
 			int routeCheck = myPLC.checkRoutes(trains, ui);
 			myPLC.checkTrainEmergency(map, trains, myModel);
 			int speedCheck = myPLC.getSafeSpeed(trains, map, myModel);

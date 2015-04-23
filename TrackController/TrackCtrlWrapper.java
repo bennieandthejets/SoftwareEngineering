@@ -168,16 +168,20 @@ public class TrackCtrlWrapper {
 		int authority;
 		boolean authstop;
 		int[] suggestedRoute;
+		int region;
 		
 		int nextSwitch;
 		int blockBefore;
 		int blockAfter;
+		
+		boolean crossingWait;
 		
 		int id;
 		
 		Train(int pos, int idnum) {
 			position = pos;
 			id = idnum;
+			region = -1;
 			speed = 0;
 		}
 		Train(int pos) {

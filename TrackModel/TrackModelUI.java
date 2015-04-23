@@ -39,6 +39,8 @@ public class TrackModelUI {
 	JLabel lblBlockSize;
 	JLabel lblBlock;
 	JLabel lblSection;
+	JLabel lblBroken;
+	JLabel lblFailed;
 	Block[] blocks;
 	JButton[] trackButtons;
 	private JPanel selBlockPanel;
@@ -189,25 +191,75 @@ public class TrackModelUI {
 			public void mouseReleased(MouseEvent arg0) {
 			}
 		});
-		attributesPanel.setLayout(new GridLayout(17, 1, 0, 0));
+		attributesPanel.setLayout(new GridLayout(19, 1, 0, 0));
 		attributesPanel.add(btnLoadTrack);
 
 		JButton btnBreakTrack = new JButton("Break Track");
 		btnBreakTrack.setBackground(new Color(0, 0, 0));
 		btnBreakTrack.setFont(new Font("Tahoma", Font.BOLD, 13));
 		btnBreakTrack.setForeground(new Color(51, 255, 51));
-		attributesPanel.add(btnBreakTrack);
+		btnBreakTrack.addMouseListener(new MouseListener(){
 
-		JButton btnPowerFailure = new JButton("Power Failure");
-		btnPowerFailure.setBackground(new Color(0, 0, 0));
-		btnPowerFailure.setFont(new Font("Tahoma", Font.BOLD, 13));
-		btnPowerFailure.setForeground(new Color(255, 255, 51));
-		attributesPanel.add(btnPowerFailure);
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				if(blocks != null)
+				{
+					t.breakTrack(Integer.parseInt(choice.getSelectedItem()));
+					resetLabels(blocks[Integer.parseInt(choice.getSelectedItem())]);
+				}
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent arg0) {
+			}
+
+			@Override
+			public void mouseExited(MouseEvent arg0) {
+			}
+
+			@Override
+			public void mousePressed(MouseEvent arg0) {
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+			}
+			
+		});
+		attributesPanel.add(btnBreakTrack);
 
 		JButton btnCircuitFailure = new JButton("Circuit Failure");
 		btnCircuitFailure.setBackground(new Color(0, 0, 0));
 		btnCircuitFailure.setFont(new Font("Tahoma", Font.BOLD, 13));
 		btnCircuitFailure.setForeground(new Color(220, 20, 60));
+		btnCircuitFailure.addMouseListener(new MouseListener(){
+
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				if(blocks != null)
+				{
+					t.circuitFail(Integer.parseInt(choice.getSelectedItem()));
+					resetLabels(blocks[Integer.parseInt(choice.getSelectedItem())]);
+				}
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent arg0) {
+			}
+
+			@Override
+			public void mouseExited(MouseEvent arg0) {
+			}
+
+			@Override
+			public void mousePressed(MouseEvent arg0) {
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+			}
+			
+		});
 		attributesPanel.add(btnCircuitFailure);
 	}
 
@@ -273,6 +325,15 @@ public class TrackModelUI {
 		lblSwitchPos.setForeground(new Color(138, 43, 226));
 		attributesPanel.add(lblSwitchPos);
 
+		lblBroken = new JLabel("Is Broken: ");
+		lblBroken.setFont(new Font("Tahoma", Font.BOLD, 13));
+		lblBroken.setForeground(new Color(138, 43, 226));
+		attributesPanel.add(lblBroken);
+		
+		lblFailed = new JLabel("Is Failed: ");
+		lblFailed.setFont(new Font("Tahoma", Font.BOLD, 13));
+		lblFailed.setForeground(new Color(138, 43, 226));
+		attributesPanel.add(lblFailed);
 	}
 
 	public void resetLabels(Block b) {
@@ -292,6 +353,8 @@ public class TrackModelUI {
 			lblSwitchPos.setText("Switch Positions: " + b.getSwitch().blockOne + ", " + b.getSwitch().blockTwo);
 		else
 			lblSwitchPos.setText("Switch Positions: ");
+		lblBroken.setText("Is Broken: " + b.isBroken);
+		lblFailed.setText("Is Failed: " + b.isFailed);
 	}	
 
 }
