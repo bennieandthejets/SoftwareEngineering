@@ -6,6 +6,7 @@ import TrackController.*;
 import TrackModel.*;
 import TrainController.*;
 import TrainModel.*;
+import java.util.Date;
 
 /**
  * Created by Drew on 3/27/2015.
@@ -31,6 +32,7 @@ public class Simulator {
         this.isRunning = false;
         this.speedMultiplier = 1;
         this.systemTime = System.currentTimeMillis();
+        
         
         this.blockMode = "fixed";
         this.blockMode = "manual";

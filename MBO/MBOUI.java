@@ -138,7 +138,14 @@ public class MBOUI {
 		fd.setVisible(true);
 		String filePath = fd.getDirectory() + fd.getFile();
 		if (filePath != null) {
-			mbo.loadTrainSchedule(filePath);
+			if(this.txtRequiredThroughput.getText() != "") {
+				int requiredThroughput = Integer.parseInt(txtRequiredThroughput.getText());
+				mbo.setThroughput(requiredThroughput, 8);
+				mbo.loadTrainSchedule(filePath);
+			}
+			else {
+				this.txtStatus.setText("Please enter a throughput before loading a schedule.");
+			}
 		}
 	}
 
@@ -203,7 +210,6 @@ public class MBOUI {
 		frame.getContentPane().add(lblRequiredThroughput);
 		
 		txtRequiredThroughput = new JTextField();
-		txtRequiredThroughput.setEditable(false);
 		txtRequiredThroughput.setColumns(10);
 		txtRequiredThroughput.setBounds(180, 291, 85, 24);
 		frame.getContentPane().add(txtRequiredThroughput);
@@ -240,14 +246,12 @@ public class MBOUI {
 		
 		txtShiftTime = new JTextField();
 		txtShiftTime.setEditable(false);
-		txtShiftTime.setText("08:00 - 16:30");
 		txtShiftTime.setColumns(10);
 		txtShiftTime.setBounds(412, 81, 95, 24);
 		frame.getContentPane().add(txtShiftTime);
 		
 		txtBreakTime = new JTextField();
 		txtBreakTime.setEditable(false);
-		txtBreakTime.setText("5");
 		txtBreakTime.setColumns(10);
 		txtBreakTime.setBounds(412, 120, 95, 24);
 		frame.getContentPane().add(txtBreakTime);
@@ -313,7 +317,6 @@ public class MBOUI {
 		
 		txtStatus = new JTextField();
 		txtStatus.setEditable(false);
-		txtStatus.setText("Train 1 is on break in the yard");
 		txtStatus.setBounds(295, 301, 269, 24);
 		frame.getContentPane().add(txtStatus);
 		txtStatus.setColumns(10);

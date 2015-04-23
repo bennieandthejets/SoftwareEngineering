@@ -261,7 +261,7 @@ public class MBO
 				stations.add(new StationInfo(block, stationName, dwellTime));
 			}
 			reader.close();
-			createTrainSchedule(14);
+			createTrainSchedule(throughput);
 		} catch(IOException e) {
 			System.out.println("Uh oh, ioexception brah");
 		}
