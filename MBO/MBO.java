@@ -169,6 +169,14 @@ public class MBO
 		return 0.5 * TRAIN_ACCEL * Math.pow(timeRequired, 2);
 	}
 	
+	/// Decreases all station dwell times by the specified number of seconds
+	/// Used for fine-tuning the schedule
+	public void decreaseDwellTimesBy(int seconds) {
+		for(StationInfo station : stations) {
+			station.dwellTime -= seconds;
+		}
+	}
+	
 	/// Creates a train schedule given the required throughput and the track model
 	/// If either of the above are not set, fails to create schedule
 	/// Typically called at the beginning of the day (when system is started)
@@ -180,38 +188,51 @@ public class MBO
 		}
 		
 		this.throughput = throughput;
-		int iThroughput = 0, i = 0;
-		int lengthBtwStations = 0;
-		int roundedMinute = 0, scheduleEnd = 0;
+		int roundedMinute = 0;
 		double suggestedVelocity = 11.1111111; 	// m/s, or 40 km/hr
-		double secsElapsed = 0.0;
-		int currentBlock = -1;
-		int currentStationID = 0;
-		StationInfo currentStation = stations.get(0);
-		int increment = 1;
-		while(iThroughput < throughput) {
-			if(currentBlock == -1) {
-				currentBlock = 77;
-				currentStation = stations.get(0);
-			}
-			else {
-				currentStationID += increment;
-				currentStation = stations.get(currentStationID);
-				if(currentStationID == 7) {
-					increment = -1;
-				} else if(currentStationID == 0) {
-					increment = 1;
-				}
-			}
+		
+		while(roundedMinute != 60) {
+			roundedMinute = 0;
+			int iThroughput = 0, i = 0;
+			double secsElapsed = 0.0;
+			int currentBlock = -1, currentStationID = 0;
+			StationInfo currentStation = stations.get(0);
+			int increment = 1;
+			trainSchedule = new TrainSchedule();
 			
-			TrainRoute route = ctc.calcRoute(currentBlock, currentStation.block, true, 420);	
-			double routeLength = ctc.routeLength(route)[0];
-			secsElapsed += this.travelTimeBetweenStations((int) routeLength, suggestedVelocity);
-			secsElapsed += currentStation.dwellTime;
-			roundedMinute = (int) Math.round(secsElapsed / 60.0);
-			currentBlock = currentStation.block;
-			iThroughput++;
-			trainSchedule.addStop(roundedMinute, currentBlock, currentStation.stationName, currentStation.dwellTime);
+			while(iThroughput < throughput) {
+				if(currentBlock == -1) {
+					currentBlock = 77;
+					currentStation = stations.get(0);
+				}
+				else {
+					currentStationID += increment;
+					currentStation = stations.get(currentStationID);
+					if(currentStationID == 7) {
+						increment = -1;
+					} else if(currentStationID == 0) {
+						increment = 1;
+					}
+				}
+				
+				TrainRoute route = ctc.calcRoute(currentBlock, currentStation.block, true, 420);	
+				double routeLength = ctc.routeLength(route)[0];
+				secsElapsed += this.travelTimeBetweenStations((int) routeLength, suggestedVelocity);
+				secsElapsed += currentStation.dwellTime;
+				roundedMinute = (int) Math.round(secsElapsed / 60.0);
+				currentBlock = currentStation.block;
+				iThroughput++;
+				trainSchedule.addStop(roundedMinute, currentBlock, currentStation.stationName, currentStation.dwellTime);
+			}
+			if(roundedMinute < 58) {
+				decreaseDwellTimesBy(-10);
+			} else if(roundedMinute < 60) {
+				decreaseDwellTimesBy(-2);
+			} else if(roundedMinute > 62) {
+				decreaseDwellTimesBy(10);
+			} else {
+				decreaseDwellTimesBy(2);
+			}
 		}
 		System.out.println(trainSchedule);
 		
@@ -312,7 +333,7 @@ public class MBO
 				stations.add(new StationInfo(block, stationName, dwellTime));
 			}
 			reader.close();
-			createTrainSchedule(20);
+			createTrainSchedule(14);
 		} catch(IOException e) {
 			System.out.println("Uh oh, ioexception brah");
 		}
