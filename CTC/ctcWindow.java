@@ -84,7 +84,7 @@ public class ctcWindow {
 	public JTextField txtSpeedSet;
 	public JTextField txtDestBlockNum;
 	public JTextField txtCloseBlockNum;
-	private JTextField txtTime;
+	public JTextField txtTime;
 	private JComboBox cboClose;
 	
 	private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
@@ -326,9 +326,10 @@ public class ctcWindow {
 	
 	public void setStops(int thisHour, double expect, int lastHour){
 		
-		valThisHour.setText("" + thisHour);
-		valExpected.setText("" + expect);
-		valLastHour.setText("" + lastHour);
+		
+		if(thisHour > -1 ) {valThisHour.setText("" + thisHour);}
+		if(expect > -1 ) {valExpected.setText("" + expect);}
+		if(lastHour > -1 ) {valLastHour.setText("" + lastHour);}
 		
 	}
 	
