@@ -21,6 +21,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.BorderFactory;
 import javax.swing.JSlider;
 import javax.swing.SwingConstants;
 import javax.swing.JComboBox;
@@ -70,6 +71,7 @@ public class ctcWindow {
 	private Color train = Color.green;
 	private Color broken = Color.red;
 	private Color switchh = Color.cyan;
+	private Color both = Color.blue;
 	
 	public JFrame frmCtc;
 	public JTable tblAnnouncements;
@@ -225,15 +227,6 @@ public class ctcWindow {
 	public void setTrackLabel(Block bl, int b){
 		JPanel pnl = blockPanels[bl.mapRow][bl.mapCol];
 		
-		//add train image 
-		JLabel trainlabel = new JLabel("");
-		trainlabel.setBounds(0,0,15,15);				
-		trainlabel.setIcon(new ImageIcon(trainPath));				
-		trainlabel.setIconTextGap(-15); //if we add numbers they will appear above the image
-		//trainlabel.setToolTipText("ohhhhh" + b);
-		pnl.add(trainlabel);
-		pnl.setToolTipText("Block " + b);
-		
 		/*//add track number and leave visible for now
 		JLabel numLabel = new JLabel("" + b);
 		numLabel.setBounds(0,0,15,15);
@@ -242,6 +235,28 @@ public class ctcWindow {
 		pnl.add(numLabel);
 		*/
 		
+		//add a label with just the border
+		JLabel brdr = new JLabel("");
+		brdr.setBounds(0,0,15,15);
+		brdr.setBorder(BorderFactory.createLineBorder(Color.darkGray));
+		pnl.add(brdr);
+		
+		//add train image 
+		JLabel trainlabel = new JLabel("");
+		trainlabel.setBounds(0,0,15,15);				
+		trainlabel.setIcon(new ImageIcon(trainPath));				
+		trainlabel.setIconTextGap(-15); //if we add numbers they will appear above the image
+		//trainlabel.setToolTipText("ohhhhh" + b);
+		//trainlabel.setBorder(BorderFactory.createLineBorder(Color.red,2));
+		pnl.add(trainlabel);
+		if(bl.getStation() == null){
+			pnl.setToolTipText("Block " + b);
+		} else {
+			pnl.setToolTipText("Block " + b + ", " + bl.getStation());
+		}
+		
+		
+			
 		//hide image until train is present
 		pnl.getComponent(pnl.getComponentCount()-1).setVisible(false);
 		
@@ -260,14 +275,19 @@ public class ctcWindow {
 			/*} else if(bl.isTrainPresent()){
 			desired = train;*/
 		} else if(sw != null){
-			desired = switchh;			
-		} else if(bl.getSwitchRoot() > 0){
-			//check if the switch is pointed here
-			if(owner.blocks[bl.getSwitchRoot()].getSwitch().getSwitchTaken() == bl.getBlockID()){
-				desired = switchh;
+			if(bl.getStation() != null){//switch is also a station in one case
+				desired = both;
 			} else {
-				desired = empty;
-			}
+				desired = switchh;	
+			}			
+		} else if(bl.getSwitchRoot() > 0 && owner.blocks[bl.getSwitchRoot()].getSwitch().getSwitchTaken() == bl.getBlockID()){
+				if(bl.getStation() != null){//switch is also a station in one case
+					desired = both;
+				} else {
+					desired = switchh;	
+				}		
+		} else if(bl.getStation() != null){
+			desired = station;
 		} else {
 			desired = empty;
 		}
@@ -281,7 +301,9 @@ public class ctcWindow {
 		//train presence is seperate from color now
 		boolean wasPresent = p.getComponent(p.getComponentCount()-1).isVisible();
 		if(wasPresent != bl.isTrainPresent()){
-			p.getComponent(p.getComponentCount()-1).setVisible(bl.isTrainPresent());
+			
+			p.getComponent(p.getComponentCount()-1).setVisible(bl.isTrainPresent()); //set train image
+			p.getComponent(p.getComponentCount()-2).setVisible(!bl.isTrainPresent()); //remove border while train is there
 			p.repaint();
 		}
 		

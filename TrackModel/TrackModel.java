@@ -40,22 +40,18 @@ public class TrackModel {
 	}
 
 	public void tick() {
-		if (allRoutes.size() > 0) {
-			ArrayList<Integer> keys = new ArrayList<Integer>(allRoutes.keySet());
-			for (int k : keys) {
-				trainMoved(k);
-				findTrain(k);
-				t.paintMap();
-			}
+		ArrayList<Integer> keys = new ArrayList<Integer>(allRoutes.keySet());
+		for (int k : keys) {
+			trainMoved(k);
+			findTrain(k);
+			t.paintMap();
 		}
 	}
 
 	public void setSpeed(double speed, int blockID) {
 		ArrayList<Integer> trains = new ArrayList<Integer>(allRoutes.keySet());
-		for(int train : trains)
-		{
-			if(trainOnBlock.get(train) == blockID)
-			{
+		for (int train : trains) {
+			if (trainOnBlock.get(train) == blockID) {
 				TrainModel trainM = s.trainModelWrapper.getTrain(train);
 				trainM.setVelocity(speed);
 			}
@@ -64,10 +60,8 @@ public class TrackModel {
 
 	public void setAuthority(double authority, int blockID) {
 		ArrayList<Integer> trains = new ArrayList<Integer>(allRoutes.keySet());
-		for(int train : trains)
-		{
-			if(trainOnBlock.get(train) == blockID)
-			{
+		for (int train : trains) {
+			if (trainOnBlock.get(train) == blockID) {
 				TrainModel trainM = s.trainModelWrapper.getTrain(train);
 				trainM.setAuthority(authority);
 			}
@@ -93,15 +87,16 @@ public class TrackModel {
 		TrainModel trainM = s.trainModelWrapper.getTrain(trainID);
 		totalTrainDist.put(trainID, trainM.getDistanceTraveled());
 	}
-
+	
 	public void findTrain(int trainID) {
-		System.out.println("TOTAL DIST = " + totalTrainDist.get(trainID));
-		System.out.println("TRAIN MOVED DIST = " + totalBlockDist.get(trainID));
-		System.out.println("BLOCK SIZE = "
-				+ blocks[trainOnBlock.get(trainID)].blockSize);
-		System.out.println("ON BLOCK " + trainOnBlock.get(trainID));
-		System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-
+		/*
+		 * System.out.println("TOTAL DIST = " + totalTrainDist.get(trainID));
+		 * System.out.println("TRAIN MOVED DIST = " +
+		 * totalBlockDist.get(trainID)); System.out.println("BLOCK SIZE = " +
+		 * blocks[trainOnBlock.get(trainID)].blockSize);
+		 * System.out.println("ON BLOCK " + trainOnBlock.get(trainID));
+		 * System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+		 */
 		double blockDist = 0.0;
 
 		ArrayList<Integer> travelRoute = allRoutes.get(trainID);
@@ -116,9 +111,10 @@ public class TrackModel {
 						.get(trainID)].blockSize) {
 			travelRoute.add(trainOnBlock.get(trainID));
 		}
-		if (totalTrainDist.get(trainID) > totalBlockDist.get(trainID)
+		else if (totalTrainDist.get(trainID) > totalBlockDist.get(trainID)
 				&& travelRoute.size() > 0) {
 			blocks[trainOnBlock.get(trainID)].trainPresent = false;
+			blocks[trainOnBlock.get(trainID)].trainID = -1;
 			travelRoute.add(trainOnBlock.get(trainID));
 
 			t.trainOffBlock(blocks[trainOnBlock.get(trainID)].mapRow,
@@ -154,12 +150,32 @@ public class TrackModel {
 					int nextBlock = blocks[trainOnBlock.get(trainID)]
 							.getSwitchRoot();
 					trainOnBlock.put(trainID, nextBlock);
-				} else if (prevBlock > trainOnBlock.get(trainID)) {
-					int currBlock = trainOnBlock.get(trainID);
-					trainOnBlock.put(trainID, currBlock - 1);
 				} else {
-					int currBlock = trainOnBlock.get(trainID);
-					trainOnBlock.put(trainID, currBlock + 1);
+					if(blocks[trainOnBlock.get(trainID)].getSwitchRoot() > trainOnBlock.get(trainID))
+					{
+						int nextBlock = trainOnBlock.get(trainID) - 1;
+						if(nextBlock < 1)
+							nextBlock = nextBlock + 2;
+						trainOnBlock.put(trainID, nextBlock);
+					}
+					else
+					{
+						int nextBlock = trainOnBlock.get(trainID) + 1;
+						trainOnBlock.put(trainID, nextBlock);
+					}
+					
+					/*
+					if (trainOnBlock.get(trainID) == blocks[blocks[trainOnBlock.get(trainID)]
+							.getSwitchRoot()].getSwitch().blockOne) {
+						int nextBlock = blocks[blocks[trainOnBlock.get(trainID)]
+								.getSwitchRoot()].getSwitch().blockTwo;
+						trainOnBlock.put(trainID, nextBlock);
+					} else {
+						int nextBlock = blocks[blocks[trainOnBlock.get(trainID)]
+								.getSwitchRoot()].getSwitch().blockOne;
+						trainOnBlock.put(trainID, nextBlock);
+					}
+						*/
 				}
 			} else {
 				if (prevBlock > trainOnBlock.get(trainID)) {
@@ -172,10 +188,13 @@ public class TrackModel {
 			}
 
 			blocks[trainOnBlock.get(trainID)].trainPresent = true;
+			blocks[trainOnBlock.get(trainID)].trainID = trainID;
 			t.trainOnBlock(blocks[trainOnBlock.get(trainID)].mapRow,
 					blocks[trainOnBlock.get(trainID)].mapCol);
 		}
 
+		System.out.println("TRAIN ON BLOCK " + trainOnBlock.get(trainID));
+		System.out.println("TRAIN ROUTE " + allRoutes.get(trainID));
 		allRoutes.put(trainID, travelRoute);
 
 	}
@@ -211,9 +230,11 @@ public class TrackModel {
 				} else if (row.get(7).equals("TO YARD")) {
 					blocks[count].sw = new Switch(count);
 					blocks[count].sw.toYardSwitch = true;
+					blocks[count].sw.fromYardSwitch = false;
 				} else if (row.get(7).equals("FROM YARD")) {
 					blocks[count].sw = new Switch(count);
 					blocks[count].sw.fromYardSwitch = true;
+					blocks[count].sw.toYardSwitch = false;
 				} else if (row.get(7).equals("TO YARD/FROM YARD")) {
 					blocks[count].sw = new Switch(count);
 					blocks[count].sw.toYardSwitch = true;

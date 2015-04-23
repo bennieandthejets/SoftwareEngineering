@@ -149,7 +149,9 @@ public class TrainModel{
 			addPassengers();
 		}
 		calcDistance();
-		setDisplay();
+		if(ui.getCurrTrain() == trainID)
+			setDisplay();
+		
 		System.out.println("Train ID: " + trainID);
 		System.out.println("Train Force: "+trainForce+" N");
 		System.out.println("Train Accel: "+trainAcceleration+" m/s^2");

@@ -8,6 +8,10 @@ public class Antenna{
 	private TrainModel train;
 	private TrackModel track;
 	private MBO mbo;
+	public boolean trainNear;
+	public int trainID;
+	public String stationName;
+	public String stationSide;
 	
 	//FUNCTIONS
 	public Antenna(TrainModel train, TrackModel track, MBO mbo){
@@ -17,8 +21,11 @@ public class Antenna{
 	}
 	
 	//Beacon Communication
-	public void sendStationInfo(double distance, String stationName, String stationSide){
-		
+	public void trainNear(boolean trainNear, int trainID, String stationName, String stationSide){
+		this.trainNear = trainNear;
+		this.trainID = trainID;
+		this.stationName = stationName;
+		this.stationSide = stationSide;
 	}
 	
 	public int getTrainID() {

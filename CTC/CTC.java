@@ -21,6 +21,7 @@ public class CTC {
 	public int[] locations;
 	public int[] reverses; // array of blocks the trains came from: can't turn around
 	private double[] speeds;
+	private boolean[] panics; //help to only print error messages once
 	private TrainRoute[] routes;
 	private ctcWindow myWindow;
 	private fakeWindow faaake;
@@ -87,6 +88,7 @@ public class CTC {
 			if(locations[i] > 0 && blocks[locations[i]].isTrainPresent()){
 				//assume this train is still the one on that block. should hold unless active train # approaches block number
 				known[i] = true;
+				panics[i] = false;
 			}			
 		}
 		//check destinations to see if the trains made it 
@@ -162,8 +164,7 @@ public class CTC {
 								reverses[i]=locations[i];
 								locations[i]=two;
 								
-								//!!! do something about the broken route
-								
+								//route it again
 								int destination = 0;
 								TrainRoute notTaken = routes[i];
 								while(notTaken != null){
@@ -178,8 +179,7 @@ public class CTC {
 								reverses[i]=locations[i];
 								locations[i]=one;
 								
-								//!!! do something about the broken route
-
+								//route it again
 								int destination = 0;
 								TrainRoute notTaken = routes[i];
 								while(notTaken != null){
@@ -193,27 +193,30 @@ public class CTC {
 						
 					} 
 				} else if(blocks[routes[i].block].isTrainPresent()){
-				//set current location to this one and cycle route
-				myWindow.setLocation(i,routes[i].block, -1);
-				reverses[i] = locations[i];
-				locations[i] = routes[i].block;
-				known[i] = true;
-				routes[i] = routes[i].next;
-			
+					//set current location to this one and cycle route
+					myWindow.setLocation(i,routes[i].block, -1);
+					reverses[i] = locations[i];
+					locations[i] = routes[i].block;
+					known[i] = true;
+					routes[i] = routes[i].next;
+					
+					//record stop when it reaches station block that it is scheduled to stop at
+					if (blocks[locations[i]].getStation() != null && routes[i] == null){
+						//record a stop
+						myWindow.setAnnouncement("Train " + (i + 1) + " reached " + blocks[locations[i]].getStation() + " station");
+						this.stops++;
+						myWindow.setStops(stops, 0, 0); //!!!not calculating expected yet
+					}
 				}
 			}
 		}
 		
 		//verify that all train locations actually have a train on them
 		for(int i = 0;i<activeTrains;i++){
-			if(!known[i] && locations[i]>0){
+			if(!known[i] && locations[i]>0 && !panics[i]){
 				myWindow.setAnnouncement("!!Lost Train " + (i + 1) + "! What have you done?!?!");
-				//locations[i] = 0;
-			} else if(locations[i] > 0 && blocks[locations[i]].getStation() != null){
-				//record a stop
-				this.stops++;
-				myWindow.setStops(stops, 0, 0); //!!!not calculating expected yet
-			}
+				panics[i] = true;
+			} 
 			
 		}
 		
@@ -240,6 +243,8 @@ public class CTC {
 		this.reverses = new int[blocks];
 		this.speeds = new double[blocks];
 		this.routes = new TrainRoute[blocks]; 
+		this.panics = new boolean[blocks];
+		Arrays.fill(panics, false);
 		Arrays.fill(closedBlocks, false);
 		Arrays.fill(locations,  -1); //use -1 for trains that don't exist yet
 		Arrays.fill(reverses, -1);
@@ -274,6 +279,8 @@ public class CTC {
 		this.routes = new TrainRoute[blockCount]; 
 		this.reverses = new int[blockCount];
 		this.speeds = new double[blockCount];
+		this.panics = new boolean[blockCount];
+		Arrays.fill(panics, false);
 		Arrays.fill(closedBlocks, false);
 		Arrays.fill(locations,  -1); //use -1 for trains that don't exist yet
 		Arrays.fill(routes,  null);//new TrainRoute(-1, null));
@@ -312,6 +319,8 @@ public class CTC {
 		this.reverses = new int[blockCount];
 		this.routes = new TrainRoute[blockCount]; 
 		this.speeds = new double[blockCount];
+		this.panics = new boolean[blockCount];
+		Arrays.fill(panics, false);
 		Arrays.fill(closedBlocks, false);
 		Arrays.fill(locations,  -1); //use -1 for trains that don't exist yet
 		Arrays.fill(routes,  null);//new TrainRoute(-1, null));
@@ -490,17 +499,23 @@ public class CTC {
 	public void spawnTrainCTC(){
 		//!!! for demo don't optimize train selection. new trains will always be at the end of the array
 		
-		
-		//use old max for index of new train
-		routes[activeTrains] = new TrainRoute(fromYard, null); 
-		locations[activeTrains] = 0; //special flag for yard
-		
-		myWindow.setLocation(activeTrains, -1,  fromYard);
-		
-		activeTrains++; 
-		
-		//make train puppy in sim
-		notReggie.makeTrainPuppy();
+		if(blockCount == 0 ){
+			myWindow.setAnnouncement("Wait For Track To Load to Make a Train Puppy!");
+		} else if (blocks[fromYard].isTrainPresent()){
+			myWindow.setAnnouncement("Yard Blocked, Wait Your turn!");
+		} else {
+							
+			//use old max for index of new train
+			routes[activeTrains] = new TrainRoute(fromYard, null); 
+			locations[activeTrains] = 0; //special flag for yard
+			
+			myWindow.setLocation(activeTrains, -1,  fromYard);
+			
+			activeTrains++; 
+			
+			//make train puppy in sim
+			notReggie.makeTrainPuppy();
+		}
 	}
 	
 	//sub to find the best route
@@ -537,7 +552,7 @@ public class CTC {
 		TrainRoute rt = new TrainRoute(block, null);
 		TrainRoute save = rt; //save start point because we're adding to the end
 		int inc; //increment
-		int previous = block;
+		int previous = from;
 		if(up){
 			inc = 1;
 		} else {
@@ -554,8 +569,7 @@ public class CTC {
 			justSwitched = true;
 		}
 		
-		while(block!=dest){
-			
+		while(block!=dest){			
 			Switch sw = blocks[block].getSwitch();			
 			boolean hasSwitch = (sw != null);
 			//myWindow.setAnnouncement("route: " + block + ". has switch? " + hasSwitch);
@@ -585,21 +599,24 @@ public class CTC {
 				//myWindow.setAnnouncement("branch");
 				justSwitched = true;
 				next = blocks[block].getSwitchRoot();
-			} else {
-				justSwitched = false;
-				if (block > 66 && block < 77){
-					next = block - inc;
-				} else {
-					next = block + inc;
-				}				
-				//turn around if these blocks are pointing the other way
-				if (next == previous){
-					next = block - inc;
+			} else {				
+				
+				//can ignore some possibilities because we know we aren't going over a switch when this point is reached
+				if (previous == block - 1){
+					next = block + 1;
+				} else if (previous == block + 1) {
+					next = block - 1;
+					
+					//else we know the train just switched
+				} else if (getTouch(block, block + 1) >= 0 &&
+							(sw != null && sw.getBlockOne() != block + 1 && sw.getBlockTwo() != block + 1)) {
+					next = block + 1;
+				} else { //it better fucking touch <-1> so don't even check
+					next = block - 1;
 				}
-				//don't get turned around if you come off of a switch and you like another block from that switch
-				if (next == blocks[block].getSwitchRoot() || (sw != null && (next==sw.getSwitchBlocks()[0] || next==sw.getSwitchBlocks()[1]))){
-					next = block - inc;
-				}											
+					
+				
+				justSwitched = false;
 			}	
 			//add new location to list (route)
 			previous = block;

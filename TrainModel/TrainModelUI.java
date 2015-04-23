@@ -39,13 +39,19 @@ public class TrainModelUI{ //implements ActionListener{
 	private TrainModel train;
 	private String brakeType;
 	private JTextField txtDistance;
+	private final JComboBox<Integer> trainSelectBox = new JComboBox<Integer>();
+	
+	private TrainModelWrapper wrapper;
+	private int displayTrain;
 
 	public void setTrain(TrainModel train){
 		this.train = train;
+		this.displayTrain = train.getID();
 	}
 	/**
 	 * Launch the application.
 	 */
+	/*
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -57,12 +63,13 @@ public class TrainModelUI{ //implements ActionListener{
 				}
 			}
 		});
-	}
+	}*/
 
 	/**
 	 * Create the application.
 	 */
-	public TrainModelUI() {
+	public TrainModelUI(TrainModelWrapper wrapper) {
+		this.wrapper = wrapper;
 		initialize();
 		//frame.setVisible(true);
 	}
@@ -302,9 +309,17 @@ public class TrainModelUI{ //implements ActionListener{
 		lblTrainSelection.setBounds(10, 203, 160, 14);
 		frame.getContentPane().add(lblTrainSelection);
 		
-		JComboBox comboBox = new JComboBox();
-		comboBox.setBounds(10, 227, 160, 20);
-		frame.getContentPane().add(comboBox);
+		trainSelectBox.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent arg0) {
+				if (arg0.getStateChange() == ItemEvent.SELECTED) {
+			          Integer trainID = (Integer) arg0.getItem();
+			          setTrain(wrapper.getTrain(trainID));
+			          wrapper.getTrain(trainID).setDisplay();
+			    }
+			}
+		});
+		trainSelectBox.setBounds(10, 227, 160, 20);
+		frame.getContentPane().add(trainSelectBox);
 		
 		JSeparator separator_5 = new JSeparator();
 		separator_5.setBounds(10, 269, 549, 2);
@@ -355,6 +370,13 @@ public class TrainModelUI{ //implements ActionListener{
 		txtDistance.setColumns(10);
 		txtDistance.setBounds(423, 293, 90, 20);
 		frame.getContentPane().add(txtDistance);
+	}
+	public void addTrain(int trainID) {
+		trainSelectBox.addItem(new Integer(trainID));
+	}
+	
+	public int getCurrTrain(){
+		return displayTrain;
 	}
 	//Methods to set all of the text fields
 	//Train Characteristics

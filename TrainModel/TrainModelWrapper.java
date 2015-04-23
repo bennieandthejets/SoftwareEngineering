@@ -20,7 +20,7 @@ public class TrainModelWrapper{
 	public TrainModelWrapper(TrainControllerWrapper trainCtrlWrapper){
 		this.trainCtrlWrapper = trainCtrlWrapper;
 		trains = new ArrayList<TrainModel>();
-		ui = new TrainModelUI();
+		ui = new TrainModelUI(this);
 	}
 	
 	public TrainModelWrapper(Simulator sim){
@@ -28,7 +28,7 @@ public class TrainModelWrapper{
 		this.trainCtrlWrapper = sim.trainControllerWrapper;
 		trains = new ArrayList<TrainModel>();
 		antennas = new ArrayList<Antenna>();
-		ui = new TrainModelUI();
+		ui = new TrainModelUI(this);
 	}
 	
 	//FUNCTIONS
@@ -40,6 +40,7 @@ public class TrainModelWrapper{
 		trains.add(trainID-1,newTrain);
 		antennas.add(trainID-1,newTrain.antenna);
 		trainCtrlWrapper.createTrainController(newTrain);
+		ui.addTrain(trainID);
 		return trainID;
 	}
 	
