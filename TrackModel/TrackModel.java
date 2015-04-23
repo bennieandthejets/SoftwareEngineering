@@ -151,7 +151,7 @@ public class TrackModel {
 							.getSwitchRoot();
 					trainOnBlock.put(trainID, nextBlock);
 				} else {
-					if(blocks[trainOnBlock.get(trainID)].getSwitchRoot() > trainOnBlock.get(trainID))
+					if(s.ctc.getTouch(trainOnBlock.get(trainID), trainOnBlock.get(trainID) + 1) == -1 || prevBlock == trainOnBlock.get(trainID) + 1)
 					{
 						int nextBlock = trainOnBlock.get(trainID) - 1;
 						if(nextBlock < 1)
@@ -163,19 +163,6 @@ public class TrackModel {
 						int nextBlock = trainOnBlock.get(trainID) + 1;
 						trainOnBlock.put(trainID, nextBlock);
 					}
-					
-					/*
-					if (trainOnBlock.get(trainID) == blocks[blocks[trainOnBlock.get(trainID)]
-							.getSwitchRoot()].getSwitch().blockOne) {
-						int nextBlock = blocks[blocks[trainOnBlock.get(trainID)]
-								.getSwitchRoot()].getSwitch().blockTwo;
-						trainOnBlock.put(trainID, nextBlock);
-					} else {
-						int nextBlock = blocks[blocks[trainOnBlock.get(trainID)]
-								.getSwitchRoot()].getSwitch().blockOne;
-						trainOnBlock.put(trainID, nextBlock);
-					}
-						*/
 				}
 			} else {
 				if (prevBlock > trainOnBlock.get(trainID)) {

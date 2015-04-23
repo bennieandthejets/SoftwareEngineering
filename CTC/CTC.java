@@ -552,7 +552,7 @@ public class CTC {
 		TrainRoute rt = new TrainRoute(block, null);
 		TrainRoute save = rt; //save start point because we're adding to the end
 		int inc; //increment
-		int previous = block;
+		int previous = from;
 		if(up){
 			inc = 1;
 		} else {
@@ -569,8 +569,7 @@ public class CTC {
 			justSwitched = true;
 		}
 		
-		while(block!=dest){
-			
+		while(block!=dest){			
 			Switch sw = blocks[block].getSwitch();			
 			boolean hasSwitch = (sw != null);
 			//myWindow.setAnnouncement("route: " + block + ". has switch? " + hasSwitch);
@@ -600,21 +599,24 @@ public class CTC {
 				//myWindow.setAnnouncement("branch");
 				justSwitched = true;
 				next = blocks[block].getSwitchRoot();
-			} else {
-				justSwitched = false;
-				if (block > 66 && block < 77){
-					next = block - inc;
-				} else {
-					next = block + inc;
-				}				
-				//turn around if these blocks are pointing the other way
-				if (next == previous){
-					next = block - inc;
+			} else {				
+				
+				//can ignore some possibilities because we know we aren't going over a switch when this point is reached
+				if (previous == block - 1){
+					next = block + 1;
+				} else if (previous == block + 1) {
+					next = block - 1;
+					
+					//else we know the train just switched
+				} else if (getTouch(block, block + 1) >= 0 &&
+							(sw != null && sw.getBlockOne() != block + 1 && sw.getBlockTwo() != block + 1)) {
+					next = block + 1;
+				} else { //it better fucking touch <-1> so don't even check
+					next = block - 1;
 				}
-				//don't get turned around if you come off of a switch and you like another block from that switch
-				if (next == blocks[block].getSwitchRoot() || (sw != null && (next==sw.getSwitchBlocks()[0] || next==sw.getSwitchBlocks()[1]))){
-					next = block - inc;
-				}											
+					
+				
+				justSwitched = false;
 			}	
 			//add new location to list (route)
 			previous = block;
