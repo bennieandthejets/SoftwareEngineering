@@ -7,33 +7,37 @@ public class TrainController {
 		
 	private final double	MPS_TO_MPH = 2.23694;		//Conversion ratio for meters per second to miles per hour
 	
+	//TRAIN INFO
 	private int			ID;
-	private	int			mode;							//0 for automatic, 1 for manual		
+	private	int			mode;							//0 for automatic, 1 for manual
+	
+	//POWER CONTROL
+	public boolean		brakeStatus;
+	public boolean		eBrakeStatus;
 	private	double		setpointVelocity;
 	private	double		velocityFeedback;
 	private double		targetVelocity;
 	private double		remainingAuthority;
 	private double		stopDistance;
-	public boolean		brakeStatus;
-	public boolean		eBrakeStatus;
 	private boolean		manualBrake;
 	private boolean		manualEBrake;
 	
+	//SUBSYSTEMS
+	private boolean		lightStatus;
+	public boolean		leftDoorStatus;
+	public boolean		rightDoorStatus;
+	private boolean		heatStatus;
+	private	boolean		acStatus;
+	
+	//STATION INFO
+	private boolean		approachingStation;
+	private String		stationName;
+	private String		stationSide;
+	
+	//OTHER CLASSES
 	private TrainModel			model;
 	private TrainControllerUI	ui;
-	private VitalControl		vc;
-	
-	//REMOVE WHEN VITAL
-	private final int		MAX_POWER = 120000;			//Maximum power output (W)
-	private final double	MAX_VELOCITY = 19.4444;		//Maximum train velocity (m/s)
-	private final double	TIME_PERIOD = 1;			//Sample period of time (s)
-	private	final double	Ki = 0.00000001;			//Integral Gain
-	private	final double	Kp = 50;					//Proportional Gain
-	
-	private	double[]	powerCommand = new double[2];	//Current[1] and most recent[0] power commands
-	private double[]	u = new double[2];				//Intermediate variables
-	private double[]	velocityError = new double[2];	//Current [1] and most recent [0] velocity velocityError
-	
+	private VitalControl		vc;	
 	
 	public TrainController(int newID, TrainModel newTrainModel, TrainControllerUI newUI) {
 		ID = newID;
@@ -47,17 +51,8 @@ public class TrainController {
 		remainingAuthority = 0.0;
 		brakeStatus = false;
 		eBrakeStatus = false;
-		
-		//REMOVE WHEN VITAL
-//		powerCommand[0] = 0.0;
-//		powerCommand[1] = 0.0;
-//		velocityError[0] = 0.0;
-//		velocityError[1] = 0.0;
-//		u[0] = 0.0;
-//		u[1] = 0.0;
-		
-		//TEST
-		//remainingAuthority = 1000.0;
+		leftDoorStatus = false;
+		rightDoorStatus = false;
 	}
 	
 	public int getID() {
@@ -80,9 +75,18 @@ public class TrainController {
 		mode = newMode;
 	}
 	
+	public void setSetpointVelocity(double newSetpointVelocity) {
+		setpointVelocity = newSetpointVelocity;
+		if(mode == 1) {
+			setTargetVelocity(setpointVelocity);
+		}
+		return;
+	}
+	
 	public void setTargetVelocity(double newVelocity) {
 		targetVelocity = newVelocity;
 		vc.setTargetVelocity(newVelocity);
+		return;
 	}
 	
 	public void setAuthority(double newAuthority) {
@@ -90,6 +94,14 @@ public class TrainController {
 		return;
 	}
 	
+	public void setStationInfo(String newStationName, String newStationSide) {
+		stationName = newStationName;
+		stationSide = newStationSide;
+		approachingStation = true;
+		return;
+	}
+	
+	//Determine how much authority the train has left, and whether or not it should stop
 	private void checkRemainingAuthority() {
 		remainingAuthority = remainingAuthority - model.getTickDistance();
 		
@@ -107,43 +119,17 @@ public class TrainController {
 		return;
 	}
 	
-	//REMOVE WHEN VITAL
-//	public void calculatePower() {
-//		
-//		velocityFeedback = model.getVelocity();
-//		
-//		velocityError[1] = targetVelocity - velocityFeedback;
-//		
-//		if(powerCommand[1] < MAX_POWER) {
-//			u[1] = u[0] + (TIME_PERIOD/2) * (velocityError[1] + velocityError[0]);
-//		}
-//		else {
-//			u[1] = u[0];
-//		}
-//		
-//		powerCommand[1] = Kp * velocityError[1] + Ki * u[1];
-//			
-//		u[0] = u[1];
-//		powerCommand[0] = powerCommand[1];
-//		velocityError[0] = velocityError[1];
-//		
-//		model.setPower(powerCommand[1]);
-//		
-//		return;
-//	}
-	
 	public void sendPower(double power) {
 		model.setPower(power);
 		return;
 	}
 	
+	//BRAKING METHODS
 	public void stopTrain(boolean manual) {
 		if(manual) {
 			manualBrake = true;
 		}
 		model.setPower(0);
-		//CHANGE WHEN VITAL
-//		powerCommand[0] = 0.0;
 		vc.resetPower();
 		model.activateServiceBrakes();
 		brakeStatus = true;
@@ -155,8 +141,6 @@ public class TrainController {
 			manualEBrake = true;
 		}
 		model.setPower(0);
-		//CHANGE WHEN VITAL
-//		powerCommand[0] = 0.0;
 		vc.resetPower();
 		model.activateEmergencyBrakes();
 		eBrakeStatus = true;
@@ -175,6 +159,7 @@ public class TrainController {
 			model.deactivateServiceBrakes();
 			brakeStatus = false;
 		}
+		return;
 	}
 		
 	public void releaseEmergencyBrakes(boolean manual) {
@@ -189,23 +174,64 @@ public class TrainController {
 			model.deactivateEmergencyBrakes();
 			eBrakeStatus = false;
 		}
+		return;
+	}
+	
+	//SUBSYSTEM CONTROL
+	public void controlDoors(boolean manual, boolean open, String side) {
+		//Opening doors
+		if(open) {
+			//Don't open the doors of a moving train
+			if(model.getVelocity() == 0) {
+				if(side.equals("right")) {
+					model.setRightDoor(true);
+					rightDoorStatus = true;
+				}
+				else if(side.equals("left")) {
+					model.setLeftDoor(true);
+					leftDoorStatus = true;
+				}
+			}
+		}
+		//Closing doors
+		else {
+			if(side.equals("right")) {
+				model.setRightDoor(false);
+				rightDoorStatus = false;
+			}
+			else if(side.equals("left")) {
+				model.setLeftDoor(false);
+				leftDoorStatus = false;
+			}
+		}
+		return;
+	}
+	
+	//Check if doors are open
+	public boolean checkDoors() {
+		return leftDoorStatus || rightDoorStatus;
 	}
 	
 	public void tick(long currentTime, int currentTemp) {		
 		//checkFailures();
 		checkRemainingAuthority();
-		setpointVelocity = model.getSetpointVelocity();
-		if(mode == 1) {
-			setTargetVelocity(setpointVelocity);
+		
+		if(model.atStation) {
+			if(remainingAuthority == 0.0 && !checkDoors() && model.getVelocity() == 0.0) {
+				controlDoors(false, true, stationSide);
+			}
+			else if(remainingAuthority != 0.0 && checkDoors()) {
+				controlDoors(false, false, stationSide);
+			}
 		}
+		
 		if(!brakeStatus && !eBrakeStatus && remainingAuthority != 0) {
-			//CHANGE WHEN VITAL
-//			calculatePower();
 			vc.vitalPower(model.getVelocity(), model.getVelocity(), model.getVelocity());
 		}
 		
-		//controlSubsystems(currentTime, currentTemp);
 		
+		//controlSubsystems(currentTime, currentTemp);
+		return;
 	}
 	
 }
