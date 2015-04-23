@@ -7,13 +7,13 @@ public class Block {
 	int blockID;
 	double blockSize;
 	boolean trainPresent;
-	boolean isBroken;
-	boolean isClosed;
-	boolean isFailed;
+	public boolean isBroken;
+	public boolean isClosed;
+	public boolean isFailed;
 	boolean isStation;
 	Switch sw;
 	Beacon beacon;
-	boolean rrCrossing;
+	public boolean rrCrossing;
 	boolean underground;
 	String station;
 	int trackTemp;
