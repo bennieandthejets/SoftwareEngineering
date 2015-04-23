@@ -33,7 +33,6 @@ public class Simulator {
         this.speedMultiplier = 1;
         this.systemTime = System.currentTimeMillis();
         
-        
         this.blockMode = "fixed";
         this.blockMode = "manual";
         

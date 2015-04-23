@@ -138,7 +138,7 @@ public class MBOUI {
 		fd.setVisible(true);
 		String filePath = fd.getDirectory() + fd.getFile();
 		if (filePath != null) {
-			if(this.txtRequiredThroughput.getText() != "") {
+			if(!this.txtRequiredThroughput.getText().equals("")) {
 				int requiredThroughput = Integer.parseInt(txtRequiredThroughput.getText());
 				mbo.setThroughput(requiredThroughput, 8);
 				mbo.loadTrainSchedule(filePath);

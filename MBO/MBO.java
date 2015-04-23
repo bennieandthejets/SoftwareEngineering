@@ -97,7 +97,41 @@ public class MBO
 	/// In moving block mode, set the authorities for all trains
 	/// Called on every tick (second)
 	public void calculateSafeAuthority(int trainID) {
-		movingBlockAuthorities.put(trainID, 0.0);		
+		if(reggies.size() == 1) {
+			double safeAuthority = currentAuthorities.get(trainID);
+			movingBlockAuthorities.put(trainID, safeAuthority);
+		}
+		else {
+			Block block = currentLocations.get(trainID);
+			int prevBlock = ctc.reverses[trainID - 1];
+			
+			for(int otherTrainID : currentLocations.keySet()) {
+				if(otherTrainID == trainID) { continue; }
+				Block otherTrainBlock = currentLocations.get(otherTrainID);
+				int otherTrainPrevBlock = ctc.reverses[otherTrainID - 1];
+				
+				//Two trains are going up
+				if((block.getBlockID() - prevBlock < 0) && (otherTrainBlock.getBlockID() - otherTrainPrevBlock < 0)){
+					if(block.getBlockID() > otherTrainBlock.getBlockID()) {
+						TrainRoute route = ctc.calcRoute(block.getBlockID(), otherTrainBlock.getBlockID(), true, prevBlock);
+						double routeLength =  ctc.routeLength(route)[0];
+						if(routeLength < movingBlockAuthorities.get(trainID)) {
+							movingBlockAuthorities.put(trainID, routeLength);
+						}
+					}
+				} 
+				//Two trains going down
+				else if((block.getBlockID() - prevBlock > 0) && (otherTrainBlock.getBlockID() - otherTrainPrevBlock > 0)) {
+					if(block.getBlockID() < otherTrainBlock.getBlockID()) {
+						TrainRoute route = ctc.calcRoute(block.getBlockID(), otherTrainBlock.getBlockID(), true, prevBlock);
+						double routeLength =  ctc.routeLength(route)[0];
+						if(routeLength < movingBlockAuthorities.get(trainID)) {
+							movingBlockAuthorities.put(trainID, routeLength);
+						}
+					}
+				}
+			}
+		}
 	}
 	
 	/// In moving block mode, set the velocity setpoints for all trains
@@ -199,6 +233,7 @@ public class MBO
 		this.throughput = throughput;
 		int roundedMinute = 0;
 		double suggestedVelocity = 11.1111111; 	// m/s, or 40 km/hr
+		int from = 420;
 		
 		while(roundedMinute != 60) {
 			roundedMinute = 0;
@@ -224,8 +259,13 @@ public class MBO
 					}
 				}
 				
-				TrainRoute route = ctc.calcRoute(currentBlock, currentStation.block, true, 420);	
-				double routeLength = ctc.routeLength(route)[0];
+				TrainRoute route = ctc.calcRoute(currentBlock, currentStation.block, true, from);
+				int[] routeCount = ctc.routeLength(route);
+				double routeLength = routeCount[0];
+				
+				int[] routeArray = ctc.pathFromRoute(route, routeCount[1]);
+				from = routeArray[routeArray.length - 2];
+				
 				secsElapsed += this.travelTimeBetweenStations((int) routeLength, suggestedVelocity);
 				secsElapsed += currentStation.dwellTime;
 				roundedMinute = (int) Math.round(secsElapsed / 60.0);

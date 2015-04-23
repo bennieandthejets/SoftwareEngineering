@@ -288,7 +288,7 @@ public class TrainModel{
 	
 	public double getAuthority(){
 		double tempAuth = authority;
-		this.authority = -1;
+		//this.authority = -1;
 		return tempAuth;
 	}
 	
