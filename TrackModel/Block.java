@@ -7,13 +7,14 @@ public class Block {
 	int blockID;
 	double blockSize;
 	boolean trainPresent;
-	public boolean isBroken;
-	public boolean isClosed;
-	public boolean isFailed;
+	boolean isBroken;
+	boolean isClosed;
+	boolean isFailed;
 	boolean isStation;
 	Switch sw;
 	Beacon beacon;
-	public boolean rrCrossing;
+	boolean rrCrossing;
+	boolean rrCrossingStatus;
 	boolean underground;
 	String station;
 	int trackTemp;
@@ -37,8 +38,17 @@ public class Block {
 	public Block(int blockID)
 	{
 		this.blockID = blockID;
+		rrCrossingStatus = false;
 	}
 	
+	public boolean getRRStatus()
+	{
+		return rrCrossingStatus;
+	}
+	public void setRRStatus(boolean s)
+	{
+		rrCrossingStatus = s;
+	}
 	public int getSwitchRoot()
 	{
 		return switchRoot;
