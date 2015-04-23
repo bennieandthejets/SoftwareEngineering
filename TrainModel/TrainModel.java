@@ -64,7 +64,7 @@ public class TrainModel{
 	private boolean heatStatus;
 	
 	//Track Model stuff
-	private Block currentBlock;
+	public Block currentBlock;
 	private Block nextBlock;
 	private double blockLocation;
 	public boolean atStation;
@@ -100,45 +100,13 @@ public class TrainModel{
 		mbo = sim.mbo;
 		antenna = new Antenna(this,track,mbo);
 		
-		//setPower(150000.0); //for testing
+
 		trainAcceleration = 0.0;
 		trainVelocity = 0.0;
 		passengers = 0;
 		blockLocation = 0.0;
 		distanceTraveled = 0.0;
-		/*
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					ui.frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
 		
-		while(true){
-			updateTrain();
-			setDisplay();
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}*/
-		
-		//TEST ONLY
-		//setpoint = 18.0;
-		//stopDistance = 100.0;
-		
-	}
-	
-	//main  for testing
-	public static void main(String[] args){
-		//ui = new TrainModelUI();
-//		TrainModel train = new TrainModel(1);
-		//ui.setTrain(train);
 	}
 	
 	public void updateTrain(){

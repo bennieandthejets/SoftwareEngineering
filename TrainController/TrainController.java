@@ -1,5 +1,8 @@
 package TrainController;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import TrainModel.*;
 
 @SuppressWarnings("unused")
@@ -16,6 +19,7 @@ public class TrainController {
 	private	double		velocityFeedback;
 	private	double		targetVelocity;
 	private	double		remainingAuthority;
+	private double		powerCommand;
 	
 	//BRAKING
 	public	boolean		brakeStatus;					//true = on
@@ -31,11 +35,8 @@ public class TrainController {
 	public	boolean		acStatus;						//true = open
 	
 	//STATION INFO
-	private	boolean		approachingStation;				//A signal has been received from the beacon
-	private	boolean		atStation;						//The train is stopped at a station with no authority
 	private	String		stationName;
 	private	String		stationSide;					//"left" or "right"
-	private	double		distanceFromStation;
 	
 	//ASSOCIATED CLASSES
 	private	TrainModel			model;
@@ -57,6 +58,7 @@ public class TrainController {
 		velocityFeedback = 0.0;
 		remainingAuthority = 0.0;
 		targetVelocity = 0.0;
+		powerCommand = 0.0;
 		
 		brakeStatus = false;
 		eBrakeStatus = false;
@@ -64,8 +66,6 @@ public class TrainController {
 		leftDoorStatus = false;
 		rightDoorStatus = false;
 		
-		atStation = false;
-		approachingStation = false;
 		stationName = "";
 	}
 	
@@ -83,6 +83,10 @@ public class TrainController {
 	
 	public double getAuthority() {
 		return remainingAuthority;
+	}
+	
+	public double getPowerCommand() {
+		return powerCommand;
 	}
 	
 	//Switch between auto and manual modes
@@ -117,14 +121,9 @@ public class TrainController {
 	
 	//Get station info from the beacon and activate station approach mode
 	public void setStationInfo(String newStationName, String newStationSide, double newDistanceFromStation) {
-		//check that you haven't already talked to this station
 		if(!stationName.equals(newStationName)) {
-			if(!approachingStation && !atStation) {
-				approachingStation = true;
-				stationName = newStationName;
-				stationSide = newStationSide;
-				distanceFromStation = newDistanceFromStation;
-			}
+			stationName = newStationName;
+			stationSide = newStationSide;
 		}
 		return;
 	}
@@ -155,19 +154,6 @@ public class TrainController {
 			releaseEmergencyBrakes(false);
 		}
 		
-		if(approachingStation) {
-			distanceFromStation = distanceFromStation - tickDistance;
-			if(distanceFromStation <= 0.0) {
-				distanceFromStation = 0.0;
-				approachingStation = false;
-			}
-			
-			//If the train stopped at a station with no remaining authority
-			if(distanceFromStation == 0.0 && remainingAuthority == 0.0 && currentVelocity == 0.0) {
-				atStation = true;
-			}
-		}
-		
 		return;
 	}
 	
@@ -180,6 +166,7 @@ public class TrainController {
 	
 	//Send the model its power command
 	public void sendPower(double power) {
+		powerCommand = power;
 		model.setPower(power);
 		return;
 	}
@@ -194,7 +181,7 @@ public class TrainController {
 		if(manual) {
 			manualBrake = true;
 		}
-		model.setPower(0);
+		sendPower(0);
 		vc.resetPower();
 		model.activateServiceBrakes();
 		brakeStatus = true;
@@ -205,7 +192,7 @@ public class TrainController {
 		if(manual) {
 			manualEBrake = true;
 		}
-		model.setPower(0);
+		sendPower(0);
 		vc.resetPower();
 		model.activateEmergencyBrakes();
 		eBrakeStatus = true;
@@ -249,50 +236,59 @@ public class TrainController {
 	//===================
 	
 	public void controlSubsystems(long currentTime, long currentTemp) {
-		if(atStation) {
-			if(!checkDoors()) {
-				controlDoors(false, true, stationSide);
+		if(model.currentBlock.getStation() != null) {
+			if(model.getVelocity() == 0.0 && remainingAuthority == 0.0) {
+				if(!checkDoors()) {
+					controlDoors(false, true, stationSide);
+				}
 			}
-			else if(remainingAuthority != 0.0 && checkDoors()) {
+			else if(remainingAuthority != 0.0 && model.getVelocity() > 0.0) {
 				controlDoors(false, false, "right");
 				controlDoors(false, false, "left");
-				atStation = false;
 			}
 		}
 		
+		Date date = new Date(currentTime);
+		int hour = Integer.parseInt(new SimpleDateFormat("HH:mm:ss").format(date).split(":")[0]);
 		//Lights are on between 6PM and 6AM
-		if( currentTime > 18*60*60 || currentTime < 6*60*60) {
+		if( hour >= 18 || hour <= 6) {
 			controlLights(true);
 		}
 		else {
 			controlLights(false);
 		}
+		
+		if(model.currentBlock.isUnderground()) {
+			controlLights(true);
+		}
 	}
 	
 	public void controlDoors(boolean manual, boolean open, String side) {
 		//Opening doors
-		if(open) {
-			//Don't open the doors of a moving train
-			if(model.getVelocity() == 0) {
+		if(side != null) {
+			if(open) {
+				//Don't open the doors of a moving train
+				if(model.getVelocity() == 0) {
+					if(side.equals("right")) {
+						model.setRightDoor(true);
+						rightDoorStatus = true;
+					}
+					else if(side.equals("left")) {
+						model.setLeftDoor(true);
+						leftDoorStatus = true;
+					}
+				}
+			}
+			//Closing doors
+			else {
 				if(side.equals("right")) {
-					model.setRightDoor(true);
-					rightDoorStatus = true;
+					model.setRightDoor(false);
+					rightDoorStatus = false;
 				}
 				else if(side.equals("left")) {
-					model.setLeftDoor(true);
-					leftDoorStatus = true;
+					model.setLeftDoor(false);
+					leftDoorStatus = false;
 				}
-			}
-		}
-		//Closing doors
-		else {
-			if(side.equals("right")) {
-				model.setRightDoor(false);
-				rightDoorStatus = false;
-			}
-			else if(side.equals("left")) {
-				model.setLeftDoor(false);
-				leftDoorStatus = false;
 			}
 		}
 		return;
@@ -316,8 +312,8 @@ public class TrainController {
 	
 	public void tick(long currentTime, int currentTemp) {		
 		checkRemainingAuthority();
-		controlPower();
 		controlSubsystems(currentTime, currentTemp);
+		controlPower();
 		return;
 	}
 	

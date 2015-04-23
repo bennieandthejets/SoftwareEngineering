@@ -84,6 +84,7 @@ public class TrainControllerUI {
 	
 	private TrainControllerWrapper wrapper;
 	private TrainController controller = null;
+	private JTextField powerCommandField;
 
 	/**
 	 * Create the application.
@@ -170,15 +171,15 @@ public class TrainControllerUI {
 		mainPanel.add(notificationsLbl);
 		
 		JButton leftDoorButton = new JButton("Left Doors");
-		leftDoorButton.setBounds(524, 149, 98, 26);
+		leftDoorButton.setBounds(524, 149, 107, 26);
 		mainPanel.add(leftDoorButton);
 		
 		JButton rightDoorButton = new JButton("Right Doors");
-		rightDoorButton.setBounds(524, 188, 98, 26);
+		rightDoorButton.setBounds(524, 188, 107, 26);
 		mainPanel.add(rightDoorButton);
 		
 		JButton lightsButton = new JButton("Lights");
-		lightsButton.setBounds(524, 109, 98, 26);
+		lightsButton.setBounds(524, 109, 106, 26);
 		mainPanel.add(lightsButton);
 		
 		trainSelectBox.addItemListener(new ItemListener() {
@@ -194,7 +195,7 @@ public class TrainControllerUI {
 		
 		JLabel setpointVelocityLbl = new JLabel("Setpoint Velocity");
 		setpointVelocityLbl.setHorizontalAlignment(SwingConstants.CENTER);
-		setpointVelocityLbl.setBounds(102, 124, 104, 28);
+		setpointVelocityLbl.setBounds(102, 124, 98, 28);
 		mainPanel.add(setpointVelocityLbl);
 		
 		JLabel velocityFeedbackLbl = new JLabel("Velocity Feedback");
@@ -330,11 +331,11 @@ public class TrainControllerUI {
 		mainPanel.add(eBrakeStatusField);
 		
 		JButton heatButton = new JButton("Heat");
-		heatButton.setBounds(524, 224, 98, 26);
+		heatButton.setBounds(524, 224, 106, 26);
 		mainPanel.add(heatButton);
 		
 		JButton acButton = new JButton("AC");
-		acButton.setBounds(524, 262, 98, 26);
+		acButton.setBounds(524, 262, 106, 26);
 		mainPanel.add(acButton);
 		
 		heatStatusField = new JTextField();
@@ -357,7 +358,7 @@ public class TrainControllerUI {
 		
 		JLabel authorityLbl = new JLabel("Authority");
 		authorityLbl.setHorizontalAlignment(SwingConstants.CENTER);
-		authorityLbl.setBounds(102, 245, 104, 28);
+		authorityLbl.setBounds(102, 246, 57, 28);
 		mainPanel.add(authorityLbl);
 		
 		JLabel lblMph = new JLabel("mph");
@@ -375,6 +376,20 @@ public class TrainControllerUI {
 		JLabel lblMiles = new JLabel("miles");
 		lblMiles.setBounds(192, 277, 36, 16);
 		mainPanel.add(lblMiles);
+		
+		powerCommandField = new JTextField();
+		powerCommandField.setEditable(false);
+		powerCommandField.setBounds(102, 331, 86, 22);
+		mainPanel.add(powerCommandField);
+		powerCommandField.setColumns(10);
+		
+		JLabel lblPowerCommand = new JLabel("Power Command");
+		lblPowerCommand.setBounds(105, 309, 106, 16);
+		mainPanel.add(lblPowerCommand);
+		
+		JLabel lblW = new JLabel("W");
+		lblW.setBounds(193, 334, 56, 16);
+		mainPanel.add(lblW);
 	}
 	
 	public void addTrain(int trainID) {
@@ -427,11 +442,16 @@ public class TrainControllerUI {
 		authorityField.setText(formatter.format(newAuthority));
 	}
 	
+	private void updatePowerCommand(double newPowerCommand) {
+		powerCommandField.setText(formatter.format(newPowerCommand));
+	}
+	
 	public void update() {
 		if(controller != null) {
 			updateSetpointVelocity(controller.getSetpointVelocity() * MPS_TO_MPH);
 			updateVelocityFeedback(controller.getVelocityFeedback() * MPS_TO_MPH);
 			updateAuthority(controller.getAuthority() * METERS_TO_MILES);
+			updatePowerCommand(controller.getPowerCommand());
 			checkBrakes();
 			checkDoors();
 			checkLights();
