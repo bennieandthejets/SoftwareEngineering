@@ -66,6 +66,7 @@ public class TrainController {
 		
 		atStation = false;
 		approachingStation = false;
+		stationName = "";
 	}
 	
 	public int getID() {
@@ -116,11 +117,14 @@ public class TrainController {
 	
 	//Get station info from the beacon and activate station approach mode
 	public void setStationInfo(String newStationName, String newStationSide, double newDistanceFromStation) {
-		if(!approachingStation) {
-			approachingStation = true;
-			stationName = newStationName;
-			stationSide = newStationSide;
-			distanceFromStation = newDistanceFromStation;
+		//check that you haven't already talked to this station
+		if(!stationName.equals(newStationName)) {
+			if(!approachingStation && !atStation) {
+				approachingStation = true;
+				stationName = newStationName;
+				stationSide = newStationSide;
+				distanceFromStation = newDistanceFromStation;
+			}
 		}
 		return;
 	}
@@ -153,14 +157,14 @@ public class TrainController {
 		
 		if(approachingStation) {
 			distanceFromStation = distanceFromStation - tickDistance;
-			if(distanceFromStation < 0.0) {
+			if(distanceFromStation <= 0.0) {
 				distanceFromStation = 0.0;
+				approachingStation = false;
 			}
 			
 			//If the train stopped at a station with no remaining authority
 			if(distanceFromStation == 0.0 && remainingAuthority == 0.0 && currentVelocity == 0.0) {
 				atStation = true;
-				approachingStation = false;
 			}
 		}
 		
@@ -250,7 +254,8 @@ public class TrainController {
 				controlDoors(false, true, stationSide);
 			}
 			else if(remainingAuthority != 0.0 && checkDoors()) {
-				controlDoors(false, false, stationSide);
+				controlDoors(false, false, "right");
+				controlDoors(false, false, "left");
 				atStation = false;
 			}
 		}
