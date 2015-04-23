@@ -106,17 +106,11 @@ public class TrackModel {
 		}
 		totalBlockDist.put(trainID, blockDist);
 
-		if (travelRoute.size() == 0
-				&& totalTrainDist.get(trainID) > blocks[trainOnBlock
-						.get(trainID)].blockSize) {
-			travelRoute.add(trainOnBlock.get(trainID));
-		}
-		else if (totalTrainDist.get(trainID) > totalBlockDist.get(trainID)
-				&& travelRoute.size() > 0) {
+		if (s.trainModelWrapper.getTrain(trainID).getBlockDistance() > blocks[trainOnBlock.get(trainID)].blockSize){
 			blocks[trainOnBlock.get(trainID)].trainPresent = false;
 			blocks[trainOnBlock.get(trainID)].trainID = -1;
 			travelRoute.add(trainOnBlock.get(trainID));
-
+			
 			t.trainOffBlock(blocks[trainOnBlock.get(trainID)].mapRow,
 					blocks[trainOnBlock.get(trainID)].mapCol);
 
@@ -181,7 +175,9 @@ public class TrackModel {
 			//HERE YOU GO, REGGIE. blocks[trainOnBlock.get(trainID)];
 			s.trainModelWrapper.getTrain(trainID).setBlock(blocks[trainOnBlock.get(trainID)]);
 		}
-
+		
+		System.out.println(trainOnBlock.get(trainID));
+		System.out.println(travelRoute);
 		allRoutes.put(trainID, travelRoute);
 
 	}
