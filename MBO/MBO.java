@@ -79,6 +79,10 @@ public class MBO
 		ui.setTrainSelectBox();
 	}
 	
+	public TrainSchedule getDefaultSchedule() {
+		return trainSchedules.get(1);
+	}
+	
 	/// Set the throughput for the system
 	/// Returns: none
 	public void setThroughput(int throughput, int hour) {
@@ -235,88 +239,7 @@ public class MBO
 			}
 		}
 		System.out.println(trainSchedule);
-		
-		/*TrainSchedule trainSchedule = new TrainSchedule();
-		if(throughput == 0 || trackModel == null ) {
-			System.out.println("Throughput and track model required.");
-			return;
-		}
-		
-		int iThroughput = 0, i = 0;
-		int lengthBtwStations = 0;
-		int roundedMinute = 0, scheduleEnd = 0;
-		double suggestedVelocity = 18.0;	// 18 m/s, or ~40 mph
-		double secsElapsed = 0.0;
-		int iterationsRequired = 0;
-		while(scheduleEnd < 58) 
-		{
-			iterationsRequired++;
-			trainSchedule = new TrainSchedule();
-			secsElapsed = 0.0;
-			iThroughput = 0;
-			i = 0;
-			while(iThroughput < throughput) {
-				lengthBtwStations += trackModel[i].getBlockSize();
-				if(i < 39) {
-					i++;
-				} else {
-					i = 0;
-				}
-				if(!trackModel[i].getStation().equals("")) {
-					iThroughput++;
-					//System.out.println("Station #" + iThroughput + ": Must travel " + lengthBtwStations + " meters.");
-					//System.out.print(trackModel[i].stationName + ": ");
-					secsElapsed += travelTimeBetweenStations(lengthBtwStations, suggestedVelocity);
-					roundedMinute = (int) Math.round(secsElapsed / 60.0);
-					if(roundedMinute >= 60) {
-						createTrainSchedule(throughput - iThroughput);
-						throughput = iThroughput;
-					} else {
-						trainSchedule.addStop(roundedMinute, trackModel[i].getStation());
-					}
-					//secsElapsed += trackModel[i].dwellTime;
-					lengthBtwStations = 0;
-				}
-			}
-			scheduleEnd = ((int) Math.round(secsElapsed)) / 60;
-			//System.out.println("=================");
-			//System.out.println(secsElapsed + " seconds elapsed, schedule ends at " + scheduleEnd + " minutes into the hour.");
-			/*if(scheduleEnd > 60) {
-				int j = 0;
-				for(TrainSchedule.Stop stop : trainSchedule.stops) {
-					if(stop.minute >= 60) {
-						trainSchedule.printSchedule();
-						System.out.println("There have been " + trainSchedule.stops.size() + " stops.");
-						trainSchedule.removeRange(j, trainSchedule.stops.size() - 1);
-						createTrainSchedule(throughput - j);
-					} else {
-						j++;
-					}
-				}
-			}
-			if(scheduleEnd < 49) {
-				suggestedVelocity -= 2;
-			} else if(scheduleEnd < 54){
-				suggestedVelocity -= 1;
-			} else if(scheduleEnd < 58) {
-				suggestedVelocity -= 0.6;
-			} else if(scheduleEnd < 59){
-				suggestedVelocity -= 0.1;
-			}
-		}
-		System.out.println("It took " + iterationsRequired + " iterations to generate a precise train schedule");
-		System.out.printf("Suggested speed is %03f m/s\n", suggestedVelocity);
-		this.trainSchedules.put(trainSchedules.size() + 1, trainSchedule);
-		trainSchedule.printSchedule();
-
-		
-		/*System.out.println("It will take " + cumLength + "m of travel distance to meet the throughput specified.");
-		System.out.println("Cumulative dwell time is " + cumDwellTime + ", or " + (cumDwellTime / 60) + "min" + (cumDwellTime % 60) + "s");
-		double stopTime = timeToAttainSpeed(40 / METERS_TO_MPH, 0, TRAIN_SERVICE_BRAKE);
-		double stopDist = calculateStopDistance(40.0 / METERS_TO_MPH);
-		System.out.println("Stop time: " + stopTime + "s");
-		System.out.println("Going 40mph, it will take " + stopDist + "m to stop");
-		this.travelTimeBetweenStations(1000);*/
+		trainSchedules.put(1, trainSchedule);		
 	}
 	
 	public void loadTrainSchedule(String filePath) {
