@@ -34,7 +34,7 @@ public class CTC {
 	
 	//modules i can talk to
 	private Simulator notReggie;
-	private TrackCtrlWrapper ben;
+	public TrackCtrlWrapper ben;
 	private MBO drewBaby;
 	
 	

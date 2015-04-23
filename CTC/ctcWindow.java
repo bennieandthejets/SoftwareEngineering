@@ -77,8 +77,6 @@ public class ctcWindow {
 	public JTable tblAnnouncements;
 	public JTable tblLocations;
 	public JTable tblRoutes;
-	public JTable tblClosures;
-	public JScrollPane scrollPane_1;
 	public JTextField valThisHour;
 	public JTextField valExpected;
 	public JTextField valLastHour;
@@ -87,6 +85,7 @@ public class ctcWindow {
 	public JTextField txtDestBlockNum;
 	public JTextField txtCloseBlockNum;
 	private JTextField txtTime;
+	private JComboBox cboClose;
 	
 	private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
 
@@ -628,28 +627,28 @@ public class ctcWindow {
 		JPanel pnlMaintenance = new JPanel();
 		pnlMaintenance.setBackground(new Color(75, 0, 130));
 		pnlMaintenance.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Maintenance", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(255, 0, 0)));
-		pnlMaintenance.setBounds(582, 9, 357, 102);
+		pnlMaintenance.setBounds(582, 33, 357, 68);
 		frmCtc.getContentPane().add(pnlMaintenance);
 		pnlMaintenance.setLayout(null);
 		
 		JLabel lblSex = new JLabel("Action:");
 		lblSex.setForeground(new Color(245, 255, 250));
 		lblSex.setHorizontalAlignment(SwingConstants.CENTER);
-		lblSex.setBounds(7, 24, 40, 14);
+		lblSex.setBounds(7, 30, 40, 14);
 		pnlMaintenance.add(lblSex);
 		
-		JComboBox cboClose = new JComboBox();
+		cboClose = new JComboBox();
 		cboClose.setModel(new DefaultComboBoxModel(new String[] {"Close", "Open"}));
 		cboClose.setMaximumRowCount(2);
 		cboClose.setForeground(new Color(255, 255, 255));
 		cboClose.setBackground(new Color(153, 50, 204));
-		cboClose.setBounds(47, 21, 74, 20);
+		cboClose.setBounds(47, 27, 74, 20);
 		pnlMaintenance.add(cboClose);
 		
 		JLabel lblBlock = new JLabel("Block:");
 		lblBlock.setHorizontalAlignment(SwingConstants.CENTER);
 		lblBlock.setForeground(new Color(245, 255, 250));
-		lblBlock.setBounds(123, 24, 40, 14);
+		lblBlock.setBounds(123, 30, 40, 14);
 		pnlMaintenance.add(lblBlock);
 		
 		txtCloseBlockNum = new JTextField();
@@ -657,79 +656,39 @@ public class ctcWindow {
 		txtCloseBlockNum.setHorizontalAlignment(SwingConstants.CENTER);
 		txtCloseBlockNum.setColumns(10);
 		txtCloseBlockNum.setBackground(new Color(128, 0, 0));
-		txtCloseBlockNum.setBounds(163, 21, 74, 20);
+		txtCloseBlockNum.setBounds(163, 27, 74, 20);
 		pnlMaintenance.add(txtCloseBlockNum);
 		
 		JButton btnDoIt = new JButton("Do It");
-		btnDoIt.setForeground(new Color(128, 0, 128));
-		btnDoIt.setBounds(162, 68, 74, 23);
-		pnlMaintenance.add(btnDoIt);
-		
-		scrollPane_1 = new JScrollPane();
-		scrollPane_1.setBounds(245, 11, 102, 83);
-		pnlMaintenance.add(scrollPane_1);
-		
-		tblClosures = new JTable();
-		tblClosures.setEnabled(false);
-		tblClosures.setBackground(new Color(255, 105, 180));
-		scrollPane_1.setViewportView(tblClosures);
-		tblClosures.setModel(new DefaultTableModel(
-			new Object[][] {
-				{null},
-				{null},
-				{null},
-				{null},
-				{null},
-				{null},
-				{null},
-				{null},
-				{null},
-				{null},
-				{null},
-				{null},
-				{null},
-				{null},
-				{null},
-				{null},
-				{null},
-				{null},
-				{null},
-				{null},
-				{null},
-				{null},
-				{null},
-				{null},
-				{null},
-				{null},
-				{null},
-				{null},
-				{null},
-				{null},
-				{null},
-				{null},
-				{null},
-				{null},
-				{null},
-				{null},
-				{null},
-				{null},
-				{null},
-				{null},
-				{null},
-				{null},
-				{null},
-				{null},
-				{null},
-				{null},
-				{null},
-				{null},
-				{null},
-				{null},
-			},
-			new String[] {
-				"Closed"
+		btnDoIt.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try{
+					if((Integer.parseInt(txtCloseBlockNum.getText()) < 1 || Integer.parseInt(txtCloseBlockNum.getText()) > owner.blockCount)){
+						setAnnouncement("Not a Block Number");
+					} else if (cboClose.getSelectedIndex() == 0 ){ //close
+						if(owner.blocks[Integer.parseInt(txtCloseBlockNum.getText())].isBroken()){
+							setAnnouncement("Block already closed");
+						} else {
+							owner.ben.closeBlock(Integer.parseInt(txtCloseBlockNum.getText()));
+						}
+						
+					} else { //open
+						if(!owner.blocks[Integer.parseInt(txtCloseBlockNum.getText())].isBroken()){
+							setAnnouncement("Block already Open");
+						} else {
+							owner.ben.closeBlock(Integer.parseInt(txtCloseBlockNum.getText())); //same function actually toggles
+						}
+						
+					}
+				} catch(Exception ex){
+					setAnnouncement("Error doing things to block");
+				}
+				
 			}
-		));
+		});
+		btnDoIt.setForeground(new Color(128, 0, 128));
+		btnDoIt.setBounds(260, 26, 74, 23);
+		pnlMaintenance.add(btnDoIt);
 		
 		JPanel panel = new JPanel();
 		panel.setBackground(new Color(0, 128, 0));
@@ -830,7 +789,7 @@ public class ctcWindow {
 		valThisHour = new JTextField();
 		valThisHour.setForeground(new Color(255, 255, 0));
 		valThisHour.setBackground(new Color(186, 85, 211));
-		valThisHour.setText("Value");
+		valThisHour.setText("0");
 		valThisHour.setHorizontalAlignment(SwingConstants.CENTER);
 		valThisHour.setEditable(false);
 		valThisHour.setColumns(10);
@@ -838,7 +797,7 @@ public class ctcWindow {
 		pnlThru.add(valThisHour);
 		
 		valExpected = new JTextField();
-		valExpected.setText("Value");
+		valExpected.setText("0.0");
 		valExpected.setHorizontalAlignment(SwingConstants.CENTER);
 		valExpected.setForeground(Color.YELLOW);
 		valExpected.setEditable(false);
@@ -848,7 +807,7 @@ public class ctcWindow {
 		pnlThru.add(valExpected);
 		
 		valLastHour = new JTextField();
-		valLastHour.setText("Value");
+		valLastHour.setText("0");
 		valLastHour.setHorizontalAlignment(SwingConstants.CENTER);
 		valLastHour.setForeground(Color.YELLOW);
 		valLastHour.setEditable(false);
@@ -867,7 +826,7 @@ public class ctcWindow {
 		lblRecentCommands.setBounds(582, 386, 110, 14);
 		frmCtc.getContentPane().add(lblRecentCommands);
 		
-		JButton btnSpawn = new JButton("Make Train Puppy From Train Embryo");
+		JButton btnSpawn = new JButton("Make Train Puppy");
 		btnSpawn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//fakeShit.spawnTrain();
